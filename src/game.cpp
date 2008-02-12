@@ -19,6 +19,7 @@ Game::Game(QObject *parent)
       m_index(0),
       m_activeArmy(White),
       m_isChess960(false),
+      m_isScratchGame(false),
       m_halfMoveClock(0),
       m_fullMoveNumber(1),
       m_fileOfKingsRook(0),
@@ -42,6 +43,7 @@ Game::Game(QObject *parent, const QString &fen)
       m_index(0),
       m_activeArmy(White),
       m_isChess960(false),
+      m_isScratchGame(false),
       m_halfMoveClock(0),
       m_fullMoveNumber(1),
       m_fileOfKingsRook(0),
@@ -169,6 +171,11 @@ void Game::playerMadeMove(Move move)
 
 bool Game::localHumanMadeMove(Chess::Army army, Move move)
 {
+    if (m_isScratchGame) {
+        processMove(army, move);
+        return true;
+    }
+
     if (m_activeArmy != army)
         return false;
 

@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     setupUi(this);
 
     Game *scratchGame = new Game(ui_tab);
+    scratchGame->setScratchGame(true);
     Board *scratchBoard = new Board(scratchGame);
     BoardView *scratchView = new BoardView(ui_tab, scratchBoard);
     QHBoxLayout *layout = new QHBoxLayout(ui_tab);

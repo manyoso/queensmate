@@ -37,6 +37,9 @@ public:
     bool isChess960() const { return m_isChess960; }
     void setChess960(bool isChess960) { m_isChess960 = isChess960; }
 
+    bool isScratchGame() const { return m_isScratchGame; }
+    void setScratchGame(bool isScratchGame) { m_isScratchGame = isScratchGame; }
+
     PieceList pieces(Chess::Army army) const;
     PieceList capturedPieces(Chess::Army army) const;
 
@@ -85,6 +88,7 @@ private:
     int m_index;
     Chess::Army m_activeArmy;
     bool m_isChess960;
+    bool m_isScratchGame;
     int m_halfMoveClock;
     int m_fullMoveNumber;
     int m_fileOfKingsRook;
