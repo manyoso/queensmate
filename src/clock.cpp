@@ -7,7 +7,7 @@ using namespace Chess;
 Clock::Clock(QObject *parent)
     : QObject(parent),
       m_started(false),
-      m_baseTime(QTime(0, 1)),
+      m_baseTime(QTime(0, 6)),
       m_moves(40),
       m_increment(QTime(0, 0, 0)),
       m_army(White),

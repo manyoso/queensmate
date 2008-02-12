@@ -46,8 +46,8 @@ NewGameDialog::NewGameDialog(QWidget *parent)
     ui_position960->setValue(settings.value("position960", 518).toInt());
     ui_whiteHuman->setChecked(settings.value("whiteIsHuman", true).toBool());
     ui_whiteComputer->setChecked(!settings.value("whiteIsHuman", true).toBool());
-    ui_blackHuman->setChecked(settings.value("blackIsHuman", false).toBool());
-    ui_blackComputer->setChecked(!settings.value("blackIsHuman", false).toBool());
+    ui_blackHuman->setChecked(settings.value("blackIsHuman", true).toBool());
+    ui_blackComputer->setChecked(!settings.value("blackIsHuman", true).toBool());
 
     int whiteComputer = ui_whiteComputerCombo->findText(settings.value("whiteComputer").toString());
     ui_whiteComputerCombo->setCurrentIndex(qMax(0, whiteComputer));

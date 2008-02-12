@@ -165,7 +165,7 @@
   </action>
   <action name="ui_actionNewScratchBoard" >
    <property name="text" >
-    <string>New Scratch Board</string>
+    <string>New Board</string>
    </property>
   </action>
  </widget>
