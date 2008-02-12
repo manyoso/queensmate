@@ -28,21 +28,8 @@
     <item row="0" column="0" >
      <widget class="TabWidget" name="ui_tabWidget" >
       <property name="currentIndex" >
-       <number>0</number>
+       <number>-1</number>
       </property>
-      <widget class="QWidget" name="ui_tab" >
-       <property name="geometry" >
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>597</width>
-         <height>501</height>
-        </rect>
-       </property>
-       <attribute name="title" >
-        <string>Scratch Board</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -62,6 +49,9 @@
     </property>
     <addaction name="ui_actionNewGame" />
     <addaction name="ui_actionLoadGame" />
+    <addaction name="separator" />
+    <addaction name="ui_actionNewScratchBoard" />
+    <addaction name="separator" />
     <addaction name="ui_actionQuit" />
    </widget>
    <widget class="QMenu" name="ui_menuView" >
@@ -171,6 +161,11 @@
   <action name="ui_actionQuit" >
    <property name="text" >
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="ui_actionNewScratchBoard" >
+   <property name="text" >
+    <string>New Scratch Board</string>
    </property>
   </action>
  </widget>

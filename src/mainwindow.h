@@ -14,6 +14,7 @@ public:
 public Q_SLOTS:
     void newGame();
     void loadGame();
+    void newScratchBoard();
     void fullScreen(bool show);
     void playButtons(bool show);
     void gameInfo(bool show);
@@ -22,6 +23,9 @@ public Q_SLOTS:
 
 protected:
     virtual void closeEvent(QCloseEvent *event);
+
+private Q_SLOTS:
+    void tabChanged(int index);
 };
 
 #endif

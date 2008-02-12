@@ -346,7 +346,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     pen.setWidthF(0.1);
     painter->setPen(pen);
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->drawRoundRect(rect());
+    painter->drawRect(rect());
 }
 
 void Borders::flip()

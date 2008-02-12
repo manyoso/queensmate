@@ -26,19 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setupUi(this);
 
-    Game *scratchGame = new Game(ui_tab);
-    scratchGame->setScratchGame(true);
-    ScratchView *scratchView = new ScratchView(ui_tab, scratchGame);
-
-    QHBoxLayout *layout = new QHBoxLayout(ui_tab);
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->addWidget(scratchView);
-
-    ui_tab->setLayout(layout);
-
     connect(ui_actionNewGame, SIGNAL(triggered(bool)), this, SLOT(newGame()));
     connect(ui_actionLoadGame, SIGNAL(triggered(bool)), this, SLOT(loadGame()));
+    connect(ui_actionNewScratchBoard, SIGNAL(triggered(bool)), this, SLOT(newScratchBoard()));
     connect(ui_actionQuit, SIGNAL(triggered(bool)), chessApp, SLOT(quit()));
 
     connect(ui_actionFullscreen, SIGNAL(triggered(bool)), this, SLOT(fullScreen(bool)));
@@ -48,9 +38,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui_actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(ui_actionConfigure, SIGNAL(triggered(bool)), this, SLOT(configure()));
 
+    connect(ui_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+
+    newScratchBoard();
+    tabChanged(0);
+
     ui_toolBar->setVisible(false);
     ui_statusBar->setVisible(false);
-    ui_tabWidget->setTabBarVisible(false);
 
     QSettings settings;
     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
@@ -115,12 +109,19 @@ void MainWindow::newGame()
     int i = ui_tabWidget->addTab(gameView,
                                  QString("%1 vs %2").arg(whitePlayer->playerName()).arg(blackPlayer->playerName()));
     ui_tabWidget->setCurrentIndex(i);
-
-    ui_tabWidget->setTabBarVisible(true);
 }
 
 void MainWindow::loadGame()
 {
+}
+
+void MainWindow::newScratchBoard()
+{
+    Game *game = new Game(ui_tabWidget);
+    game->setScratchGame(true);
+    ScratchView *scratchView = new ScratchView(ui_tabWidget, game);
+    int i = ui_tabWidget->addTab(scratchView, tr("Scratch Board"));
+    ui_tabWidget->setCurrentIndex(i);
 }
 
 void MainWindow::fullScreen(bool show)
@@ -130,7 +131,7 @@ void MainWindow::fullScreen(bool show)
 
         showFullScreen();
     } else {
-        ui_tabWidget->setTabBarVisible(ui_tabWidget->count() > 1);
+        ui_tabWidget->setTabBarVisible(true);
 
         showNormal();
     }
@@ -173,4 +174,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
     settings.setValue("size", size());
 
     QMainWindow::closeEvent(event);
+}
+
+void MainWindow::tabChanged(int index)
+{
+    GameView *gameView = qobject_cast<GameView*>(ui_tabWidget->widget(index));
+    ui_actionPlayButtons->setVisible(gameView != 0);
+    ui_actionGameInfo->setVisible(gameView != 0);
+
+    ScratchView *scratchView = qobject_cast<ScratchView*>(ui_tabWidget->widget(index));
+    ui_actionGameInfo->setVisible(scratchView != 0 ? false : ui_actionGameInfo->isVisible());
 }
