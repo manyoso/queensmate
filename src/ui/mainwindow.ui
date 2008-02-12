@@ -1,0 +1,187 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>601</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Castle</string>
+  </property>
+  <widget class="QWidget" name="ui_centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>46</y>
+     <width>601</width>
+     <height>530</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <item row="0" column="0" >
+     <widget class="TabWidget" name="ui_tabWidget" >
+      <property name="currentIndex" >
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="ui_tab" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>597</width>
+         <height>501</height>
+        </rect>
+       </property>
+       <attribute name="title" >
+        <string>Scratch Board</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="ui_menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>601</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="ui_menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <addaction name="ui_actionNewGame" />
+    <addaction name="ui_actionLoadGame" />
+    <addaction name="ui_actionQuit" />
+   </widget>
+   <widget class="QMenu" name="ui_menuView" >
+    <property name="title" >
+     <string>View</string>
+    </property>
+    <addaction name="ui_actionFullscreen" />
+    <addaction name="ui_actionPlayButtons" />
+    <addaction name="ui_actionGameInfo" />
+   </widget>
+   <widget class="QMenu" name="ui_menuSettings" >
+    <property name="title" >
+     <string>Settings</string>
+    </property>
+    <addaction name="ui_actionConfigure" />
+   </widget>
+   <widget class="QMenu" name="ui_menuHelp" >
+    <property name="title" >
+     <string>Help</string>
+    </property>
+    <addaction name="ui_actionAbout" />
+   </widget>
+   <addaction name="ui_menuFile" />
+   <addaction name="ui_menuView" />
+   <addaction name="ui_menuSettings" />
+   <addaction name="ui_menuHelp" />
+  </widget>
+  <widget class="QStatusBar" name="ui_statusBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>576</y>
+     <width>601</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="ui_toolBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>31</y>
+     <width>601</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="ui_actionNewGame" >
+   <property name="text" >
+    <string>New Game</string>
+   </property>
+  </action>
+  <action name="ui_actionAbout" >
+   <property name="text" >
+    <string>About Castle</string>
+   </property>
+  </action>
+  <action name="ui_actionConfigure" >
+   <property name="text" >
+    <string>Configure Castle</string>
+   </property>
+  </action>
+  <action name="ui_actionLoadGame" >
+   <property name="text" >
+    <string>Load Game</string>
+   </property>
+  </action>
+  <action name="ui_actionPlayButtons" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Play Buttons</string>
+   </property>
+  </action>
+  <action name="ui_actionGameInfo" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Game Info</string>
+   </property>
+  </action>
+  <action name="ui_actionFullscreen" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Fullscreen</string>
+   </property>
+  </action>
+  <action name="ui_actionQuit" >
+   <property name="text" >
+    <string>Quit</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>tabwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

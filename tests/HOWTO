@@ -1,0 +1,6 @@
+This testsuite is based on QTestLib from Trolltech.  To add a test just
+create a new class called TestFoo and add this class to main.cpp.
+
+############# GREAT TUTORIAL #############
+2) http://techbase.kde.org/Development/Tutorials/Unittests
+

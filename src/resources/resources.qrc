@@ -1,0 +1,29 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource>
+        <file>960fen.txt</file>
+        <file>icons/application.png</file>
+        <file>icons/backward.png</file>
+        <file>icons/begin.png</file>
+        <file>icons/black_king.png</file>
+        <file>icons/board.png</file>
+        <file>icons/end.png</file>
+        <file>icons/flip.png</file>
+        <file>icons/forward.png</file>
+        <file>icons/pause.png</file>
+        <file>icons/record.png</file>
+        <file>icons/stop.png</file>
+        <file>icons/white_king.png</file>
+        <file>icons/pieces/wk.png</file>
+        <file>icons/pieces/wq.png</file>
+        <file>icons/pieces/wr.png</file>
+        <file>icons/pieces/wb.png</file>
+        <file>icons/pieces/wn.png</file>
+        <file>icons/pieces/wp.png</file>
+        <file>icons/pieces/bk.png</file>
+        <file>icons/pieces/bq.png</file>
+        <file>icons/pieces/br.png</file>
+        <file>icons/pieces/bb.png</file>
+        <file>icons/pieces/bn.png</file>
+        <file>icons/pieces/bp.png</file>
+    </qresource>
+</RCC>
