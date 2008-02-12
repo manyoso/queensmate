@@ -13,6 +13,7 @@
 #include "resource.h"
 #include "boardview.h"
 #include "uciengine.h"
+#include "scratchview.h"
 #include "application.h"
 #include "aboutdialog.h"
 #include "newgamedialog.h"
@@ -27,12 +28,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     Game *scratchGame = new Game(ui_tab);
     scratchGame->setScratchGame(true);
-    Board *scratchBoard = new Board(scratchGame);
-    BoardView *scratchView = new BoardView(ui_tab, scratchBoard);
+    ScratchView *scratchView = new ScratchView(ui_tab, scratchGame);
+
     QHBoxLayout *layout = new QHBoxLayout(ui_tab);
     layout->setMargin(0);
     layout->setSpacing(0);
     layout->addWidget(scratchView);
+
     ui_tab->setLayout(layout);
 
     connect(ui_actionNewGame, SIGNAL(triggered(bool)), this, SLOT(newGame()));

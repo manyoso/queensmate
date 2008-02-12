@@ -65,8 +65,10 @@ GameView::GameView(QWidget *parent, Game *game)
     ui_blackPlayerIcon->setScaledContents(true);
     ui_blackPlayerIcon->setMaximumSize(QSize(PLAYER_SIZE, PLAYER_SIZE));
 
-    ui_whitePlayer->setText(m_game->player(White)->playerName());
-    ui_blackPlayer->setText(m_game->player(Black)->playerName());
+    if (Player *player = m_game->player(White))
+        ui_whitePlayer->setText(player->playerName());
+    if (Player *player = m_game->player(Black))
+        ui_blackPlayer->setText(player->playerName());
 
     ui_whiteClock->setText(m_game->clock()->currentClock(White).toString("mm:ss"));
     ui_blackClock->setText(m_game->clock()->currentClock(Black).toString("mm:ss"));

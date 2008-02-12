@@ -38,6 +38,7 @@ SOURCES += \
     player.cpp \
     resource.cpp \
     rules.cpp \
+    scratchview.cpp \
     square.cpp \
     tabwidget.cpp \
     theme.cpp \
@@ -68,6 +69,7 @@ HEADERS += \
     player.h \
     resource.h \
     rules.h \
+    scratchview.h \
     square.h \
     tabwidget.h \
     theme.h \

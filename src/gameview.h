@@ -12,9 +12,7 @@ class Board;
 class BoardView;
 
 class GameView : public QWidget, public Ui::GameView {
-
-Q_OBJECT
-
+    Q_OBJECT
 public:
     GameView(QWidget *parent, Game *game);
     ~GameView();
