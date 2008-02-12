@@ -10,6 +10,7 @@ TabBar::TabBar(QWidget *parent)
 
     m_actionCloseTab = new QAction(tr("Close Tab"), this);
     m_actionCloseTab->setVisible(false);
+    m_actionCloseTab->setShortcut(Qt::CTRL + Qt::Key_W);
     connect(m_actionCloseTab, SIGNAL(triggered()), this, SLOT(closeCurrentTab()));
 
     addAction(m_actionCloseTab);
@@ -60,9 +61,8 @@ void TabWidget::setTabBarVisible(bool visible)
 
 void TabWidget::closeTab(int index)
 {
-    if (QWidget *w = widget(index)) {
-        w->deleteLater();
-    }
+    if (QWidget *w = widget(index))
+        delete w;
 
     removeTab(index);
 }
