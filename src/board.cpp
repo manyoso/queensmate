@@ -255,9 +255,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    QPen pen(Qt::white);
-    pen.setCosmetic(true);
-    painter->setPen(pen);
+    painter->setPen(m_board->theme()->penForGrid());
 
     QList<QChar> files;
     files << 'a' << 'b' << 'c' << 'd' << 'e' << 'f' << 'g' << 'h';
@@ -275,7 +273,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 
         if (file == 0) { //first file
             painter->save();
-            painter->setPen(Qt::lightGray);
+            painter->setPen(m_board->theme()->penForLabels());
 
             QChar c = m_board->armyInFront() == White ? ranks.at(rank) : ranks.at(7 - rank);
 
@@ -292,7 +290,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 
         if (file == 7) { //last file
             painter->save();
-            painter->setPen(Qt::lightGray);
+            painter->setPen(m_board->theme()->penForLabels());
 
             QChar c = m_board->armyInFront() == White ? ranks.at(rank) : ranks.at(7 - rank);
 
@@ -309,7 +307,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 
         if (rank == 0) { //first rank
             painter->save();
-            painter->setPen(Qt::lightGray);
+            painter->setPen(m_board->theme()->penForLabels());
 
             QChar c = m_board->armyInFront() == White ? files.at(file) : files.at(7 - file);
 
@@ -326,7 +324,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 
         if (rank == 0) { //last rank
             painter->save();
-            painter->setPen(Qt::lightGray);
+            painter->setPen(m_board->theme()->penForLabels());
 
             QChar c = m_board->armyInFront() == White ? files.at(file) : files.at(7 - file);
 
@@ -342,9 +340,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
         }
     }
 
-    pen.setCosmetic(false);
-    pen.setWidthF(0.1);
-    painter->setPen(pen);
+    painter->setPen(m_board->theme()->penForBorder());
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->drawRect(rect());
 }

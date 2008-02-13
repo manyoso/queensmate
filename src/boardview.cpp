@@ -4,13 +4,14 @@
 #include <QResizeEvent>
 
 #include "board.h"
+#include "theme.h"
 
 BoardView::BoardView(QWidget *parent, Board *board)
     : QGraphicsView(parent)
 {
     setFrameStyle(QFrame::NoFrame);
     setCacheMode(QGraphicsView::CacheBackground);
-    setBackgroundBrush(Qt::black);
+    setBackgroundBrush(board->theme()->brushForBackground());
 
     QSizePolicy policy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     policy.setHeightForWidth(true);
