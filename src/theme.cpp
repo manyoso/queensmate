@@ -29,7 +29,7 @@ Theme::Theme(QObject *parent)
 //     m_labelPen = QPen(Qt::lightGray);
 //     m_borderPen = QPen(Qt::white);
 //     saveSquaresTheme("default.castle");
-// 
+
 //     m_squareBrushes.insert(Light, QBrush(Qt::lightGray));
 //     m_squareBrushes.insert(Dark, QBrush(Qt::darkGray));
 //     m_squareBrushes.insert(Attack, QBrush(Qt::darkRed));
@@ -40,7 +40,7 @@ Theme::Theme(QObject *parent)
 //     m_labelPen = QPen(Qt::lightGray);
 //     m_borderPen = QPen(Qt::white);
 //     saveSquaresTheme("monocolor.castle");
-// 
+
 //     m_squareBrushes.insert(Light, QBrush(Qt::lightGray));
 //     m_squareBrushes.insert(Dark, QBrush(Qt::darkRed));
 //     m_squareBrushes.insert(Attack, QBrush(Qt::red));
@@ -51,6 +51,17 @@ Theme::Theme(QObject *parent)
 //     m_labelPen = QPen(Qt::black);
 //     m_borderPen = QPen(Qt::black);
 //     saveSquaresTheme("redandgray.castle");
+
+//     m_squareBrushes.insert(Light, QBrush(QColor(209, 205, 184)));
+//     m_squareBrushes.insert(Dark, QBrush(QColor(110, 128, 158)));
+//     m_squareBrushes.insert(Attack, QBrush(Qt::darkRed));
+//     m_squareBrushes.insert(Defense, QBrush(Qt::darkBlue));
+//     m_squareBrushes.insert(Move, QBrush(Qt::darkGreen));
+//     m_backgroundBrush = QBrush(Qt::white);
+//     m_gridPen = QPen(Qt::black);
+//     m_labelPen = QPen(Qt::black);
+//     m_borderPen = QPen(Qt::black);
+//     saveSquaresTheme("monge.castle");
 }
 
 Theme::~Theme()
