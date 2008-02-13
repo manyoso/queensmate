@@ -8,13 +8,16 @@ MOC_DIR = tmp
 TARGET = castle
 DESTDIR = $$OUTPUT_DIR/bin
 
-THEMES_FILE = .   # Need to give some bogus input
-themes.input = THEMES_FILE
-themes.output = themes.h
-themes.commands = $(COPY_DIR) $$TOPLEVELDIR/themes $$OUTPUT_DIR
-themes.name = themes
-themes.CONFIG = target_predeps no_link
-QMAKE_EXTRA_COMPILERS += themes
+#FIXME the paths aren't properly quoted under windows...
+!win32 {
+    THEMES_FILE = .   # Need to give some bogus input
+    themes.input = THEMES_FILE
+    themes.output = themes.h
+    themes.commands = $(COPY_DIR) $$TOPLEVELDIR/themes $$OUTPUT_DIR
+    themes.name = themes
+    themes.CONFIG = target_predeps no_link
+    QMAKE_EXTRA_COMPILERS += themes
+}
 
 INCLUDEPATH += \
     tmp \
