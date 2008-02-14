@@ -37,7 +37,7 @@ void BoardView::themeChanged()
 void BoardView::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
-    fitInView(scene()->sceneRect().adjusted(-0.5, -0.5, 1.0, 1.0), Qt::KeepAspectRatio);
+    fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 int BoardView::heightForWidth(int w) const

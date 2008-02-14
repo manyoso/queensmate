@@ -25,7 +25,7 @@ using namespace Chess;
 qreal BOARD_SIZE = 20.0;
 qreal SQUARE_SIZE = BOARD_SIZE / 8.0;
 qreal BORDER_SIZE = SQUARE_SIZE / 2.0;
-qreal LETTER_WIDTH = 0.5;
+qreal LETTER_WIDTH = 0.4;
 qreal LETTER_HEIGHT = 0.7;
 
 Board::Board(Game *game)
@@ -363,10 +363,6 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
             painter->restore();
         }
     }
-
-    painter->setPen(m_board->theme()->penForBorder());
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->drawRect(rect());
 }
 
 void Borders::flip()
