@@ -25,6 +25,9 @@ Q_SIGNALS:
     void hoverEnter();
     void hoverLeave();
 
+private Q_SLOTS:
+    void themeChanged();
+
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);

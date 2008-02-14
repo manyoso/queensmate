@@ -32,6 +32,7 @@ SOURCES += \
     boardsquare.cpp \
     boardview.cpp \
     captured.cpp \
+    changetheme.cpp \
     clock.cpp \
     configuredialog.cpp \
     engine.cpp \
@@ -63,6 +64,7 @@ HEADERS += \
     boardsquare.h \
     boardview.h \
     captured.h \
+    changetheme.h \
     chess.h \
     clock.h \
     configuredialog.h \
@@ -87,6 +89,7 @@ HEADERS += \
 
 FORMS += \
     ui/aboutdialog.ui \
+    ui/changetheme.ui \
     ui/configuredialog.ui \
     ui/gameview.ui \
     ui/mainwindow.ui \

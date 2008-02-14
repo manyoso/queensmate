@@ -16,9 +16,7 @@ private Q_SLOTS:
     void modifyEngine();
     void deleteEngine();
     void fillEngineList();
-    void pieceThemeChanged();
-    void squareThemeChanged();
-    void fillPieceThemeList();
-    void fillSquareThemeList();
+    void pieceThemeChanged(const QString &theme);
+    void squareThemeChanged(const QString &theme);
 };
 #endif

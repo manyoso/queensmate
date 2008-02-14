@@ -21,6 +21,8 @@ BoardSquare::BoardSquare(Board *board, Square square, const QSizeF &size, bool o
 {
     connect(this, SIGNAL(hoverEnter()), board, SLOT(hoverEnterSquare()));
     connect(this, SIGNAL(hoverLeave()), board, SLOT(hoverLeaveSquare()));
+    connect(board->theme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+
     setBrush(m_board->theme()->brushForSquare(m_squareType));
     setPen(Qt::NoPen);
     setZValue(1);
@@ -55,4 +57,10 @@ void BoardSquare::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void BoardSquare::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QGraphicsRectItem::paint(painter, option, widget);
+}
+
+void BoardSquare::themeChanged()
+{
+    setBrush(m_board->theme()->brushForSquare(m_squareType));
+    update();
 }

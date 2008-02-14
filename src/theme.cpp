@@ -68,6 +68,32 @@ Theme::~Theme()
 {
 }
 
+QString Theme::pieceThemePath()
+{
+    QDir appDirectory(QCoreApplication::applicationDirPath());
+    appDirectory.cdUp();
+
+    QDir themeDirectory(QString(appDirectory.canonicalPath() +
+                                QDir::separator() +
+                                "themes" +
+                                QDir::separator() +
+                                "pieces"));
+    return themeDirectory.canonicalPath();
+}
+
+QString Theme::squareThemePath()
+{
+    QDir appDirectory(QCoreApplication::applicationDirPath());
+    appDirectory.cdUp();
+
+    QDir themeDirectory(QString(appDirectory.canonicalPath() +
+                                QDir::separator() +
+                                "themes" +
+                                QDir::separator() +
+                                "squares"));
+    return themeDirectory.canonicalPath();
+}
+
 QString Theme::piecesTheme() const
 {
     return m_piecesTheme;
@@ -105,6 +131,7 @@ void Theme::setPiecesTheme(const QString &theme)
     m_blackPieces.insert(Bishop, new QSvgRenderer(fileName + "bb.svg", this));
     m_blackPieces.insert(Knight, new QSvgRenderer(fileName + "bn.svg", this));
     m_blackPieces.insert(Pawn, new QSvgRenderer(fileName + "bp.svg", this));
+    emit themeChanged();
 }
 
 QString Theme::squaresTheme() const
@@ -114,6 +141,8 @@ QString Theme::squaresTheme() const
 
 void Theme::setSquaresTheme(const QString &theme)
 {
+    m_squaresTheme = theme;
+
     m_squareBrushes.clear();
 
     QDir appDirectory(QCoreApplication::applicationDirPath());
@@ -128,6 +157,7 @@ void Theme::setSquaresTheme(const QString &theme)
                                theme + ".castle");
 
     parseSquaresTheme(fileName);
+    emit themeChanged();
 }
 
 QSvgRenderer *Theme::rendererForPiece(Chess::Army army, Chess::PieceType piece)

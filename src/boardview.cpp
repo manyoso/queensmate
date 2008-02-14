@@ -7,11 +7,13 @@
 #include "theme.h"
 
 BoardView::BoardView(QWidget *parent, Board *board)
-    : QGraphicsView(parent)
+    : QGraphicsView(parent),
+    m_board(board)
 {
     setFrameStyle(QFrame::NoFrame);
     setCacheMode(QGraphicsView::CacheBackground);
-    setBackgroundBrush(board->theme()->brushForBackground());
+    setBackgroundBrush(m_board->theme()->brushForBackground());
+    connect(m_board->theme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 
     QSizePolicy policy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     policy.setHeightForWidth(true);
@@ -24,6 +26,12 @@ BoardView::BoardView(QWidget *parent, Board *board)
 
 BoardView::~BoardView()
 {
+}
+
+void BoardView::themeChanged()
+{
+    setBackgroundBrush(m_board->theme()->brushForBackground());
+    update();
 }
 
 void BoardView::resizeEvent(QResizeEvent *event)

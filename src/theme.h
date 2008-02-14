@@ -19,11 +19,11 @@ public:
     Theme(QObject *parent);
     ~Theme();
 
-    QString piecesTheme() const;
-    void setPiecesTheme(const QString &theme);
+    static QString pieceThemePath();
+    static QString squareThemePath();
 
+    QString piecesTheme() const;
     QString squaresTheme() const;
-    void setSquaresTheme(const QString &theme);
 
     QSvgRenderer *rendererForPiece(Chess::Army army, Chess::PieceType piece);
     QBrush brushForSquare(Theme::SquareType squareType);
@@ -32,6 +32,13 @@ public:
     QPen penForGrid() const { return m_gridPen; }
     QPen penForLabels() const { return m_labelPen; }
     QPen penForBorder() const { return m_borderPen; }
+
+Q_SIGNALS:
+    void themeChanged();
+
+public Q_SLOTS:
+    void setPiecesTheme(const QString &theme);
+    void setSquaresTheme(const QString &theme);
 
 private:
     void parseSquaresTheme(const QString &theme);

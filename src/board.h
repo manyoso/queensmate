@@ -10,10 +10,10 @@
 
 class Theme;
 class Piece;
-class BoardSquare;
 class BoardPiece;
-class QPainter;
+class BoardSquare;
 class QWidget;
+class QPainter;
 class QStyleOptionGraphicsItem;
 
 class Borders;
@@ -41,6 +41,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void keyReleaseEvent(QKeyEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
 private Q_SLOTS:
     void clearBoard();
@@ -50,6 +51,7 @@ private Q_SLOTS:
     void hoverLeaveSquare();
     void hoverEnterPiece();
     void hoverLeavePiece();
+    void changeTheme();
 
 private:
     Theme *m_theme;

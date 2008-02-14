@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 
 #include "uciengine.h"
+#include "changetheme.h"
 
 ConfigureDialog::ConfigureDialog(QWidget *parent)
     : QDialog(parent)
@@ -25,15 +26,26 @@ ConfigureDialog::ConfigureDialog(QWidget *parent)
     connect(ui_deleteEngine, SIGNAL(pressed()),
             this, SLOT(deleteEngine()));
 
-    connect(ui_pieceTheme, SIGNAL(activated(const QString &)),
-            this, SLOT(pieceThemeChanged()));
-
-    connect(ui_squareTheme, SIGNAL(activated(const QString &)),
-            this, SLOT(squareThemeChanged()));
-
-    fillPieceThemeList();
-    fillSquareThemeList();
     fillEngineList();
+
+    QSettings settings;
+    settings.beginGroup("Themes");
+    QString piecesTheme = settings.value("piecesTheme", "default").toString();
+    QString squaresTheme = settings.value("squaresTheme", "default").toString();
+    settings.endGroup();
+
+    ChangeTheme *changeTheme = new ChangeTheme(piecesTheme, squaresTheme, ui_themePage);
+    connect(changeTheme, SIGNAL(pieceThemeChanged(const QString &)),
+            this, SLOT(pieceThemeChanged(const QString &)));
+
+    connect(changeTheme, SIGNAL(squareThemeChanged(const QString &)),
+            this, SLOT(squareThemeChanged(const QString &)));
+
+    QVBoxLayout *layout = new QVBoxLayout(ui_themePage);
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    layout->addWidget(changeTheme);
+    ui_themePage->setLayout(layout);
 
     ui_pageList->item(0)->setHidden(true); //general
     ui_pageList->setCurrentRow(1); //themes
@@ -55,7 +67,7 @@ void ConfigureDialog::addEngine()
         return;
     }
 
-    qDebug() << "Engine name:" << engineName << endl;
+    //qDebug() << "Engine name:" << engineName << endl;
 
     QSettings settings;
     settings.beginGroup("Engines");
@@ -94,65 +106,18 @@ void ConfigureDialog::fillEngineList()
     settings.endGroup();
 }
 
-void ConfigureDialog::pieceThemeChanged()
+void ConfigureDialog::pieceThemeChanged(const QString &theme)
 {
     QSettings settings;
     settings.beginGroup("Themes");
-    settings.setValue("piecesTheme", ui_pieceTheme->currentText());
+    settings.setValue("piecesTheme", theme);
     settings.endGroup();
 }
 
-void ConfigureDialog::squareThemeChanged()
+void ConfigureDialog::squareThemeChanged(const QString &theme)
 {
     QSettings settings;
     settings.beginGroup("Themes");
-    settings.setValue("squaresTheme", ui_squareTheme->currentText());
-    settings.endGroup();
-}
-
-void ConfigureDialog::fillPieceThemeList()
-{
-    QDir appDirectory(QCoreApplication::applicationDirPath());
-    appDirectory.cdUp();
-
-    QDir themeDirectory(QString(appDirectory.canonicalPath() +
-                                QDir::separator() +
-                                "themes" +
-                                QDir::separator() +
-                                "pieces"));
-
-    QStringList pieceThemes = themeDirectory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    ui_pieceTheme->addItems(pieceThemes);
-
-    QSettings settings;
-    settings.beginGroup("Themes");
-    QString theme = settings.value("piecesTheme", "default").toString();
-    ui_pieceTheme->setCurrentIndex(ui_pieceTheme->findText(theme));
-    settings.endGroup();
-}
-
-void ConfigureDialog::fillSquareThemeList()
-{
-    QDir appDirectory(QCoreApplication::applicationDirPath());
-    appDirectory.cdUp();
-
-    QDir themeDirectory(QString(appDirectory.canonicalPath() +
-                                QDir::separator() +
-                                "themes" +
-                                QDir::separator() +
-                                "squares"));
-
-    QStringList humanReadable;
-    QStringList squareThemes = themeDirectory.entryList(QDir::Files);
-    foreach (QString theme, squareThemes) {
-        humanReadable << theme.replace(".castle", "");
-    }
-
-    ui_squareTheme->addItems(humanReadable);
-
-    QSettings settings;
-    settings.beginGroup("Themes");
-    QString theme = settings.value("squaresTheme", "default").toString();
-    ui_squareTheme->setCurrentIndex(ui_squareTheme->findText(theme));
+    settings.setValue("squaresTheme", theme);
     settings.endGroup();
 }

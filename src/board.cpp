@@ -1,11 +1,14 @@
 #include "board.h"
 
+#include <QMenu>
 #include <QDebug>
+#include <QAction>
 #include <QPainter>
 #include <QKeyEvent>
 #include <QPixmapCache>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include <math.h>
 
@@ -13,8 +16,9 @@
 #include "chess.h"
 #include "notation.h"
 #include "bitboard.h"
-#include "boardsquare.h"
 #include "boardpiece.h"
+#include "boardsquare.h"
+#include "changetheme.h"
 
 using namespace Chess;
 
@@ -30,6 +34,7 @@ Board::Board(Game *game)
       m_armyInFront(White)
 {
     m_theme = new Theme(this);
+    connect(m_theme, SIGNAL(themeChanged()), this, SLOT(update()));
 
     // generate the board
     int count = 0;
@@ -197,6 +202,16 @@ void Board::hoverLeavePiece()
     emit hoverLeave();
 }
 
+void Board::changeTheme()
+{
+    ChangeThemeDialog dialog(theme()->piecesTheme(), theme()->squaresTheme(), 0);
+    connect(&dialog, SIGNAL(pieceThemeChanged(const QString &)),
+            theme(), SLOT(setPiecesTheme(const QString &)));
+    connect(&dialog, SIGNAL(squareThemeChanged(const QString &)),
+            theme(), SLOT(setSquaresTheme(const QString &)));
+    dialog.exec();
+}
+
 void Board::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     BoardPiece *piece = qgraphicsitem_cast<BoardPiece*>(mouseGrabberItem());
@@ -236,6 +251,15 @@ void Board::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+void Board::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QMenu menu;
+
+    QAction *themeAction = menu.addAction(tr("Change theme..."));
+    connect(themeAction, SIGNAL(triggered()), this, SLOT(changeTheme()));
+
+    menu.exec(event->screenPos());
+}
 
 Borders::Borders(Board *board)
     : QGraphicsRectItem(board->sceneRect().adjusted(-BORDER_SIZE, -BORDER_SIZE, BORDER_SIZE, BORDER_SIZE)),

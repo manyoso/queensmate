@@ -18,6 +18,7 @@ BoardPiece::BoardPiece(Board *board, Piece piece, const QSizeF &size)
     connect(this, SIGNAL(hoverEnter()), board, SLOT(hoverEnterPiece()));
     connect(this, SIGNAL(hoverLeave()), board, SLOT(hoverLeavePiece()));
     connect(board, SIGNAL(boardFlipped()), this, SLOT(flip()));
+    connect(board->theme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 
     setPiece(piece);
 
@@ -64,4 +65,15 @@ void BoardPiece::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void BoardPiece::flip()
 {
     setSquare(m_piece.square());
+}
+
+void BoardPiece::themeChanged()
+{
+    setVisible(false);
+    resetTransform();
+    setSharedRenderer(m_board->theme()->rendererForPiece(m_piece.army(), m_piece.piece()));
+    QRectF rect = boundingRect();
+    scale(m_size.width() / rect.width(), m_size.height() / rect.width());
+    setVisible(true);
+    update();
 }

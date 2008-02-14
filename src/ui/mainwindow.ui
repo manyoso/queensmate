@@ -110,22 +110,22 @@
   </widget>
   <action name="ui_actionNewGame" >
    <property name="text" >
-    <string>New Game</string>
+    <string>New Game...</string>
    </property>
   </action>
   <action name="ui_actionAbout" >
    <property name="text" >
-    <string>About Castle</string>
+    <string>About Castle...</string>
    </property>
   </action>
   <action name="ui_actionConfigure" >
    <property name="text" >
-    <string>Configure Castle</string>
+    <string>Configure Castle...</string>
    </property>
   </action>
   <action name="ui_actionLoadGame" >
    <property name="text" >
-    <string>Load Game</string>
+    <string>Load Game...</string>
    </property>
   </action>
   <action name="ui_actionPlayButtons" >
