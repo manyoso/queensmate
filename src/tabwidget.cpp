@@ -63,6 +63,4 @@ void TabWidget::closeTab(int index)
 {
     if (QWidget *w = widget(index))
         delete w;
-
-    removeTab(index);
 }
