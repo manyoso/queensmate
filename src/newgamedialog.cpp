@@ -213,7 +213,7 @@ void NewGameDialog::setBlackClockType(const QString &clockType)
         ui_blackIncrement->setValue(0);
         ui_blackMove->setValue(-1);
     } else if (clockType == "Lightning") {
-        ui_blackBase->setValue(1);
+        ui_blackBase->setValue(2);
         ui_blackIncrement->setValue(0);
         ui_blackMove->setValue(-1);
     } else if (clockType == "Custom") {
