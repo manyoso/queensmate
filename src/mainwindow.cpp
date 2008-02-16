@@ -145,7 +145,7 @@ void MainWindow::loadGame()
 
     bool ok = false;
     QString err;
-    QList<Pgn*> pgn = Pgn::pgnToGames(file, &ok, &err);
+    QList<Pgn> pgn = Pgn::pgnToGames(file, &ok, &err);
     if (!ok) {
         qDebug() << "ERROR! while loading PGN file" << file << err << endl;
         return;

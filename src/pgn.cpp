@@ -46,7 +46,7 @@ QList<Pgn> Pgn::pgnToGames(const QString &fileName, bool *ok, QString *err)
         QByteArray line = file.readLine();
         //qDebug() << "pgn line:" << line << endl;
 
-        switch (state) {
+/*        switch (state) {
         case TagPairSection:
         case MoveTextSection:
         default:
@@ -55,7 +55,7 @@ QList<Pgn> Pgn::pgnToGames(const QString &fileName, bool *ok, QString *err)
                 *err = QObject::tr("Unknown state!");
                 return QList<Pgn>();
             }
-        }
+        }*/
     }
 
     *ok = true;

@@ -52,6 +52,7 @@ SOURCES += \
     rules.cpp \
     scratchview.cpp \
     square.cpp \
+    tableview.cpp \
     tabwidget.cpp \
     theme.cpp \
     uciengine.cpp
@@ -85,6 +86,7 @@ HEADERS += \
     rules.h \
     scratchview.h \
     square.h \
+    tableview.h \
     tabwidget.h \
     theme.h \
     uciengine.h
