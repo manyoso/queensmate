@@ -70,8 +70,16 @@ GameView::GameView(QWidget *parent, Game *game)
     if (Player *player = m_game->player(Black))
         ui_blackPlayer->setText(player->playerName());
 
-    ui_whiteClock->setText(m_game->clock()->currentClock(White).toString("mm:ss"));
-    ui_blackClock->setText(m_game->clock()->currentClock(Black).toString("mm:ss"));
+    if (!m_game->clock()->isUnlimited(White))
+        ui_whiteClock->setText(m_game->clock()->currentClock(White).toString("mm:ss"));
+    else
+        ui_whiteClock->setText(tr("Unlimited"));
+
+    if (!m_game->clock()->isUnlimited(Black))
+        ui_blackClock->setText(m_game->clock()->currentClock(Black).toString("mm:ss"));
+    else
+        ui_blackClock->setText(tr("Unlimited"));
+
     connect(m_game->clock(), SIGNAL(tick()), this, SLOT(tick()));
 
     QHBoxLayout *piecesLayout = new QHBoxLayout(ui_piecesBox);
@@ -146,6 +154,14 @@ void GameView::end()
 void GameView::tick()
 {
 //     qDebug() << "tick" << endl;
-    ui_whiteClock->setText(m_game->clock()->currentClock(White).toString("mm:ss"));
-    ui_blackClock->setText(m_game->clock()->currentClock(Black).toString("mm:ss"));
+    if (!m_game->clock()->isUnlimited(White))
+        ui_whiteClock->setText(m_game->clock()->currentClock(White).toString("mm:ss"));
+    else
+        ui_whiteClock->setText(tr("Unlimited"));
+
+    if (!m_game->clock()->isUnlimited(Black))
+        ui_blackClock->setText(m_game->clock()->currentClock(Black).toString("mm:ss"));
+    else
+        ui_blackClock->setText(tr("Unlimited"));
+
 }

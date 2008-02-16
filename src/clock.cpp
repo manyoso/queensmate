@@ -7,17 +7,20 @@ using namespace Chess;
 Clock::Clock(QObject *parent)
     : QObject(parent),
       m_started(false),
-      m_baseTime(QTime(0, 6)),
-      m_moves(40),
-      m_increment(QTime(0, 0, 0)),
       m_army(White),
-      m_whiteMoves(0),
-      m_blackMoves(0)
+      m_whiteBaseTime(QTime(0, 15)),
+      m_whiteIncrement(QTime(0, 0, 0)),
+      m_whiteMoves(-1),
+      m_whiteIsUnlimited(false),
+      m_blackBaseTime(QTime(0, 15)),
+      m_blackIncrement(QTime(0, 0, 0)),
+      m_blackMoves(-1),
+      m_blackIsUnlimited(false)
 {
     m_clock = QTime();
 
-    m_whiteTime = qAbs(m_baseTime.msecsTo(QTime()));
-    m_blackTime = qAbs(m_baseTime.msecsTo(QTime()));
+    m_whiteTime = qAbs(m_whiteBaseTime.msecsTo(QTime()));
+    m_blackTime = qAbs(m_blackBaseTime.msecsTo(QTime()));
 
     m_timer = new QTimer(this);
     m_timer->setInterval(250);
@@ -26,6 +29,73 @@ Clock::Clock(QObject *parent)
 
 Clock::~Clock()
 {
+}
+
+QTime Clock::baseTime(Chess::Army army) const
+{
+    if (army == White)
+        return m_whiteBaseTime;
+    else
+        return m_blackBaseTime;
+}
+
+void Clock::setBaseTime(Chess::Army army, const QTime &time)
+{
+    if (army == White) {
+        m_whiteBaseTime = time;
+        m_whiteTime = qAbs(m_whiteBaseTime.msecsTo(QTime()));
+    } else {
+        m_blackBaseTime = time;
+        m_blackTime = qAbs(m_blackBaseTime.msecsTo(QTime()));
+    }
+}
+
+QTime Clock::increment(Chess::Army army) const
+{
+    if (army == White)
+        return m_whiteIncrement;
+    else
+        return m_blackIncrement;
+}
+
+void Clock::setIncrement(Chess::Army army, const QTime &time)
+{
+    if (army == White)
+        m_whiteIncrement = time;
+    else
+        m_blackIncrement = time;
+}
+
+int Clock::moves(Chess::Army army) const
+{
+    if (army == White)
+        return m_whiteMoves;
+    else
+        return m_blackMoves;
+}
+
+void Clock::setMoves(Chess::Army army, int moves)
+{
+    if (army == White)
+        m_whiteMoves = moves;
+    else
+        m_blackMoves = moves;
+}
+
+bool Clock::isUnlimited(Chess::Army army) const
+{
+    if (army == White)
+        return m_whiteIsUnlimited;
+    else
+        return m_blackIsUnlimited;
+}
+
+void Clock::setUnlimited(Chess::Army army, bool isUnlimited)
+{
+    if (army == White)
+        m_whiteIsUnlimited = isUnlimited;
+    else
+        m_blackIsUnlimited = isUnlimited;
 }
 
 QTime Clock::currentClock(Chess::Army army) const
@@ -46,12 +116,12 @@ int Clock::timeLeft(Chess::Army army) const
         return m_blackTime;
 }
 
-int Clock::increment(Chess::Army army) const
+int Clock::incrementLeft(Chess::Army army) const
 {
     if (army == White)
-        return qAbs(m_increment.msecsTo(QTime()));
+        return qAbs(m_whiteIncrement.msecsTo(QTime()));
     else
-        return qAbs(m_increment.msecsTo(QTime()));
+        return qAbs(m_blackIncrement.msecsTo(QTime()));
 }
 
 void Clock::startClock(Chess::Army army)
@@ -72,13 +142,13 @@ void Clock::startClock(Chess::Army army)
             m_blackTime -= elapsed;
         }
 
-        m_whiteTime += increment(army);
+        m_whiteTime += incrementLeft(army);
     } else {
         if (m_started) {
             m_whiteTime -= elapsed;
         }
 
-        m_blackTime += increment(army);
+        m_blackTime += incrementLeft(army);
     }
 
     if (!m_started) {
@@ -112,12 +182,12 @@ void Clock::updateSignals()
         m_blackTime -= elapsed;
     }
 
-    if (m_whiteTime <= 0) {
+    if (m_whiteTime <= 0 && !m_whiteIsUnlimited) {
         qDebug() << "flagFell for white" << endl;
         endClock();
         emit flagFell(White);
         return;
-    } else if (m_blackTime <= 0) {
+    } else if (m_blackTime <= 0 && !m_blackIsUnlimited) {
         qDebug() << "flagFell for black" << endl;
         endClock();
         emit flagFell(Black);

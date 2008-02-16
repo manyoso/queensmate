@@ -14,24 +14,22 @@ public:
     Clock(QObject *parent);
     ~Clock();
 
-    QTime baseTime() const { return m_baseTime; }
-    void setBaseTime(const QTime &time)
-    {
-        m_baseTime = time;
-        m_whiteTime = qAbs(m_baseTime.msecsTo(QTime()));
-        m_blackTime = qAbs(m_baseTime.msecsTo(QTime()));
-    }
+    QTime baseTime(Chess::Army army) const;
+    void setBaseTime(Chess::Army army, const QTime &time);
 
-    int moves() const { return m_moves; }
-    void setMoves(int moves) { m_moves = moves; }
+    QTime increment(Chess::Army army) const;
+    void setIncrement(Chess::Army army, const QTime &time);
 
-    QTime increment() const { return m_increment; }
-    void setIncrement(const QTime &time) { m_increment = time; }
+    int moves(Chess::Army army) const;
+    void setMoves(Chess::Army army, int moves);
+
+    bool isUnlimited(Chess::Army army) const;
+    void setUnlimited(Chess::Army army, bool isUnlimited);
 
     QTime currentClock(Chess::Army army) const;
 
     int timeLeft(Chess::Army army) const; //msecs
-    int increment(Chess::Army army) const; //msecs
+    int incrementLeft(Chess::Army army) const; //msecs
 
     void startClock(Chess::Army army);
     void endClock();
@@ -45,16 +43,20 @@ private Q_SLOTS:
 
 private:
     bool m_started;
-    QTime m_baseTime;
-    int m_moves;
-    QTime m_increment;
+
     Chess::Army m_army;
 
-    int m_whiteMoves;
     int m_whiteTime;
+    QTime m_whiteBaseTime;
+    QTime m_whiteIncrement;
+    int m_whiteMoves;
+    bool m_whiteIsUnlimited;
 
-    int m_blackMoves;
     int m_blackTime;
+    QTime m_blackBaseTime;
+    QTime m_blackIncrement;
+    int m_blackMoves;
+    bool m_blackIsUnlimited;
 
     QTime m_clock;
     QTimer *m_timer;

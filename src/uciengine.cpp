@@ -424,13 +424,27 @@ void UciEngine::sendGo() const
 {
     //qDebug() << "UciEngine::sendGo" << endl;
     //FIXME Need to figure out all the options...
-    QString wtime = QString::number(game()->clock()->timeLeft(White));
-    QString btime = QString::number(game()->clock()->timeLeft(Black));
-    QString winc = QString::number(game()->clock()->increment(White));
-    QString binc = QString::number(game()->clock()->increment(Black));
 
-    //qDebug() << QString("go wtime %1 btime %2 winc %3 binc %4\n").arg(wtime).arg(btime).arg(winc).arg(binc) << endl;
-    m_process->write(QString("go wtime %1 btime %2 winc %3 binc %4\n").arg(wtime).arg(btime).arg(winc).arg(binc).toLatin1());
+    QString wtime = QString(" wtime %1").arg(QString::number(game()->clock()->timeLeft(White)));
+    if (game()->clock()->isUnlimited(White))
+        wtime = QString(); //FIXME should this be a very large integer instead??
+    QString btime = QString(" btime %1").arg(QString::number(game()->clock()->timeLeft(Black)));
+    if (game()->clock()->isUnlimited(Black))
+        btime = QString(); //FIXME should this be a very large integer instead??
+
+    QString winc = QString(" winc %1").arg(QString::number(game()->clock()->incrementLeft(White)));
+    if (game()->clock()->incrementLeft(White) < 1)
+        winc = QString();
+    QString binc = QString(" binc %1").arg(QString::number(game()->clock()->incrementLeft(Black)));
+    if (game()->clock()->incrementLeft(Black) < 1)
+        binc = QString();
+
+    QString movestogo = QString(" movestogo %1").arg(QString::number(game()->clock()->moves(army())));
+    if (game()->clock()->moves(army()) < 1)
+        movestogo = QString();
+
+    qDebug() << QString("go%1%2%3%4%5\n").arg(wtime).arg(btime).arg(winc).arg(binc).arg(movestogo).toLatin1() << endl;
+    m_process->write(QString("go%1%2%3%4%5\n").arg(wtime).arg(btime).arg(winc).arg(binc).arg(movestogo).toLatin1());
 }
 
 void UciEngine::sendStop() const

@@ -121,7 +121,6 @@ bool Game::startGame()
 {
     if (m_white->isReady()) {
         m_white->startGame();
-        m_clock->startClock(m_activeArmy);
         m_white->makeNextMove();
     } else {
         connect(m_white, SIGNAL(ready()), this, SLOT(playerReady()));
@@ -153,7 +152,6 @@ void Game::playerReady()
     Q_ASSERT(player);
     player->startGame();
     if (player->army() == m_activeArmy) {
-        m_clock->startClock(m_activeArmy);
         player->makeNextMove();
     }
 }

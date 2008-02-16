@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>531</width>
+    <width>568</width>
     <height>677</height>
    </rect>
   </property>
@@ -138,7 +138,7 @@
      <property name="title" >
       <string>White:</string>
      </property>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout" name="horizontalLayout_2" >
       <item>
        <widget class="QLabel" name="ui_whiteLabel" >
         <property name="minimumSize" >
@@ -207,7 +207,39 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" >
+       <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <item>
+         <widget class="QComboBox" name="ui_whiteClockType" >
+          <property name="currentIndex" >
+           <number>1</number>
+          </property>
+          <item>
+           <property name="text" >
+            <string>Unlimited</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Standard</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Blitz</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Lightning</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Custom</string>
+           </property>
+          </item>
+         </widget>
+        </item>
         <item>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
@@ -219,36 +251,54 @@
           </item>
           <item row="0" column="1" >
            <widget class="QSpinBox" name="ui_whiteBase" >
-            <property name="enabled" >
-             <bool>false</bool>
+            <property name="suffix" >
+             <string> Minutes</string>
+            </property>
+            <property name="maximum" >
+             <number>9999</number>
+            </property>
+            <property name="value" >
+             <number>6</number>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
+          <item row="2" column="0" >
            <widget class="QLabel" name="ui_whiteMoveLabel" >
             <property name="text" >
              <string>Moves</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
+          <item row="2" column="1" >
            <widget class="QSpinBox" name="ui_whiteMove" >
-            <property name="enabled" >
-             <bool>false</bool>
+            <property name="suffix" >
+             <string> Moves</string>
+            </property>
+            <property name="minimum" >
+             <number>-1</number>
+            </property>
+            <property name="maximum" >
+             <number>9999</number>
+            </property>
+            <property name="value" >
+             <number>-1</number>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
+          <item row="1" column="1" >
+           <widget class="QSpinBox" name="ui_whiteIncrement" >
+            <property name="suffix" >
+             <string> Seconds</string>
+            </property>
+            <property name="maximum" >
+             <number>9999</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
            <widget class="QLabel" name="ui_whiteIncrementLabel" >
             <property name="text" >
              <string>Increment</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="QSpinBox" name="ui_whiteIncrement" >
-            <property name="enabled" >
-             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -261,8 +311,8 @@
           </property>
           <property name="sizeHint" stdset="0" >
            <size>
-            <width>21</width>
-            <height>21</height>
+            <width>149</width>
+            <height>28</height>
            </size>
           </property>
          </spacer>
@@ -277,7 +327,7 @@
      <property name="title" >
       <string>Black:</string>
      </property>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout" name="horizontalLayout" >
       <item>
        <widget class="QLabel" name="ui_blackLabel" >
         <property name="minimumSize" >
@@ -346,7 +396,39 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" >
+       <layout class="QVBoxLayout" name="verticalLayout" >
+        <item>
+         <widget class="QComboBox" name="ui_blackClockType" >
+          <property name="currentIndex" >
+           <number>1</number>
+          </property>
+          <item>
+           <property name="text" >
+            <string>Unlimited</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Standard</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Blitz</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Lightning</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Custom</string>
+           </property>
+          </item>
+         </widget>
+        </item>
         <item>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
@@ -358,36 +440,54 @@
           </item>
           <item row="0" column="1" >
            <widget class="QSpinBox" name="ui_blackBase" >
-            <property name="enabled" >
-             <bool>false</bool>
+            <property name="suffix" >
+             <string> Minutes</string>
+            </property>
+            <property name="maximum" >
+             <number>9999</number>
+            </property>
+            <property name="value" >
+             <number>6</number>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
+          <item row="2" column="0" >
            <widget class="QLabel" name="ui_blackMoveLabel" >
             <property name="text" >
              <string>Moves</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
+          <item row="2" column="1" >
            <widget class="QSpinBox" name="ui_blackMove" >
-            <property name="enabled" >
-             <bool>false</bool>
+            <property name="suffix" >
+             <string> Moves</string>
+            </property>
+            <property name="minimum" >
+             <number>-1</number>
+            </property>
+            <property name="maximum" >
+             <number>9999</number>
+            </property>
+            <property name="value" >
+             <number>-1</number>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
+          <item row="1" column="0" >
            <widget class="QLabel" name="ui_blackIncrementLabel" >
             <property name="text" >
              <string>Increment</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
+          <item row="1" column="1" >
            <widget class="QSpinBox" name="ui_blackIncrement" >
-            <property name="enabled" >
-             <bool>false</bool>
+            <property name="suffix" >
+             <string> Seconds</string>
+            </property>
+            <property name="maximum" >
+             <number>9999</number>
             </property>
            </widget>
           </item>
@@ -400,8 +500,8 @@
           </property>
           <property name="sizeHint" stdset="0" >
            <size>
-            <width>21</width>
-            <height>21</height>
+            <width>149</width>
+            <height>28</height>
            </size>
           </property>
          </spacer>

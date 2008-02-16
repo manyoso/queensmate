@@ -7,6 +7,7 @@
 #include <QListView>
 
 #include "game.h"
+#include "clock.h"
 #include "board.h"
 #include "player.h"
 #include "gameview.h"
@@ -98,6 +99,30 @@ void MainWindow::newGame()
         blackPlayer->setPlayerName(dialog.blackComputer());
         if (!dialog.isClassicalChess())
             qobject_cast<UciEngine*>(blackPlayer)->sendSetOption("UCI_Chess960", true);
+    }
+
+    if (dialog.whiteClockType() == "Unlimited") {
+        game->clock()->setUnlimited(White, true);
+    } else {
+        QTime base;
+        base = base.addSecs(dialog.whiteBase() * 60);
+        QTime increment;
+        increment = increment.addSecs(dialog.whiteIncrement());
+        game->clock()->setBaseTime(White, base);
+        game->clock()->setIncrement(White, increment);
+        game->clock()->setMoves(White, dialog.whiteMove());
+    }
+
+    if (dialog.blackClockType() == "Unlimited") {
+        game->clock()->setUnlimited(Black, true);
+    } else {
+        QTime base;
+        base = base.addSecs(dialog.blackBase() * 60);
+        QTime increment;
+        increment = increment.addSecs(dialog.blackIncrement());
+        game->clock()->setBaseTime(Black, base);
+        game->clock()->setIncrement(Black, increment);
+        game->clock()->setMoves(Black, dialog.blackMove());
     }
 
     game->setPlayers(whitePlayer, blackPlayer);
