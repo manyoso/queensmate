@@ -211,7 +211,6 @@ QChar Notation::pieceToChar(Chess::PieceType piece, Chess::NotationType notation
     return ch;
 }
 
-
 Notation::Notation()
 {
 }

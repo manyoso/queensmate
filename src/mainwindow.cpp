@@ -4,8 +4,9 @@
 #include <QSettings>
 #include <QBoxLayout>
 #include <QCloseEvent>
-#include <QListView>
+#include <QFileDialog>
 
+#include "pgn.h"
 #include "game.h"
 #include "clock.h"
 #include "board.h"
@@ -138,6 +139,17 @@ void MainWindow::newGame()
 
 void MainWindow::loadGame()
 {
+    QString file = QFileDialog::getOpenFileName(this, tr("Load PGN File"), QString(), tr("PGN files (*.pgn)"));
+    if (file.isEmpty())
+        return;
+
+    bool ok = false;
+    QString err;
+    QList<Pgn*> pgn = Pgn::pgnToGames(file, &ok, &err);
+    if (!ok) {
+        qDebug() << "ERROR! while loading PGN file" << file << err << endl;
+        return;
+    }
 }
 
 void MainWindow::newScratchBoard()

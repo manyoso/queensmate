@@ -46,6 +46,7 @@ SOURCES += \
     newgamedialog.cpp \
     notation.cpp \
     piece.cpp \
+    pgn.cpp \
     player.cpp \
     resource.cpp \
     rules.cpp \
@@ -78,6 +79,7 @@ HEADERS += \
     newgamedialog.h \
     notation.h \
     piece.h \
+    pgn.h \
     player.h \
     resource.h \
     rules.h \
