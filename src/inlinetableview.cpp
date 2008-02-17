@@ -53,8 +53,16 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
             m_posToIndex.insert(cursor.position(), index);
             m_indexToPos.insert(index, cursor.position());
 
+            QTextCharFormat format;
+            QBrush foreground = qVariantValue<QBrush>(model()->data(index, Qt::ForegroundRole));
+            QBrush background = qVariantValue<QBrush>(model()->data(index, Qt::BackgroundRole));
+            format.setForeground(foreground);
+            format.setBackground(background);
+
             QString display = QString("%2 ").arg(value);
+            cursor.setCharFormat(format);
             cursor.insertText(display);
+            cursor.setCharFormat(QTextCharFormat());
         }
     }
 
