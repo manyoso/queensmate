@@ -37,6 +37,9 @@ public:
     Game *game() const { return qobject_cast<Game*>(parent()); }
 
     void addMove(int fullMoveNumber, Chess::Army army, Move move);
+
+private Q_SLOTS:
+    void positionChanged(int oldIndex, int newIndex);
 };
 
 #endif

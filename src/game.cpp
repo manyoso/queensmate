@@ -78,7 +78,9 @@ void Game::setPosition(int index)
 {
     if (m_mapOfFen.contains(index)) {
         setFen(m_mapOfFen.value(index));
+        int oldIndex = m_index;
         m_index = index;
+        emit positionChanged(oldIndex, m_index);
     }
 }
 

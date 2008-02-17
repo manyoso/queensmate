@@ -34,6 +34,23 @@ QVariant MoveItem::data(int role) const
         {
             return (m_move.isValid() ? Notation::moveToString(m_move) : "...");
         }
+    case Qt::ForegroundRole:
+        {
+            int pos = model()->game()->position() - 1;
+            int r = pos / 2;
+            int c = pos % 2 ? 1 : 0;
+
+//             qDebug() << "pos" << pos
+//                      << "r" << r
+//                      << "c" << c
+//                      << "row" << row()
+//                      << "column" << column()
+//                      << endl;
+
+            if (pos != -1 && r == row() && c == column()) {
+                return QBrush(Qt::red);
+            }
+        }
     case Qt::DecorationRole:
     case Qt::BackgroundRole:
     case Qt::ToolTipRole:
@@ -75,6 +92,9 @@ MovesModel::MovesModel(Game *game)
 
     //create a placeholder...
     setItem(0, new MoveItem);
+
+    connect(game, SIGNAL(positionChanged(int, int)),
+            this, SLOT(positionChanged(int, int)));
 }
 
 MovesModel::~MovesModel()
@@ -92,4 +112,41 @@ void MovesModel::addMove(int fullMoveNumber, Chess::Army army, Move move)
         setItem(fullMoveNumber - 1, 1, new MoveItem);
     else
         setItem(fullMoveNumber, 0, new MoveItem);
+}
+
+void MovesModel::positionChanged(int oldIndex, int newIndex)
+{
+    {
+        int pos = oldIndex - 1;
+        int r = pos / 2;
+        int c = pos % 2 ? 1 : 0;
+
+        if (pos != -1) {
+//             qDebug() << "pos" << pos
+//                       << "r" << r
+//                       << "c" << c
+//                       << endl;
+
+            QStandardItem *i = item(r, c);
+            QModelIndex index = indexFromItem(i);
+            emit dataChanged(index, index);
+        }
+    }
+    {
+        int pos = newIndex - 1;
+        int r = pos / 2;
+        int c = pos % 2 ? 1 : 0;
+
+        if (pos != -1) {
+//             qDebug() << "pos" << pos
+//                       << "r" << r
+//                       << "c" << c
+//                       << endl;
+
+            QStandardItem *i = item(r, c);
+            QModelIndex index = indexFromItem(i);
+            emit dataChanged(index, index);
+        }
+    }
+
 }

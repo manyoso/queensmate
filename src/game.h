@@ -71,6 +71,7 @@ Q_SIGNALS:
     void capturedPiecesChanged();
     void gameStarted();
     void gameEnded();
+    void positionChanged(int oldPosition, int newPosition);
 
 private Q_SLOTS:
     void playerReady();

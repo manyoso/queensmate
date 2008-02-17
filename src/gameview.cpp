@@ -16,6 +16,7 @@
 #include "player.h"
 #include "captured.h"
 #include "boardview.h"
+#include "tableview.h"
 #include "movesmodel.h"
 #include "inlinetableview.h"
 
@@ -86,13 +87,18 @@ GameView::GameView(QWidget *parent, Game *game)
     piecesLayout->addWidget(new Captured(ui_piecesBox, m_game));
     ui_piecesBox->setLayout(piecesLayout);
 
-    ui_moveTable->setModel(m_game->moves());
-
-    InlineTableView *table = new InlineTableView(ui_moveInline);
+    TableView *table = new TableView(ui_moveTable);
     table->setModel(m_game->moves());
 
+    QHBoxLayout *tableLayout = new QHBoxLayout(ui_moveTable);
+    tableLayout->addWidget(table);
+    ui_moveTable->setLayout(tableLayout);
+
+    InlineTableView *inlineTable = new InlineTableView(ui_moveInline);
+    inlineTable->setModel(m_game->moves());
+
     QHBoxLayout *inlineLayout = new QHBoxLayout(ui_moveInline);
-    inlineLayout->addWidget(table);
+    inlineLayout->addWidget(inlineTable);
     ui_moveInline->setLayout(inlineLayout);
 
     ui_infoBox->setVisible(false);
