@@ -27,6 +27,7 @@ private Q_SLOTS:
     void themeChanged();
 
 protected:
+    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 

@@ -29,6 +29,8 @@ public:
     Chess::Army armyInFront() const { return m_armyInFront; }
     void setArmyInFront(Chess::Army army);
 
+    QRectF boardRect() const;
+
 public Q_SLOTS:
     void flipBoard();
 

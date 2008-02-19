@@ -67,6 +67,11 @@ void Board::setArmyInFront(Chess::Army army)
     emit boardFlipped();
 }
 
+QRectF Board::boardRect() const
+{
+    return sceneRect().adjusted(BORDER_SIZE, BORDER_SIZE, -BORDER_SIZE, -BORDER_SIZE);
+}
+
 void Board::flipBoard()
 {
     setArmyInFront(armyInFront() == White ? Black : White);

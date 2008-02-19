@@ -50,6 +50,22 @@ void BoardPiece::setSquare(Square square)
            (m_board->armyInFront() == White ? (7 - square.rank()) : square.rank()) * m_size.height());
 }
 
+QVariant BoardPiece::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemPositionChange && scene()) {
+        QPointF pos = value.toPointF();
+        QRectF rect = m_board->boardRect();
+        QRectF bound = QRectF(pos, QSizeF(m_size.width(), m_size.height()));
+
+        if (!rect.contains(bound)) {
+            pos.setX(qMin(rect.right() - m_size.width(), qMax(pos.x(), rect.left())));
+            pos.setY(qMin(rect.bottom() - m_size.height(), qMax(pos.y(), rect.top())));
+            return pos;
+        }
+    }
+    return QGraphicsItem::itemChange(change, value);
+}
+
 void BoardPiece::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     emit hoverEnter();
