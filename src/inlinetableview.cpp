@@ -23,32 +23,59 @@ InlineTableView::~InlineTableView()
 {
 }
 
-
 void InlineTableView::dataChanged(const QModelIndex &topLeft,
                                   const QModelIndex &bottomRight)
 {
     QAbstractItemView::dataChanged(topLeft, bottomRight);
 
-    m_document->clear();
+//     qDebug() << "dataChanged"
+//              << "topLeft:" << topLeft.row() << "," << topLeft.column()
+//              << "bottomRight:" << bottomRight.row() << "," << bottomRight.column()
+//              << endl;
 
     QTextCursor cursor(m_document);
-    cursor.movePosition(QTextCursor::End);
+
+    QModelIndex index = model()->index(topLeft.row(), topLeft.column(), rootIndex());
+    int pos = m_indexToPos.contains(index) ? m_indexToPos.value(index) : -1;
+    if (pos == -1) {
+//        qDebug() << "moving to end" << endl;
+        cursor.movePosition(QTextCursor::End);
+    } else {
+//        qDebug() << "moving to position" << pos << endl;
+        cursor.setPosition(pos);
+        cursor.movePosition(QTextCursor::StartOfWord);
+    }
 
     QTextCharFormat bold;
     bold.setFontWeight(QFont::Bold);
 
-    for (int row = 0; row < model()->rowCount(rootIndex()); ++row) {
+    for (int row = topLeft.row(); row < bottomRight.row() + 1; ++row) {
 
-        cursor.setCharFormat(bold);
-        cursor.insertText(QString("%1. ").arg(QString::number(row + 1)));
-        cursor.setCharFormat(QTextCharFormat());
+        QModelIndex rowNumber = model()->index(row, 0, rootIndex());
+        if (!m_indexToPos.contains(rowNumber)) {
+            cursor.setCharFormat(bold);
+            QString text = QString("%1. ").arg(QString::number(row + 1));
+            cursor.insertText(text);
+            cursor.setCharFormat(QTextCharFormat());
+        }
 
-        for (int column = 0; column < model()->columnCount(rootIndex()); ++column) {
+        for (int column = topLeft.column(); column < bottomRight.column() + 1; ++column) {
+
             QModelIndex index = model()->index(row, column, rootIndex());
+            int pos = m_indexToPos.contains(index) ? m_indexToPos.value(index) : -1;
             QString value = model()->data(index).toString();
 
-            if (value.isEmpty())
-                continue;
+            if (pos == -1) {
+//                qDebug() << "new index" << endl;
+                if (value.isEmpty())
+                    continue;
+            } else {
+//                qDebug() << "previous index at" << pos << endl;
+                m_posToIndex.remove(pos);
+                m_indexToPos.remove(index);
+                QString previousText = m_indexToText.take(index);
+                cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, previousText.count());
+            }
 
             m_posToIndex.insert(cursor.position(), index);
             m_indexToPos.insert(index, cursor.position());
@@ -59,9 +86,10 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
             format.setForeground(foreground);
             format.setBackground(background);
 
-            QString display = QString("%2 ").arg(value);
+            QString text = QString("%2 ").arg(value);
+            m_indexToText.insert(index, text);
             cursor.setCharFormat(format);
-            cursor.insertText(display);
+            cursor.insertText(text);
             cursor.setCharFormat(QTextCharFormat());
         }
     }
@@ -69,6 +97,15 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
     viewport()->update();
 }
 
+void InlineTableView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+{
+    QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
+}
+
+void InlineTableView::rowsInserted(const QModelIndex &parent, int start, int end)
+{
+    QAbstractItemView::rowsInserted(parent, start, end);
+}
 
 QModelIndex InlineTableView::indexAt(const QPoint &point) const
 {
@@ -110,45 +147,45 @@ void InlineTableView::scrollTo(const QModelIndex &index, ScrollHint hint)
     area.moveTop(verticalScrollBar()->value());
     QRect rect = visualRect(index);
 
-//     qDebug() << "scrollTo"
-//              << "area" << area
-//              << "rect" << rect
-//              << endl;
+/*    qDebug() << "scrollTo"
+             << "area" << area
+             << "rect" << rect
+             << endl;*/
 
-      if (rect.top() < area.top()) { //to the top
+    if (rect.top() < area.top()) { //to the top
 
-          int value = verticalScrollBar()->value() + rect.top() - area.top();
-//           qDebug() << "to the top"
-//                    << "oldValue" << verticalScrollBar()->value()
-//                    << "newValue" << value
-//                    << endl;
-          verticalScrollBar()->setValue(value);
+        int value = verticalScrollBar()->value() + rect.top() - area.top();
+/*        qDebug() << "to the top"
+                  << "oldValue" << verticalScrollBar()->value()
+                  << "newValue" << value
+                  << endl;*/
+        verticalScrollBar()->setValue(value);
 
-      } else if (rect.bottom() > area.bottom()) { //to the bottom
+    } else if (rect.bottom() > area.bottom()) { //to the bottom
 
-          int value = verticalScrollBar()->value() + qMin(
-                        rect.bottom() - area.bottom(), rect.top() - area.top());
-//           qDebug() << "to the bottom"
-//                    << "oldValue" << verticalScrollBar()->value()
-//                    << "newValue" << value
-//                    << endl;
-          verticalScrollBar()->setValue(value);
+        int value = verticalScrollBar()->value() + qMin(
+                      rect.bottom() - area.bottom(), rect.top() - area.top());
+/*        qDebug() << "to the bottom"
+                  << "oldValue" << verticalScrollBar()->value()
+                  << "newValue" << value
+                  << endl;*/
+        verticalScrollBar()->setValue(value);
 
-      }
+    }
 
-      update();
-//     switch (hint) {
-//     case EnsureVisible:
-//         verticalScrollBar()->setValue(); break;
-//     case PositionAtTop:
-//         verticalScrollBar()->setValue(); break;
-//     case PositionAtBottom:
-//         verticalScrollBar()->setValue(); break;
-//     case PositionAtCenter:
-//         verticalScrollBar()->setValue(); break;
-//     default:
-//         break;
-//     }
+    update();
+/*    switch (hint) {
+    case EnsureVisible:
+        verticalScrollBar()->setValue(); break;
+    case PositionAtTop:
+        verticalScrollBar()->setValue(); break;
+    case PositionAtBottom:
+        verticalScrollBar()->setValue(); break;
+    case PositionAtCenter:
+        verticalScrollBar()->setValue(); break;
+    default:
+        break;
+    }*/
 }
 
 QRect InlineTableView::visualRect(const QModelIndex &index) const

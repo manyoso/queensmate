@@ -15,13 +15,16 @@ public:
     InlineTableView(QWidget *parent);
     ~InlineTableView();
 
-    virtual void dataChanged(const QModelIndex &topLeft,
-                             const QModelIndex &bottomRight);
-
     //inherited from QAbstractItemView
     virtual QModelIndex indexAt(const QPoint &point) const;
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible);
     virtual QRect visualRect(const QModelIndex &index) const;
+
+protected Q_SLOTS:
+    virtual void dataChanged(const QModelIndex &topLeft,
+                             const QModelIndex &bottomRight);
+    virtual void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
+    virtual void rowsInserted(const QModelIndex &parent, int start, int end);
 
 protected:
     //inherited from QAbstractItemView
@@ -39,6 +42,7 @@ private:
     QTextDocument *m_document;
     QHash<QModelIndex, int> m_indexToPos;
     QHash<int, QModelIndex> m_posToIndex;
+    QHash<QModelIndex, QString> m_indexToText;
 };
 
 #endif
