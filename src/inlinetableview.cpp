@@ -110,14 +110,15 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
 
 void InlineTableView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
 {
-    qDebug() << "InlineTableView::rowsAboutToBeRemoved" << endl;
+//     qDebug() << "InlineTableView::rowsAboutToBeRemoved" << endl;
     QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
 }
 
 void InlineTableView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
-    qDebug() << "InlineTableView::rowsInserted" << endl;
+//     qDebug() << "InlineTableView::rowsInserted" << endl;
     QAbstractItemView::rowsInserted(parent, start, end);
+    scrollToBottom();
 }
 
 QModelIndex InlineTableView::indexAt(const QPoint &point) const
@@ -160,10 +161,10 @@ void InlineTableView::scrollTo(const QModelIndex &index, ScrollHint hint)
     area.moveTop(verticalScrollBar()->value());
     QRect rect = visualRect(index);
 
-/*    qDebug() << "scrollTo"
-             << "area" << area
-             << "rect" << rect
-             << endl;*/
+//     qDebug() << "scrollTo"
+//              << "area" << area
+//              << "rect" << rect
+//              << endl;
 
     if (rect.top() < area.top()) { //to the top
 
@@ -203,8 +204,9 @@ void InlineTableView::scrollTo(const QModelIndex &index, ScrollHint hint)
 
 QRect InlineTableView::visualRect(const QModelIndex &index) const
 {
-    if (!m_indexToPos.contains(index))
+    if (!m_indexToPos.contains(index)) {
         return QRect();
+    }
 
     QTextBlock block = m_document->begin();
     QTextLayout *layout = block.layout();

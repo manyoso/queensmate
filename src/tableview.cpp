@@ -30,6 +30,7 @@ void TableView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int e
 
 void TableView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
-//     qDebug() << "TableView::rowsInserted" << endl;
+//    qDebug() << "TableView::rowsInserted" << endl;
     QAbstractItemView::rowsInserted(parent, start, end);
+    scrollToBottom();
 }
