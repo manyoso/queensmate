@@ -73,7 +73,6 @@ void MoveItem::setData(const QVariant &value, int role)
 
         model()->game()->localHumanMadeMove((column() == 0 ? White : Black), move);
     }
-    QStandardItem::setData(value, role);
 }
 
 void MoveItem::setMove(Move move)
