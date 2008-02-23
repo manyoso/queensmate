@@ -23,12 +23,20 @@ InlineTableView::~InlineTableView()
 {
 }
 
+void InlineTableView::setModel(QAbstractItemModel *model)
+{
+    QAbstractItemView::setModel(model);
+    QModelIndex topLeft = model->index(0, 0, rootIndex());
+    QModelIndex bottomRight = model->index(model->rowCount() - 1, model->columnCount() - 1, rootIndex());
+    dataChanged(topLeft, bottomRight);
+}
+
 void InlineTableView::dataChanged(const QModelIndex &topLeft,
                                   const QModelIndex &bottomRight)
 {
     QAbstractItemView::dataChanged(topLeft, bottomRight);
 
-//     qDebug() << "dataChanged"
+//     qDebug() << "InlineTableView::dataChanged"
 //              << "topLeft:" << topLeft.row() << "," << topLeft.column()
 //              << "bottomRight:" << bottomRight.row() << "," << bottomRight.column()
 //              << endl;
@@ -38,59 +46,62 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
     QModelIndex index = model()->index(topLeft.row(), topLeft.column(), rootIndex());
     int pos = m_indexToPos.contains(index) ? m_indexToPos.value(index) : -1;
     if (pos == -1) {
-//        qDebug() << "moving to end" << endl;
+//         qDebug() << "moving to end" << endl;
         cursor.movePosition(QTextCursor::End);
     } else {
-//        qDebug() << "moving to position" << pos << endl;
+//         qDebug() << "moving to position" << pos << endl;
         cursor.setPosition(pos);
         cursor.movePosition(QTextCursor::StartOfWord);
     }
 
     QTextCharFormat bold;
     bold.setFontWeight(QFont::Bold);
+    cursor.setCharFormat(bold);
 
     for (int row = topLeft.row(); row < bottomRight.row() + 1; ++row) {
 
         QModelIndex rowNumber = model()->index(row, 0, rootIndex());
         if (!m_indexToPos.contains(rowNumber)) {
-            cursor.setCharFormat(bold);
             QString text = QString("%1. ").arg(QString::number(row + 1));
             cursor.insertText(text);
-            cursor.setCharFormat(QTextCharFormat());
         }
 
         for (int column = topLeft.column(); column < bottomRight.column() + 1; ++column) {
-
             QModelIndex index = model()->index(row, column, rootIndex());
             int pos = m_indexToPos.contains(index) ? m_indexToPos.value(index) : -1;
             QString value = model()->data(index).toString();
 
+            if (pos == -1 && value.isEmpty())
+                continue;
+
             if (pos == -1) {
-//                qDebug() << "new index" << endl;
-                if (value.isEmpty())
-                    continue;
+//                 qDebug() << "new index" << pos << endl;
+                m_posToIndex.insert(cursor.position(), index);
+                m_indexToPos.insert(index, cursor.position());
             } else {
-//                qDebug() << "previous index at" << pos << endl;
+//                 qDebug() << "previous index at" << pos << endl;
                 m_posToIndex.remove(pos);
                 m_indexToPos.remove(index);
                 QString previousText = m_indexToText.take(index);
+                m_posToIndex.insert(cursor.position(), index);
+                m_indexToPos.insert(index, cursor.position());
                 cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, previousText.count());
             }
-
-            m_posToIndex.insert(cursor.position(), index);
-            m_indexToPos.insert(index, cursor.position());
 
             QTextCharFormat format;
             QBrush foreground = qVariantValue<QBrush>(model()->data(index, Qt::ForegroundRole));
             QBrush background = qVariantValue<QBrush>(model()->data(index, Qt::BackgroundRole));
+//             qDebug() << "foreground" << foreground << "background" << background << endl;
+
             format.setForeground(foreground);
             format.setBackground(background);
+            format.setFontWeight(QFont::Bold);
 
             QString text = QString("%2 ").arg(value);
             m_indexToText.insert(index, text);
             cursor.setCharFormat(format);
             cursor.insertText(text);
-            cursor.setCharFormat(QTextCharFormat());
+//             cursor.setCharFormat(QTextCharFormat());
         }
     }
 
@@ -99,11 +110,13 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
 
 void InlineTableView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
 {
+    qDebug() << "InlineTableView::rowsAboutToBeRemoved" << endl;
     QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
 }
 
 void InlineTableView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
+    qDebug() << "InlineTableView::rowsInserted" << endl;
     QAbstractItemView::rowsInserted(parent, start, end);
 }
 

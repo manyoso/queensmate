@@ -36,6 +36,7 @@ QVariant MoveItem::data(int role) const
         }
     case Qt::ForegroundRole:
         {
+//             qDebug() << "looking for foreground" << endl;
             int pos = model()->game()->position() - 1;
             int r = pos / 2;
             int c = pos % 2 ? 1 : 0;
@@ -48,6 +49,7 @@ QVariant MoveItem::data(int role) const
 //                      << endl;
 
             if (pos != -1 && r == row() && c == column()) {
+//                 qDebug() << "returning red" << endl;
                 return QBrush(Qt::red);
             }
         }

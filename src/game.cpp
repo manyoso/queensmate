@@ -31,9 +31,11 @@ Game::Game(QObject *parent)
 
     QString fen = QLatin1String("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
+    int oldIndex = m_index;
     m_index = m_mapOfFen.count();
     m_mapOfFen.insert(m_index, fen);
     setFen(fen);
+    emit positionChanged(oldIndex, m_index);
 
     m_rules->refreshBoards();
 }
@@ -53,9 +55,11 @@ Game::Game(QObject *parent, const QString &fen)
     m_clock = new Clock(this);
     m_moves = new MovesModel(this);
 
+    int oldIndex = m_index;
     m_index = m_mapOfFen.count();
     m_mapOfFen.insert(m_index, fen);
     setFen(fen);
+    emit positionChanged(oldIndex, m_index);
 
     m_rules->refreshBoards();
 }
@@ -333,9 +337,11 @@ void Game::processMove(Chess::Army army, Move move)
     m_activeArmy = m_activeArmy == White ? Black : White;
 
     QString fen = stateOfGameToFen();
+    int oldIndex = m_index;
     m_index = m_mapOfFen.count();
     m_mapOfFen.insert(m_index, fen);
     setFen(fen);
+    emit positionChanged(oldIndex, m_index);
 
     m_clock->startClock(m_activeArmy);
 

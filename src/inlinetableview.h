@@ -16,6 +16,7 @@ public:
     ~InlineTableView();
 
     //inherited from QAbstractItemView
+    virtual void setModel(QAbstractItemModel *model);
     virtual QModelIndex indexAt(const QPoint &point) const;
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible);
     virtual QRect visualRect(const QModelIndex &index) const;
