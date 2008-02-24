@@ -7,6 +7,7 @@
 #include <QPaintEvent>
 #include <QTextCursor>
 #include <QTextOption>
+#include <QApplication>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 
@@ -17,6 +18,7 @@ InlineTableView::InlineTableView(QWidget *parent)
     QTextOption option = m_document->defaultTextOption();
     option.setWrapMode(QTextOption::WordWrap);
     m_document->setDefaultTextOption(option);
+    setSelectionMode(QAbstractItemView::NoSelection);
 }
 
 InlineTableView::~InlineTableView()
@@ -85,6 +87,7 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
                 QString previousText = m_indexToText.take(index);
                 m_posToIndex.insert(cursor.position(), index);
                 m_indexToPos.insert(index, cursor.position());
+                cursor.clearSelection();
                 cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, previousText.count());
             }
 

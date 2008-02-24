@@ -43,7 +43,7 @@ Captured::Captured(QWidget *parent, Game *game)
 
     connect(game, SIGNAL(capturedPiecesChanged()), this, SLOT(resetPieces()));
 
-    setMinimumHeight(PIECE_SIZE);
+    setMinimumHeight(PIECE_SIZE * 2);
     setMinimumWidth(PIECE_SIZE * 15);
 }
 

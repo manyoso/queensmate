@@ -1,6 +1,8 @@
 #include "movesmodel.h"
 
 #include <QDebug>
+#include <QPalette>
+#include <QApplication>
 
 #include "notation.h"
 
@@ -50,7 +52,7 @@ QVariant MoveItem::data(int role) const
 
             if (pos != -1 && r == row() && c == column()) {
 //                 qDebug() << "returning red" << endl;
-                return QBrush(Qt::red);
+                return QApplication::palette().link();
             }
         }
     case Qt::DecorationRole:

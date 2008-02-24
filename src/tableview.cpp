@@ -5,6 +5,7 @@
 TableView::TableView(QWidget *parent)
     : QTableView(parent)
 {
+    setSelectionMode(QAbstractItemView::NoSelection);
 }
 
 TableView::~TableView()
