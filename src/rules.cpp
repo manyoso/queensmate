@@ -135,7 +135,7 @@ bool Rules::isLegalMove(Chess::Army army, Move move) const
         return true;
     }
 
-    bool attacks = bitBoard(move.start(), Attacks).isSquareOccupied(move.end());
+    bool attacks = BitBoard(bitBoard(move.start(), Attacks) & bitBoard(army == White ? Black : White)).isSquareOccupied(move.end());
     if (attacks) {
         return true;
     }
