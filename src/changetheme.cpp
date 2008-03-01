@@ -48,7 +48,7 @@ void ChangeTheme::fillSquareThemeList(const QString &theme)
 ChangeThemeDialog::ChangeThemeDialog(const QString &defaultPieceTheme, const QString &defaultSquareTheme, QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(tr("Change theme for board"));
+    setWindowTitle(tr("Change Theme"));
     ChangeTheme *changeTheme = new ChangeTheme(defaultPieceTheme, defaultSquareTheme, this);
     connect(changeTheme, SIGNAL(pieceThemeChanged(const QString &)),
             this, SIGNAL(pieceThemeChanged(const QString &)));

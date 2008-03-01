@@ -99,7 +99,7 @@
           <item>
            <widget class="QLabel" name="ui_label960" >
             <property name="text" >
-             <string>960 Position</string>
+             <string>960 Position:</string>
             </property>
            </widget>
           </item>
@@ -245,7 +245,7 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="ui_whiteBaseLabel" >
             <property name="text" >
-             <string>Base</string>
+             <string>Base:</string>
             </property>
            </widget>
           </item>
@@ -265,7 +265,7 @@
           <item row="2" column="0" >
            <widget class="QLabel" name="ui_whiteMoveLabel" >
             <property name="text" >
-             <string>Moves</string>
+             <string>Moves:</string>
             </property>
            </widget>
           </item>
@@ -298,7 +298,7 @@
           <item row="1" column="0" >
            <widget class="QLabel" name="ui_whiteIncrementLabel" >
             <property name="text" >
-             <string>Increment</string>
+             <string>Increment:</string>
             </property>
            </widget>
           </item>
@@ -434,7 +434,7 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="ui_blackBaseLabel" >
             <property name="text" >
-             <string>Base</string>
+             <string>Base:</string>
             </property>
            </widget>
           </item>
@@ -454,7 +454,7 @@
           <item row="2" column="0" >
            <widget class="QLabel" name="ui_blackMoveLabel" >
             <property name="text" >
-             <string>Moves</string>
+             <string>Moves:</string>
             </property>
            </widget>
           </item>
@@ -477,7 +477,7 @@
           <item row="1" column="0" >
            <widget class="QLabel" name="ui_blackIncrementLabel" >
             <property name="text" >
-             <string>Increment</string>
+             <string>Increment:</string>
             </property>
            </widget>
           </item>

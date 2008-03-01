@@ -326,36 +326,36 @@ void Board::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
 
-    QAction *themeAction = menu.addAction(tr("Change theme..."));
+    QAction *themeAction = menu.addAction(tr("Change Theme..."));
     connect(themeAction, SIGNAL(triggered()), this, SLOT(changeTheme()));
 
     menu.addSeparator();
 
-    QAction *showMovesAction = menu.addAction(tr("Show possible moves"));
+    QAction *showMovesAction = menu.addAction(tr("Show Possible Moves"));
     showMovesAction->setCheckable(true);
     showMovesAction->setChecked(isMovesShown());
     showMovesAction->setShortcut(Qt::Key_M);
     connect(showMovesAction, SIGNAL(triggered(bool)), this, SLOT(setMovesShown(bool)));
 
-    QAction *showAttacksAction = menu.addAction(tr("Show possible attacks"));
+    QAction *showAttacksAction = menu.addAction(tr("Show Possible Attacks"));
     showAttacksAction->setCheckable(true);
     showAttacksAction->setChecked(isAttacksShown());
     showAttacksAction->setShortcut(Qt::Key_A);
     connect(showAttacksAction, SIGNAL(triggered(bool)), this, SLOT(setAttacksShown(bool)));
 
-    QAction *showDefendsAction = menu.addAction(tr("Show squares defended"));
+    QAction *showDefendsAction = menu.addAction(tr("Show Squares Defended"));
     showDefendsAction->setCheckable(true);
     showDefendsAction->setChecked(isDefendsShown());
     showDefendsAction->setShortcut(Qt::Key_D);
     connect(showDefendsAction, SIGNAL(triggered(bool)), this, SLOT(setDefendsShown(bool)));
 
-    QAction *showAttackedByAction = menu.addAction(tr("Show attacking pieces"));
+    QAction *showAttackedByAction = menu.addAction(tr("Show Attacking Pieces"));
     showAttackedByAction->setCheckable(true);
     showAttackedByAction->setChecked(isAttackedByShown());
     showAttackedByAction->setShortcut(Qt::CTRL + Qt::Key_A);
     connect(showAttackedByAction, SIGNAL(triggered(bool)), this, SLOT(setAttackedByShown(bool)));
 
-    QAction *showDefendedByAction = menu.addAction(tr("Show defending pieces"));
+    QAction *showDefendedByAction = menu.addAction(tr("Show Defending Pieces"));
     showDefendedByAction->setCheckable(true);
     showDefendedByAction->setChecked(isDefendedByShown());
     showDefendedByAction->setShortcut(Qt::CTRL + Qt::Key_D);

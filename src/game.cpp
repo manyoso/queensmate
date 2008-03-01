@@ -179,6 +179,7 @@ void Game::playerMadeMove(Move move)
 bool Game::localHumanMadeMove(Chess::Army army, Move move)
 {
     if (m_isScratchGame) {
+        fillOutMove(army, &move);
         processMove(army, move);
         return true;
     }
@@ -387,8 +388,8 @@ bool Game::fillOutMove(Chess::Army army, Move *move)
         QStringList pieces;
         pieces << tr("Queen") << tr("Rook") << tr("Bishop") << tr("Knight");
         QString promotion = QInputDialog::getItem(chessApp->mainWindow(),
-                                                  tr("Promote pawn"),
-                                                  tr("Choose piece"),
+                                                  tr("Promote Pawn"),
+                                                  tr("Choose Piece:"),
                                                   pieces, 0, false);
         if (promotion == tr("Queen"))
             move->setPromotion(Queen);
