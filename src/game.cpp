@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QStringList>
+#include <QInputDialog>
 
 #include "rules.h"
 #include "clock.h"
@@ -10,6 +11,7 @@
 #include "bitboard.h"
 #include "resource.h"
 #include "movesmodel.h"
+#include "mainwindow.h"
 #include "application.h"
 
 using namespace Chess;
@@ -30,7 +32,7 @@ Game::Game(QObject *parent)
     m_moves = new MovesModel(this);
 
     QString fen = QLatin1String("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    //fen = QLatin1String("3R4/2b2pkp/2r3p1/8/1P5P/2P2N2/5PK1/8 w -- - 0 1");
+    fen = QLatin1String("3R4/2b2pkp/2r3p1/8/1P5P/2P2N2/5PK1/8 w -- - 0 1");
 
     int oldIndex = m_index;
     m_index = m_mapOfFen.count();
@@ -377,12 +379,27 @@ bool Game::fillOutMove(Chess::Army army, Move *move)
             return false;
     }
 
-    if (move->promotion() == Unknown && move->piece() == Pawn) {
-        if (army == White && move->end().rank() == 7) {
-            Q_ASSERT_X(false, "fillOutMove", "FIXME handle pawn promotion please!!");
-        } else if (army == Black && move->end().rank() == 0) {
-            Q_ASSERT_X(false, "fillOutMove", "FIXME handle pawn promotion please!!");
-        }
+    if (move->promotion() == Unknown && move->piece() == Pawn &&
+        ((army == White && move->end().rank() == 7) ||
+         (army == Black && move->end().rank() == 0))) {
+
+        //FIXME don't allow 'cancel' button...
+        QStringList pieces;
+        pieces << tr("Queen") << tr("Rook") << tr("Bishop") << tr("Knight");
+        QString promotion = QInputDialog::getItem(chessApp->mainWindow(),
+                                                  tr("Promote pawn"),
+                                                  tr("Choose piece"),
+                                                  pieces, 0, false);
+        if (promotion == tr("Queen"))
+            move->setPromotion(Queen);
+        else if (promotion == tr("Rook"))
+            move->setPromotion(Rook);
+        else if (promotion == tr("Bishop"))
+            move->setPromotion(Bishop);
+        else if (promotion == tr("Knight"))
+            move->setPromotion(Knight);
+        else
+            move->setPromotion(Queen);
     }
 
     if (move->piece() == King) {
