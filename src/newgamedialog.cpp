@@ -94,7 +94,7 @@ void NewGameDialog::setIsClassicalChess(bool isClassicalChess)
 {
     QSettings settings;
     settings.beginGroup("NewGameDialog");
-    settings.setValue("isClassicalChess", isClassicalChess);
+    settings.setValue("classicalChess", isClassicalChess);
     settings.endGroup();
 
     ui_random960->setEnabled(!isClassicalChess);

@@ -23,6 +23,7 @@ private:
 };
 
 inline bool operator==(const Square &a, const Square &b) { return a.file() == b.file() && a.rank() == b.rank(); }
+inline bool operator!=(const Square &a, const Square &b) { return a.file() != b.file() || a.rank() != b.rank(); }
 
 typedef QList<Square> SquareList;
 

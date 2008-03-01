@@ -31,7 +31,12 @@ qreal LETTER_HEIGHT = 0.7;
 Board::Board(Game *game)
     : QGraphicsScene(game),
       m_currentPiece(0),
-      m_armyInFront(White)
+      m_armyInFront(White),
+      m_isMovesShown(false),
+      m_isAttacksShown(false),
+      m_isDefendsShown(false),
+      m_isAttackedByShown(false),
+      m_isDefendedByShown(false)
 {
     m_theme = new Theme(this);
     connect(m_theme, SIGNAL(themeChanged()), this, SLOT(update()));
@@ -55,6 +60,7 @@ Board::Board(Game *game)
     resetBoard();
 
     connect(game, SIGNAL(piecesChanged()), this, SLOT(resetBoard()));
+    connect(this, SIGNAL(currentPieceChanged()), this, SLOT(resetSquares()));
 }
 
 Board::~Board()
@@ -89,7 +95,10 @@ void Board::clearBoard()
         delete piece;
     }
 
-    m_currentPiece = 0;
+    if (m_currentPiece != 0) {
+        m_currentPiece = 0;
+        emit currentPieceChanged();
+    }
 
     clearSquares();
 }
@@ -123,44 +132,49 @@ void Board::resetBoard()
     }
 }
 
-void Board::keyPressEvent(QKeyEvent *event)
+void Board::resetSquares()
 {
-    QGraphicsScene::keyPressEvent(event);
+    clearSquares();
 
     if (!m_currentPiece)
         return;
 
-    Theme::SquareType type;
-
-    BitBoard b;
     Square sq = m_currentPiece->square();
-    if (event->key() == Qt::Key_M) {
-        type = Theme::Move;
-        b = game()->rules()->bitBoard(sq, Moves);
-    } else if (event->key() == Qt::Key_A) {
-        type = Theme::Attack;
-        if (event->modifiers() & Qt::ControlModifier)
-            b = game()->rules()->bitBoard(sq, AttackedBy);
-        else
-            b = game()->rules()->bitBoard(sq, Attacks);
-    } else if (event->key() == Qt::Key_D) {
-        type = Theme::Defense;
-        if (event->modifiers() & Qt::ControlModifier)
-            b = game()->rules()->bitBoard(sq, DefendedBy);
-        else
-            b = game()->rules()->bitBoard(sq, Defends);
-    } else {
-        return;
+
+    QMap<Theme::SquareType, BitBoard> boards;
+
+    if (isMovesShown()) {
+        boards.insert(Theme::Move, game()->rules()->bitBoard(sq, Moves));
+    }
+    if (isAttacksShown()) {
+        boards.insert(Theme::Attack, game()->rules()->bitBoard(sq, Attacks));
+    }
+    if (isDefendsShown()) {
+        boards.insert(Theme::Defense, game()->rules()->bitBoard(sq, Defends));
+    }
+    if (isAttackedByShown()) {
+        boards.insert(Theme::Attack, game()->rules()->bitBoard(sq, AttackedBy));
+    }
+    if (isDefendedByShown()) {
+        boards.insert(Theme::Defense, game()->rules()->bitBoard(sq, DefendedBy));
     }
 
-    if (b.isClear())
+    if (boards.isEmpty())
         return;
 
-    for (int i = 0; i < b.count(); i++) {
-        if (b.testBit(i)) {
+    QMap<Theme::SquareType, BitBoard>::ConstIterator it = boards.begin();
+    for (; it != boards.end(); ++it) {
+        colorBoard(it.key(), it.value());
+    }
+}
+
+void Board::colorBoard(Theme::SquareType type, const BitBoard &board)
+{
+    for (int i = 0; i < board.count(); i++) {
+        if (board.testBit(i)) {
             int index = i;
             if (armyInFront() == Black) {
-                Square s = b.bitToSquare(i);
+                Square s = board.bitToSquare(i);
                 Square inverted(7 - s.file(), 7 - s.rank());
                 index = inverted.index();
             }
@@ -171,23 +185,63 @@ void Board::keyPressEvent(QKeyEvent *event)
     }
 }
 
+void Board::keyPressEvent(QKeyEvent *event)
+{
+    QGraphicsScene::keyPressEvent(event);
+
+    if (event->key() == Qt::Key_M) {
+        setMovesShown(true);
+    } else if (event->key() == Qt::Key_A) {
+        if (event->modifiers() & Qt::ControlModifier)
+            setAttackedByShown(true);
+        else
+            setAttacksShown(false);
+    } else if (event->key() == Qt::Key_D) {
+        setDefendsShown(true);
+        if (event->modifiers() & Qt::ControlModifier)
+            setDefendedByShown(true);
+        else
+            setDefendsShown(true);
+    }
+}
+
 void Board::keyReleaseEvent(QKeyEvent *event)
 {
     QGraphicsScene::keyReleaseEvent(event);
-    clearSquares();
+
+    if (event->key() == Qt::Key_M) {
+        setMovesShown(false);
+    } else if (event->key() == Qt::Key_A) {
+        if (event->modifiers() & Qt::ControlModifier)
+            setAttackedByShown(false);
+        else
+            setAttacksShown(false);
+    } else if (event->key() == Qt::Key_D) {
+        setDefendsShown(false);
+        if (event->modifiers() & Qt::ControlModifier)
+            setDefendedByShown(false);
+        else
+            setDefendsShown(false);
+    }
 }
 
 void Board::hoverEnterSquare()
 {
     BoardSquare *square = qobject_cast<BoardSquare*>(sender());
     Q_ASSERT(square);
-    m_currentSquare = square->square();
+    if (m_currentSquare != square->square()) {
+        m_currentSquare = square->square();
+        emit currentSquareChanged();
+    }
     emit hoverEnter();
 }
 
 void Board::hoverLeaveSquare()
 {
-    m_currentSquare = Square();
+    if (m_currentSquare != Square()) {
+        m_currentSquare = Square();
+        emit currentSquareChanged();
+    }
     emit hoverLeave();
 }
 
@@ -195,15 +249,27 @@ void Board::hoverEnterPiece()
 {
     BoardPiece *piece = qobject_cast<BoardPiece*>(sender());
     Q_ASSERT(piece);
-    m_currentPiece = piece;
-    m_currentSquare = piece->square();
+    if (m_currentPiece != piece) {
+        m_currentPiece = piece;
+        emit currentPieceChanged();
+    }
+    if (m_currentSquare != piece->square()) {
+        m_currentSquare = piece->square();
+        emit currentSquareChanged();
+    }
     emit hoverEnter();
 }
 
 void Board::hoverLeavePiece()
 {
-    m_currentPiece = 0;
-    m_currentSquare = Square();
+    if (m_currentPiece != 0) {
+        m_currentPiece = 0;
+        emit currentPieceChanged();
+    }
+    if (m_currentSquare != Square()) {
+        m_currentSquare = Square();
+        emit currentSquareChanged();
+    }
     emit hoverLeave();
 }
 
@@ -262,6 +328,38 @@ void Board::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
     QAction *themeAction = menu.addAction(tr("Change theme..."));
     connect(themeAction, SIGNAL(triggered()), this, SLOT(changeTheme()));
+
+    menu.addSeparator();
+
+    QAction *showMovesAction = menu.addAction(tr("Show possible moves"));
+    showMovesAction->setCheckable(true);
+    showMovesAction->setChecked(isMovesShown());
+    showMovesAction->setShortcut(Qt::Key_M);
+    connect(showMovesAction, SIGNAL(triggered(bool)), this, SLOT(setMovesShown(bool)));
+
+    QAction *showAttacksAction = menu.addAction(tr("Show possible attacks"));
+    showAttacksAction->setCheckable(true);
+    showAttacksAction->setChecked(isAttacksShown());
+    showAttacksAction->setShortcut(Qt::Key_A);
+    connect(showAttacksAction, SIGNAL(triggered(bool)), this, SLOT(setAttacksShown(bool)));
+
+    QAction *showDefendsAction = menu.addAction(tr("Show squares defended"));
+    showDefendsAction->setCheckable(true);
+    showDefendsAction->setChecked(isDefendsShown());
+    showDefendsAction->setShortcut(Qt::Key_D);
+    connect(showDefendsAction, SIGNAL(triggered(bool)), this, SLOT(setDefendsShown(bool)));
+
+    QAction *showAttackedByAction = menu.addAction(tr("Show attacking pieces"));
+    showAttackedByAction->setCheckable(true);
+    showAttackedByAction->setChecked(isAttackedByShown());
+    showAttackedByAction->setShortcut(Qt::CTRL + Qt::Key_A);
+    connect(showAttackedByAction, SIGNAL(triggered(bool)), this, SLOT(setAttackedByShown(bool)));
+
+    QAction *showDefendedByAction = menu.addAction(tr("Show defending pieces"));
+    showDefendedByAction->setCheckable(true);
+    showDefendedByAction->setChecked(isDefendedByShown());
+    showDefendedByAction->setShortcut(Qt::CTRL + Qt::Key_D);
+    connect(showDefendedByAction, SIGNAL(triggered(bool)), this, SLOT(setDefendedByShown(bool)));
 
     menu.exec(event->screenPos());
 }

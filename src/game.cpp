@@ -30,6 +30,7 @@ Game::Game(QObject *parent)
     m_moves = new MovesModel(this);
 
     QString fen = QLatin1String("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    //fen = QLatin1String("3R4/2b2pkp/2r3p1/8/1P5P/2P2N2/5PK1/8 w -- - 0 1");
 
     int oldIndex = m_index;
     m_index = m_mapOfFen.count();

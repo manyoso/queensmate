@@ -7,9 +7,10 @@
 #include <QList>
 
 #include "game.h"
+#include "theme.h"
 
-class Theme;
 class Piece;
+class BitBoard;
 class BoardPiece;
 class BoardSquare;
 class QWidget;
@@ -31,13 +32,26 @@ public:
 
     QRectF boardRect() const;
 
+    bool isMovesShown() const { return m_isMovesShown; }
+    bool isAttacksShown() const { return m_isAttacksShown; }
+    bool isDefendsShown() const { return m_isDefendsShown; }
+    bool isAttackedByShown() const { return m_isAttackedByShown; }
+    bool isDefendedByShown() const { return m_isDefendedByShown; }
+
 public Q_SLOTS:
     void flipBoard();
+    void setMovesShown(bool checked) { m_isMovesShown = checked; resetSquares(); }
+    void setAttacksShown(bool checked) { m_isAttacksShown = checked; resetSquares(); }
+    void setDefendsShown(bool checked) { m_isDefendsShown = checked; resetSquares(); }
+    void setAttackedByShown(bool checked) { m_isAttackedByShown = checked; resetSquares(); }
+    void setDefendedByShown(bool checked) { m_isDefendedByShown = checked; resetSquares(); }
 
 Q_SIGNALS:
     void boardFlipped();
     void hoverEnter();
     void hoverLeave();
+    void currentPieceChanged();
+    void currentSquareChanged();
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
@@ -49,11 +63,15 @@ private Q_SLOTS:
     void clearBoard();
     void clearSquares();
     void resetBoard();
+    void resetSquares();
     void hoverEnterSquare();
     void hoverLeaveSquare();
     void hoverEnterPiece();
     void hoverLeavePiece();
     void changeTheme();
+
+private:
+    void colorBoard(Theme::SquareType type, const BitBoard &board);
 
 private:
     Theme *m_theme;
@@ -62,6 +80,7 @@ private:
     BoardPiece *m_currentPiece;
     Square m_currentSquare;
     Chess::Army m_armyInFront;
+    bool m_isMovesShown, m_isAttacksShown, m_isDefendsShown, m_isAttackedByShown, m_isDefendedByShown;
     friend class Borders;
 };
 
