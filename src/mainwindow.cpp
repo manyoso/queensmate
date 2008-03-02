@@ -153,6 +153,7 @@ void MainWindow::newGame(const QString &fen)
 
     GameView *gameView = new GameView(ui_tabWidget, game);
     gameView->board()->setArmyInFront(!dialog.whiteIsHuman() && dialog.blackIsHuman() ? Black : White);
+    game->setParent(gameView); //reparent!!
     game->startGame();
 
     int i = ui_tabWidget->addTab(gameView,
@@ -196,13 +197,15 @@ void MainWindow::loadGameFromFEN()
 
 void MainWindow::newScratchBoard()
 {
-    Game *game = new Game(ui_tabWidget);
+    Game *game = new Game(this);
     game->setScratchGame(true);
 
     connect(game, SIGNAL(gameStarted()), this, SLOT(gameStateChanged()));
     connect(game, SIGNAL(gameEnded()), this, SLOT(gameStateChanged()));
 
     ScratchView *scratchView = new ScratchView(ui_tabWidget, game);
+    game->setParent(scratchView); //reparent!!
+
     int i = ui_tabWidget->addTab(scratchView, tr("Scratch Board"));
     ui_tabWidget->setCurrentIndex(i);
 }
@@ -270,6 +273,8 @@ void MainWindow::convertToScratchBoard()
     game->setScratchGame(true);
 
     ScratchView *scratchView = new ScratchView(ui_tabWidget, game);
+    game->setParent(scratchView); //reparent!!
+
     int i = ui_tabWidget->addTab(scratchView, tr("Scratch Board"));
     ui_tabWidget->setCurrentIndex(i);
 

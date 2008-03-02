@@ -54,7 +54,7 @@ public:
     void setChess960(bool isChess960) { m_isChess960 = isChess960; }
 
     bool isScratchGame() const { return m_isScratchGame; }
-    void setScratchGame(bool isScratchGame) { m_isScratchGame = isScratchGame; }
+    void setScratchGame(bool isScratchGame);
 
     PieceList pieces(Chess::Army army) const;
     PieceList capturedPieces(Chess::Army army) const;

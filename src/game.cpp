@@ -103,6 +103,15 @@ QString Game::fen(int index) const
     return QString();
 }
 
+void Game::setScratchGame(bool isScratchGame)
+{
+    m_isScratchGame = isScratchGame;
+    if (m_isScratchGame) {
+        delete m_white;
+        delete m_black;
+    }
+}
+
 PieceList Game::pieces(Chess::Army army) const
 {
     if (army == White)
