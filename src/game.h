@@ -119,8 +119,6 @@ private:
     QHash<int, Piece> m_blackPieces;    //current black pieces
     PieceList m_whiteCapturedPieces;    //white pieces that have been captured
     PieceList m_blackCapturedPieces;    //black pieces that have been captured
-    MoveList m_whiteHistory;            //white history of moves
-    MoveList m_blackHistory;            //black history of moves
     QMap<int, QString> m_mapOfFen;      //map of fen throughout game...
     QPointer<Player> m_white;
     QPointer<Player> m_black;

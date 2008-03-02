@@ -38,6 +38,8 @@ public:
 
     void addMove(int fullMoveNumber, Chess::Army army, Move move);
 
+    void clear(int index); //clears everything after index
+
 private Q_SLOTS:
     void positionChanged(int oldIndex, int newIndex);
 };

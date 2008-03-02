@@ -117,6 +117,21 @@ void MovesModel::addMove(int fullMoveNumber, Chess::Army army, Move move)
         setItem(fullMoveNumber, 0, new MoveItem);
 }
 
+void MovesModel::clear(int index)
+{
+    int pos = index - 1;
+    int r = pos / 2;
+    int c = pos % 2 ? 1 : 0;
+    setRowCount(r + 1);
+    if (c == 0) {
+        QStandardItem *item = takeItem(r, 1);
+        delete item;
+    }
+    QStandardItem *i = item(r, c);
+    QModelIndex current = indexFromItem(i);
+    emit dataChanged(current, current);
+}
+
 void MovesModel::positionChanged(int oldIndex, int newIndex)
 {
     {

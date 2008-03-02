@@ -165,8 +165,6 @@ bool Game::endGame(Ending ending, Result result)
 bool Game::restartGame()
 {
     QString fen = stateOfGameToFen();
-
-    m_index = 0;
     m_activeArmy = White;
 
     m_isScratchGame = false;
@@ -183,23 +181,19 @@ bool Game::restartGame()
     m_blackPieces.clear();
     m_whiteCapturedPieces.clear();
     m_blackCapturedPieces.clear();
-    m_whiteHistory.clear();
-    m_blackHistory.clear();
-    m_mapOfFen.clear();
 
-    int oldIndex = m_index;
-    m_index = m_mapOfFen.count();
-    m_mapOfFen.insert(m_index, fen);
+    foreach (int i, m_mapOfFen.keys()) {
+        if (i > m_index) {
+            m_mapOfFen.remove(i);
+        }
+    }
+
     setFen(fen);
-    emit positionChanged(oldIndex, m_index);
 
     m_rules->refreshBoards();
-
-    //FIXME clear up to current position
-    //FIXME if this is scratch, then clear completely...
-    //m_moves->setRowCount(m_index);
-
+    m_moves->clear(m_index);
     m_clock->reset();
+
     startGame();
     return true;
 }
@@ -294,8 +288,6 @@ void Game::processMove(Chess::Army army, Move move)
             setEnPassantTarget(Square(move.end().file(), move.end().rank() - 1));
         }
 
-        m_whiteHistory << move;
-
         int start = move.start().index();
         int end = move.end().index();
 
@@ -347,8 +339,6 @@ void Game::processMove(Chess::Army army, Move move)
         } else if (move.piece() == Pawn && qAbs(move.start().rank() - move.end().rank()) == 2) {
             setEnPassantTarget(Square(move.end().file(), move.end().rank() + 1));
         }
-
-        m_blackHistory << move;
 
         int start = move.start().index();
         int end = move.end().index();
