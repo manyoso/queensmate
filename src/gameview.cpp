@@ -30,6 +30,9 @@ GameView::GameView(QWidget *parent, Game *game)
 {
     setupUi(this);
 
+    connect(game, SIGNAL(gameStarted()), this, SLOT(gameStarted()));
+    connect(game, SIGNAL(gameEnded()), this, SLOT(gameEnded()));
+
     m_board = new Board(game);
     m_boardView = new BoardView(ui_boardBox, m_board);
 
@@ -170,4 +173,16 @@ void GameView::tick()
     else
         ui_blackClock->setText(tr("Unlimited"));
 
+}
+
+void GameView::gameStarted()
+{
+    if (m_game->ending() == Game::InProgress)
+        ui_buttonBox->setVisible(false);
+}
+
+void GameView::gameEnded()
+{
+    if (m_game->ending() != Game::InProgress)
+        ui_buttonBox->setVisible(true);
 }

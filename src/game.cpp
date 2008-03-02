@@ -25,14 +25,16 @@ Game::Game(QObject *parent)
       m_halfMoveClock(0),
       m_fullMoveNumber(1),
       m_fileOfKingsRook(0),
-      m_fileOfQueensRook(0)
+      m_fileOfQueensRook(0),
+      m_ending(InProgress),
+      m_result(NoResult)
 {
     m_rules = new Rules(this);
     m_clock = new Clock(this);
     m_moves = new MovesModel(this);
 
     QString fen = QLatin1String("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    fen = QLatin1String("3R4/2b2pkp/2r3p1/8/1P5P/2P2N2/5PK1/8 w -- - 0 1");
+    //fen = QLatin1String("3R4/2b2pkp/2r3p1/8/1P5P/2P2N2/5PK1/8 w -- - 0 1");
 
     int oldIndex = m_index;
     m_index = m_mapOfFen.count();
@@ -52,7 +54,9 @@ Game::Game(QObject *parent, const QString &fen)
       m_halfMoveClock(0),
       m_fullMoveNumber(1),
       m_fileOfKingsRook(0),
-      m_fileOfQueensRook(0)
+      m_fileOfQueensRook(0),
+      m_ending(InProgress),
+      m_result(NoResult)
 {
     m_rules = new Rules(this);
     m_clock = new Clock(this);
@@ -143,16 +147,19 @@ bool Game::startGame()
 
     connect(m_white, SIGNAL(madeMove(Move)), this, SLOT(playerMadeMove(Move)));
     connect(m_black, SIGNAL(madeMove(Move)), this, SLOT(playerMadeMove(Move)));
+    emit gameStarted();
     return true;
 }
 
-bool Game::endGame()
+bool Game::endGame(Ending ending, Result result)
 {
-    qDebug() << "FIXME: game ended... now what!" << endl;
     m_clock->endClock();
     disconnect(m_white, SIGNAL(madeMove(Move)), this, SLOT(playerMadeMove(Move)));
     disconnect(m_black, SIGNAL(madeMove(Move)), this, SLOT(playerMadeMove(Move)));
-    return false;
+    m_ending = ending;
+    m_result = result;
+    emit gameEnded();
+    return true;
 }
 
 void Game::playerReady()
@@ -350,7 +357,7 @@ void Game::processMove(Chess::Army army, Move move)
     m_clock->startClock(m_activeArmy);
 
     if (halfMoveClock() >= 49) {
-        endGame();
+        endGame(HalfMoveClock, Drawn);
     } else if (m_activeArmy == White && m_white) {
         m_white->makeNextMove();
     } else if (m_activeArmy == Black && m_black) {

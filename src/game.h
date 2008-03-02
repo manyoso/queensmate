@@ -22,6 +22,22 @@ class MovesModel;
 class Game : public QObject {
     Q_OBJECT
 public:
+    enum Ending
+    {
+        InProgress,
+        CheckMate,
+        StaleMate,
+        Resignation,
+        DrawAccepted,
+        HalfMoveClock
+    };
+    enum Result
+    {
+        NoResult,
+        WhiteWins,
+        BlackWins,
+        Drawn
+    };
     Game(QObject *parent);
     Game(QObject *parent, const QString &fen);
     ~Game();
@@ -56,7 +72,10 @@ public:
     void setPlayers(Player *white, Player *black);
 
     bool startGame();
-    bool endGame();
+    bool endGame(Ending ending, Result result);
+
+    Ending ending() const { return m_ending; }
+    Result result() const { return m_result; }
 
     bool localHumanMadeMove(Chess::Army army, Move move);
     bool remoteOrEngineMadeMove(Chess::Army army, Move move);
@@ -107,6 +126,8 @@ private:
     Rules *m_rules;
     Clock *m_clock;
     MovesModel *m_moves;
+    Ending m_ending;
+    Result m_result;
     friend class Board;
 };
 

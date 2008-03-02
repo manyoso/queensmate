@@ -127,10 +127,10 @@ void MainWindow::newGame()
     }
 
     game->setPlayers(whitePlayer, blackPlayer);
-    game->startGame();
 
     GameView *gameView = new GameView(ui_tabWidget, game);
     gameView->board()->setArmyInFront(!dialog.whiteIsHuman() && dialog.blackIsHuman() ? Black : White);
+    game->startGame();
 
     int i = ui_tabWidget->addTab(gameView,
                                  QString("%1 vs %2").arg(whitePlayer->playerName()).arg(blackPlayer->playerName()));
@@ -216,9 +216,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::tabChanged(int index)
 {
     GameView *gameView = qobject_cast<GameView*>(ui_tabWidget->widget(index));
-    ui_actionPlayButtons->setVisible(gameView != 0);
+    ui_actionPlayButtons->setVisible(gameView != 0 && gameView->game()->ending() != Game::InProgress);
     ui_actionGameInfo->setVisible(gameView != 0);
 
     ScratchView *scratchView = qobject_cast<ScratchView*>(ui_tabWidget->widget(index));
+    ui_actionPlayButtons->setVisible(scratchView != 0 ? true : ui_actionPlayButtons->isVisible());
     ui_actionGameInfo->setVisible(scratchView != 0 ? false : ui_actionGameInfo->isVisible());
 }

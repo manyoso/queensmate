@@ -17,7 +17,9 @@ public:
     GameView(QWidget *parent, Game *game);
     ~GameView();
 
+    Game *game() const { return m_game; }
     Board *board() const { return m_board; }
+    BoardView *boardView() const { return m_boardView; }
 
     bool isPlayButtonsVisible() const;
     void setPlayButtonsVisible(bool visible);
@@ -31,6 +33,8 @@ private Q_SLOTS:
     void forward();
     void end();
     void tick();
+    void gameStarted();
+    void gameEnded();
 
 private:
     Game *m_game;
