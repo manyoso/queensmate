@@ -48,7 +48,9 @@
      <string>File</string>
     </property>
     <addaction name="ui_actionNewGame" />
-    <addaction name="ui_actionLoadGame" />
+    <addaction name="ui_actionConstructGame" />
+    <addaction name="ui_actionLoadGameFromPGN" />
+    <addaction name="ui_actionLoadGameFromFEN" />
     <addaction name="separator" />
     <addaction name="ui_actionNewScratchBoard" />
     <addaction name="separator" />
@@ -74,8 +76,19 @@
     </property>
     <addaction name="ui_actionAbout" />
    </widget>
+   <widget class="QMenu" name="ui_menuGame" >
+    <property name="title" >
+     <string>Game</string>
+    </property>
+    <addaction name="ui_actionOfferDraw" />
+    <addaction name="ui_actionResign" />
+    <addaction name="separator" />
+    <addaction name="ui_actionConvertToScratchBoard" />
+    <addaction name="ui_actionRestart" />
+   </widget>
    <addaction name="ui_menuFile" />
    <addaction name="ui_menuView" />
+   <addaction name="ui_menuGame" />
    <addaction name="ui_menuSettings" />
    <addaction name="ui_menuHelp" />
   </widget>
@@ -123,9 +136,9 @@
     <string>Configure Castle...</string>
    </property>
   </action>
-  <action name="ui_actionLoadGame" >
+  <action name="ui_actionLoadGameFromPGN" >
    <property name="text" >
-    <string>Load Game...</string>
+    <string>Load Game From PGN...</string>
    </property>
   </action>
   <action name="ui_actionPlayButtons" >
@@ -165,7 +178,42 @@
   </action>
   <action name="ui_actionNewScratchBoard" >
    <property name="text" >
-    <string>New Board</string>
+    <string>New Scratch Board</string>
+   </property>
+  </action>
+  <action name="ui_actionLoadGameFromFEN" >
+   <property name="text" >
+    <string>Load Game From FEN...</string>
+   </property>
+  </action>
+  <action name="ui_actionOfferDraw" >
+   <property name="text" >
+    <string>Offer Draw</string>
+   </property>
+  </action>
+  <action name="ui_actionResign" >
+   <property name="text" >
+    <string>Resign</string>
+   </property>
+  </action>
+  <action name="ui_actionRestart" >
+   <property name="text" >
+    <string>Start Game...</string>
+   </property>
+  </action>
+  <action name="ui_actionConvertToScratchBoard" >
+   <property name="text" >
+    <string>Convert To Stratch Board</string>
+   </property>
+  </action>
+  <action name="actionConstruct_Game" >
+   <property name="text" >
+    <string>Construct Game...</string>
+   </property>
+  </action>
+  <action name="ui_actionConstructGame" >
+   <property name="text" >
+    <string>Construct Game...</string>
    </property>
   </action>
  </widget>

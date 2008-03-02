@@ -5,6 +5,7 @@
 #include <QBoxLayout>
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QInputDialog>
 
 #include "pgn.h"
 #include "game.h"
@@ -29,7 +30,9 @@ MainWindow::MainWindow(QWidget *parent)
     setupUi(this);
 
     connect(ui_actionNewGame, SIGNAL(triggered(bool)), this, SLOT(newGame()));
-    connect(ui_actionLoadGame, SIGNAL(triggered(bool)), this, SLOT(loadGame()));
+    connect(ui_actionConstructGame, SIGNAL(triggered(bool)), this, SLOT(constructGame()));
+    connect(ui_actionLoadGameFromPGN, SIGNAL(triggered(bool)), this, SLOT(loadGameFromPGN()));
+    connect(ui_actionLoadGameFromFEN, SIGNAL(triggered(bool)), this, SLOT(loadGameFromFEN()));
     connect(ui_actionNewScratchBoard, SIGNAL(triggered(bool)), this, SLOT(newScratchBoard()));
     connect(ui_actionQuit, SIGNAL(triggered(bool)), chessApp, SLOT(quit()));
 
@@ -37,8 +40,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui_actionPlayButtons, SIGNAL(triggered(bool)), this, SLOT(playButtons(bool)));
     connect(ui_actionGameInfo, SIGNAL(triggered(bool)), this, SLOT(gameInfo(bool)));
 
-    connect(ui_actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
+    connect(ui_actionOfferDraw, SIGNAL(triggered(bool)), this, SLOT(offerDraw()));
+    connect(ui_actionResign, SIGNAL(triggered(bool)), this, SLOT(resign()));
+    connect(ui_actionConvertToScratchBoard, SIGNAL(triggered(bool)), this, SLOT(convertToScratchBoard()));
+    connect(ui_actionRestart, SIGNAL(triggered(bool)), this, SLOT(restart()));
+
     connect(ui_actionConfigure, SIGNAL(triggered(bool)), this, SLOT(configure()));
+    connect(ui_actionAbout, SIGNAL(triggered(bool)), this, SLOT(about()));
 
     connect(ui_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
@@ -61,7 +69,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::newGame()
 {
+    newGame(QString());
+}
+
+void MainWindow::newGame(const QString &fen)
+{
     NewGameDialog dialog(this);
+    if (!fen.isEmpty()) {
+        dialog.setTypeVisible(false);
+        dialog.resize(dialog.minimumSizeHint());
+    }
+
     if (dialog.exec() == QDialog::Rejected)
         return;
 
@@ -69,12 +87,17 @@ void MainWindow::newGame()
     Player *whitePlayer = 0;
     Player *blackPlayer = 0;
 
-    if (dialog.isClassicalChess()) {
+    if (!fen.isEmpty()) {
+        game = new Game(this, fen);
+    } else if (dialog.isClassicalChess()) {
         game = new Game(this);
     } else {
         game = new Game(this, chessApp->resource()->fenFor960(dialog.isRandom960() ? -1 : dialog.position960()));
         game->setChess960(true);
     }
+
+    connect(game, SIGNAL(gameStarted()), this, SLOT(gameStateChanged()));
+    connect(game, SIGNAL(gameEnded()), this, SLOT(gameStateChanged()));
 
     if (dialog.whiteIsHuman()) {
         whitePlayer = new Player(game);
@@ -137,7 +160,12 @@ void MainWindow::newGame()
     ui_tabWidget->setCurrentIndex(i);
 }
 
-void MainWindow::loadGame()
+void MainWindow::constructGame()
+{
+    qDebug() << "FIXME!!" << endl;
+}
+
+void MainWindow::loadGameFromPGN()
 {
     QString file = QFileDialog::getOpenFileName(this, tr("Load PGN File"), QString(), tr("PGN files (*.pgn)"));
     if (file.isEmpty())
@@ -152,10 +180,28 @@ void MainWindow::loadGame()
     }
 }
 
+void MainWindow::loadGameFromFEN()
+{
+    bool ok;
+    QString fen = QInputDialog::getText(this, tr("Load FEN String"), tr("FEN String:"), QLineEdit::Normal, QString(), &ok);
+    if (!ok)
+        return;
+
+    if (fen.isEmpty())
+        qDebug() << "ERROR! FEN string is empty" << endl;
+
+    //FIXME error checking...
+    newGame(fen);
+}
+
 void MainWindow::newScratchBoard()
 {
     Game *game = new Game(ui_tabWidget);
     game->setScratchGame(true);
+
+    connect(game, SIGNAL(gameStarted()), this, SLOT(gameStateChanged()));
+    connect(game, SIGNAL(gameEnded()), this, SLOT(gameStateChanged()));
+
     ScratchView *scratchView = new ScratchView(ui_tabWidget, game);
     int i = ui_tabWidget->addTab(scratchView, tr("Scratch Board"));
     ui_tabWidget->setCurrentIndex(i);
@@ -192,15 +238,60 @@ void MainWindow::gameInfo(bool show)
     gameView->setGameInfoVisible(show);
 }
 
-void MainWindow::about()
+void MainWindow::offerDraw()
 {
-    AboutDialog dialog(this);
-    dialog.exec();
+}
+
+void MainWindow::resign()
+{
+    GameView *gameView = qobject_cast<GameView*>(ui_tabWidget->currentWidget());
+    Q_ASSERT(gameView);
+    Player *whitePlayer = gameView->game()->player(White);
+    Player *blackPlayer = gameView->game()->player(Black);
+    if (whitePlayer->isHuman() && blackPlayer->isHuman()) {
+        gameView->game()->endGame(Game::Resignation, gameView->game()->activeArmy() == White ? Game::BlackWins : Game::WhiteWins);
+    } else if (whitePlayer->isHuman() && gameView->game()->activeArmy() == White) {
+        gameView->game()->endGame(Game::Resignation, Game::BlackWins);
+    } else if (blackPlayer->isHuman() && gameView->game()->activeArmy() == Black) {
+        gameView->game()->endGame(Game::Resignation, Game::WhiteWins);
+    } else if (whitePlayer->isHuman()) {
+        gameView->game()->endGame(Game::Resignation, Game::BlackWins);
+    } else if (blackPlayer->isHuman()) {
+        gameView->game()->endGame(Game::Resignation, Game::WhiteWins);
+    }
+}
+
+void MainWindow::convertToScratchBoard()
+{
+    GameView *gameView = qobject_cast<GameView*>(ui_tabWidget->currentWidget());
+    Q_ASSERT(gameView);
+
+    Game *game = gameView->game();
+    game->setScratchGame(true);
+
+    ScratchView *scratchView = new ScratchView(ui_tabWidget, game);
+    int i = ui_tabWidget->addTab(scratchView, tr("Scratch Board"));
+    ui_tabWidget->setCurrentIndex(i);
+
+    delete gameView;
+}
+
+void MainWindow::restart()
+{
+    GameView *gameView = qobject_cast<GameView*>(ui_tabWidget->currentWidget());
+    Q_ASSERT(gameView);
+    gameView->game()->restartGame();
 }
 
 void MainWindow::configure()
 {
     ConfigureDialog dialog(this);
+    dialog.exec();
+}
+
+void MainWindow::about()
+{
+    AboutDialog dialog(this);
     dialog.exec();
 }
 
@@ -213,13 +304,31 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QMainWindow::closeEvent(event);
 }
 
+void MainWindow::gameStateChanged()
+{
+    tabChanged(ui_tabWidget->currentIndex());
+}
+
 void MainWindow::tabChanged(int index)
 {
     GameView *gameView = qobject_cast<GameView*>(ui_tabWidget->widget(index));
-    ui_actionPlayButtons->setVisible(gameView != 0 && gameView->game()->ending() != Game::InProgress);
-    ui_actionGameInfo->setVisible(gameView != 0);
+
+    ui_actionPlayButtons->setEnabled(gameView != 0 && gameView->game()->ending() != Game::InProgress);
+    ui_actionGameInfo->setEnabled(gameView != 0);
+
+    //FIXME can not offer draw or resign when no player is human
+    ui_actionOfferDraw->setEnabled(gameView != 0 && gameView->game()->ending() == Game::InProgress);
+    ui_actionResign->setEnabled(gameView != 0 && gameView->game()->ending() == Game::InProgress);
+    ui_actionConvertToScratchBoard->setEnabled(gameView != 0 && gameView->game()->ending() != Game::InProgress);
+    ui_actionRestart->setEnabled(gameView != 0 && gameView->game()->ending() != Game::InProgress);
 
     ScratchView *scratchView = qobject_cast<ScratchView*>(ui_tabWidget->widget(index));
-    ui_actionPlayButtons->setVisible(scratchView != 0 ? true : ui_actionPlayButtons->isVisible());
-    ui_actionGameInfo->setVisible(scratchView != 0 ? false : ui_actionGameInfo->isVisible());
+
+    ui_actionPlayButtons->setEnabled(scratchView != 0 ? true : ui_actionPlayButtons->isEnabled());
+    ui_actionGameInfo->setEnabled(scratchView != 0 ? false : ui_actionGameInfo->isEnabled());
+
+    ui_actionOfferDraw->setEnabled(scratchView != 0 ? false : ui_actionOfferDraw->isEnabled());
+    ui_actionResign->setEnabled(scratchView != 0 ? false : ui_actionResign->isEnabled());
+    ui_actionConvertToScratchBoard->setEnabled(scratchView != 0 ? false : ui_actionConvertToScratchBoard->isEnabled());
+    ui_actionRestart->setEnabled(scratchView != 0 ? true : ui_actionRestart->isEnabled());
 }

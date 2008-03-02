@@ -162,6 +162,48 @@ bool Game::endGame(Ending ending, Result result)
     return true;
 }
 
+bool Game::restartGame()
+{
+    QString fen = stateOfGameToFen();
+
+    m_index = 0;
+    m_activeArmy = White;
+
+    m_isScratchGame = false;
+
+    m_halfMoveClock = 0;
+    m_fullMoveNumber = 1;
+    m_fileOfKingsRook = 0;
+    m_fileOfQueensRook = 0;
+    m_ending = Game::InProgress;
+    m_result = Game::NoResult;
+
+    m_enPassantTarget = Square();
+    m_whitePieces.clear();
+    m_blackPieces.clear();
+    m_whiteCapturedPieces.clear();
+    m_blackCapturedPieces.clear();
+    m_whiteHistory.clear();
+    m_blackHistory.clear();
+    m_mapOfFen.clear();
+
+    int oldIndex = m_index;
+    m_index = m_mapOfFen.count();
+    m_mapOfFen.insert(m_index, fen);
+    setFen(fen);
+    emit positionChanged(oldIndex, m_index);
+
+    m_rules->refreshBoards();
+
+    //FIXME clear up to current position
+    //FIXME if this is scratch, then clear completely...
+    //m_moves->setRowCount(m_index);
+
+    m_clock->reset();
+    startGame();
+    return true;
+}
+
 void Game::playerReady()
 {
     Player *player = qobject_cast<Player*>(sender());

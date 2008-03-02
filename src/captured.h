@@ -15,7 +15,7 @@ public:
     Captured(QWidget *parent, Game *game);
     ~Captured();
 
-private Q_SLOTS:
+public Q_SLOTS:
     void resetPieces();
 
 private:

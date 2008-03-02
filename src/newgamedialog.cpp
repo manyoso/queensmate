@@ -75,7 +75,7 @@ NewGameDialog::NewGameDialog(QWidget *parent)
 
     int whiteComputer = ui_whiteComputerCombo->findText(settings.value("whiteComputer").toString());
     ui_whiteComputerCombo->setCurrentIndex(qMax(0, whiteComputer));
-    int blackComputer = ui_whiteComputerCombo->findText(settings.value("whiteComputer").toString());
+    int blackComputer = ui_whiteComputerCombo->findText(settings.value("blackComputer").toString());
     ui_blackComputerCombo->setCurrentIndex(qMax(0, blackComputer));
 
     int whiteClockType = ui_whiteClockType->findText(settings.value("whiteClockType").toString());

@@ -73,6 +73,7 @@ public:
 
     bool startGame();
     bool endGame(Ending ending, Result result);
+    bool restartGame();
 
     Ending ending() const { return m_ending; }
     Result result() const { return m_result; }

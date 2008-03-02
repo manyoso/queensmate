@@ -33,6 +33,8 @@ public:
     int whiteIncrement() const { return ui_whiteIncrement->value(); }
     int blackIncrement() const { return ui_blackIncrement->value(); }
 
+    void setTypeVisible(bool visible) { ui_typeBox->setVisible(visible); }
+
 private Q_SLOTS:
     void setIsClassicalChess(bool isClassicalChess);
     void setRandom960(bool random);

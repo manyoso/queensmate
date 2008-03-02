@@ -34,6 +34,8 @@ public:
     void startClock(Chess::Army army);
     void endClock();
 
+    void reset();
+
 Q_SIGNALS:
     void tick();
     void flagFell(Chess::Army army);

@@ -10,6 +10,7 @@
 class Game;
 class Board;
 class BoardView;
+class Captured;
 
 class GameView : public QWidget, public Ui::GameView {
     Q_OBJECT
@@ -40,6 +41,7 @@ private:
     Game *m_game;
     Board *m_board;
     BoardView *m_boardView;
+    Captured *m_captured;
 };
 
 #endif

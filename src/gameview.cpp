@@ -86,8 +86,9 @@ GameView::GameView(QWidget *parent, Game *game)
 
     connect(m_game->clock(), SIGNAL(tick()), this, SLOT(tick()));
 
+    m_captured = new Captured(ui_piecesBox, m_game);
     QHBoxLayout *piecesLayout = new QHBoxLayout(ui_piecesBox);
-    piecesLayout->addWidget(new Captured(ui_piecesBox, m_game));
+    piecesLayout->addWidget(m_captured);
     ui_piecesBox->setLayout(piecesLayout);
 
     TableView *table = new TableView(ui_moveTable);
@@ -177,6 +178,7 @@ void GameView::tick()
 
 void GameView::gameStarted()
 {
+    m_captured->resetPieces();
     if (m_game->ending() == Game::InProgress)
         ui_buttonBox->setVisible(false);
 }

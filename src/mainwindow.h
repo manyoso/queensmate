@@ -13,18 +13,29 @@ public:
 
 public Q_SLOTS:
     void newGame();
-    void loadGame();
+    void newGame(const QString &fen);
+    void constructGame();
+    void loadGameFromPGN();
+    void loadGameFromFEN();
     void newScratchBoard();
+
     void fullScreen(bool show);
     void playButtons(bool show);
     void gameInfo(bool show);
-    void about();
+
+    void offerDraw();
+    void resign();
+    void convertToScratchBoard();
+    void restart();
+
     void configure();
+    void about();
 
 protected:
     virtual void closeEvent(QCloseEvent *event);
 
 private Q_SLOTS:
+    void gameStateChanged();
     void tabChanged(int index);
 };
 

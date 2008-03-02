@@ -165,6 +165,19 @@ void Clock::endClock()
     m_timer->stop();
 }
 
+void Clock::reset()
+{
+    m_started = false;
+    m_army = White;
+    m_whiteMoves = -1;
+    m_blackMoves = -1;
+
+    endClock();
+    m_whiteTime = qAbs(m_whiteBaseTime.msecsTo(QTime()));
+    m_blackTime = qAbs(m_blackBaseTime.msecsTo(QTime()));
+    emit tick();
+}
+
 void Clock::updateSignals()
 {
 //     qDebug() << "updateSignals"
