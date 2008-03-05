@@ -3,7 +3,7 @@
 
 #include <QBitArray>
 
-#include <QHash>
+#include <QDebug>
 
 #include "square.h"
 
@@ -26,5 +26,7 @@ public:
     Square bitToSquare(int bit) const;
     int squareToBit(Square square) const;
 };
+
+QDebug operator<<(QDebug, const BitBoard &);
 
 #endif

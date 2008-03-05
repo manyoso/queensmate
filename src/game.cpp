@@ -253,6 +253,16 @@ bool Game::localHumanMadeMove(Chess::Army army, Move move)
         return false;
 
     processMove(army, move);
+
+    if (m_rules->isChecked(army == White ? Black : White)) {
+        qDebug() << (army == White ? "BLACK" : "WHITE") << " IS CHECKED!" << endl;
+    }
+
+    if (m_rules->isCheckMated(army == White ? Black : White)) {
+        qDebug() << (army == White ? "BLACK" : "WHITE") << " IS CHECKMATED!" << endl;
+        endGame(CheckMate, army == White ? WhiteWins : BlackWins);
+    }
+
     return true;
 }
 
@@ -273,6 +283,16 @@ bool Game::remoteOrEngineMadeMove(Chess::Army army, Move move)
     }
 
     processMove(army, move);
+
+    if (m_rules->isChecked(army == White ? Black : White)) {
+        qDebug() << (army == White ? "BLACK" : "WHITE") << " IS CHECKED!" << endl;
+    }
+
+    if (m_rules->isCheckMated(army == White ? Black : White)) {
+        qDebug() << (army == White ? "BLACK" : "WHITE") << " IS CHECKMATED!" << endl;
+        endGame(CheckMate, army == White ? WhiteWins : BlackWins);
+    }
+
     return true;
 }
 

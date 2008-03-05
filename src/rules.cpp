@@ -55,7 +55,7 @@ BitBoard Rules::bitBoard(Chess::Army army, Chess::BoardType type) const
     case Moves:
         return m_armyMoveBoards.value(army);
     case Attacks:
-        return m_armyAttackBoards.value(army);
+        return m_armyMoveBoards.value(army) | m_armyAttackBoards.value(army);
     case Defends:
         return BitBoard();
     case DefendedBy:
@@ -161,10 +161,21 @@ bool Rules::isLegalMove(Chess::Army army, Move move) const
 
 bool Rules::isChecked(Chess::Army army) const
 {
-    if (army == White)
-        return !BitBoard(bitBoard(White) & bitBoard(King) & bitBoard(Black, Attacks)).isClear();
-    else
-        return !BitBoard(bitBoard(Black) & bitBoard(King) & bitBoard(White, Attacks)).isClear();
+    if (army == White) {
+        BitBoard b(bitBoard(White) & bitBoard(King) & bitBoard(Black, Attacks));
+        bool checked = !b.isClear();
+/*        qDebug() << "white king is checked" << (checked ? "true" : "false")
+                 << "\nwhite king" << BitBoard(bitBoard(White) & bitBoard(King))
+                 << "\nblack attacks" << bitBoard(Black, Attacks) << endl;*/
+        return checked;
+    } else {
+        BitBoard b(bitBoard(Black) & bitBoard(King) & bitBoard(White, Attacks));
+        bool checked = !b.isClear();
+/*        qDebug() << "black king is checked" << (checked ? "true" : "false")
+                 << "\nblack king" << BitBoard(bitBoard(Black) & bitBoard(King))
+                 << "\nwhite attacks" << bitBoard(White, Attacks) << endl;*/
+        return checked;
+    }
     return false;
 }
 
@@ -179,27 +190,38 @@ bool Rules::isCheckMated(Chess::Army army) const
     else
         square = BitBoard(bitBoard(Black) & bitBoard(King)).occupiedSquares().first();
 
-    BitBoard kingsMoves;
+    BitBoard moves;
     if (army == White)
-        kingsMoves = BitBoard(bitBoard(White, Moves) & bitBoard(White, Attacks));
+        moves = BitBoard(bitBoard(White, Moves) & bitBoard(White, Attacks));
     else
-        kingsMoves = BitBoard(bitBoard(Black, Moves) & bitBoard(Black, Attacks));
+        moves = BitBoard(bitBoard(Black, Moves) & bitBoard(Black, Attacks));
 
     BitBoard attackedBy = bitBoard(square, AttackedBy);
 
     //King can move to escape check??
+    BitBoard kingsMoves(bitBoard(army, Moves) & bitBoard(army, Attacks) &
+                        bitBoard(King, Moves) & bitBoard(King, Attacks));
     bool canMove = BitBoard(kingsMoves & bitBoard(army == White ? Black : White, Attacks)) != kingsMoves;
-    if (canMove)
+    if (canMove) {
+        qDebug() << "king can move to escape check!"
+                 << "\nmoves" << kingsMoves
+                 << "\nattacks" << bitBoard(army == White ? Black : White, Attacks)
+                 << endl;
         return false;
+    }
 
     //Only thing a king could do with multiple attackers is move to escape check so...
-    if (attackedBy.count(true) > 1)
+    if (attackedBy.count(true) > 1) {
+        qDebug() << "multiple attackers and king can't move!" << endl;
         return true;
+    }
 
     //A friendly piece can move to capture kings attacker??
     bool canCaptureAttacker = !BitBoard(bitBoard(army, Attacks) & attackedBy).isClear();
-    if (canCaptureAttacker)
+    if (canCaptureAttacker) {
+        qDebug() << "king can capture attacker!" << endl;
         return false;
+    }
 
     //Another piece can move to block attacker??
     Square attacker;
@@ -216,10 +238,13 @@ bool Rules::isCheckMated(Chess::Army army) const
     BitBoard rayOfAttack(squareList);
 
     bool canBlock = BitBoard(bitBoard(army, Moves) & rayOfAttack) != BitBoard(bitBoard(army, Moves));
-    if (canBlock)
-        return true;
+    if (canBlock) {
+        qDebug() << "can block attacker!" << endl;
+        return false;
+    }
 
-    return false;
+    qDebug() << "that's all folks..." << endl;
+    return true;
 }
 
 bool Rules::isUnderAttack(Piece piece) const

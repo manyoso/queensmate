@@ -79,3 +79,19 @@ int BitBoard::squareToBit(Square square) const
     int bit = (8 * r) - (8 - f) - 1;
     return bit;
 }
+
+QDebug operator<<(QDebug debug, const BitBoard &b) {
+    debug.nospace() << "\n";
+    for (int i = 7; i > -1; --i) {
+        debug.nospace() << "\n";
+        for (int j = 0; j < 8; ++j) {
+            Square square(j, i);
+            if (b.isSquareOccupied(square))
+                debug.nospace() << "1";
+            else
+                debug.nospace() << "0";
+        }
+    }
+
+    return debug.space();
+}
