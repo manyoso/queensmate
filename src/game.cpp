@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include <QDebug>
+#include <QStatusBar>
 #include <QStringList>
 #include <QInputDialog>
 
@@ -255,12 +256,14 @@ bool Game::localHumanMadeMove(Chess::Army army, Move move)
     processMove(army, move);
 
     if (m_rules->isChecked(army == White ? Black : White)) {
-        qDebug() << (army == White ? "BLACK" : "WHITE") << " IS CHECKED!" << endl;
+        qDebug() << (army == White ? "BLACK" : "WHITE") << "IS CHECKED!" << endl;
+        chessApp->showStatus(QString("%1: check!").arg((army == White ? "white" : "black")));
     }
 
     if (m_rules->isCheckMated(army == White ? Black : White)) {
-        qDebug() << (army == White ? "BLACK" : "WHITE") << " IS CHECKMATED!" << endl;
+        qDebug() << (army == White ? "BLACK" : "WHITE") << "IS CHECKMATED!" << endl;
         endGame(CheckMate, army == White ? WhiteWins : BlackWins);
+        chessApp->showStatus(QString("%1: checkmate!").arg((army == White ? "white" : "black")));
     }
 
     return true;
@@ -285,11 +288,13 @@ bool Game::remoteOrEngineMadeMove(Chess::Army army, Move move)
     processMove(army, move);
 
     if (m_rules->isChecked(army == White ? Black : White)) {
-        qDebug() << (army == White ? "BLACK" : "WHITE") << " IS CHECKED!" << endl;
+        qDebug() << (army == White ? "BLACK" : "WHITE") << "IS CHECKED!" << endl;
+        chessApp->showStatus(QString("%1: check!").arg((army == White ? "white" : "black")));
     }
 
     if (m_rules->isCheckMated(army == White ? Black : White)) {
-        qDebug() << (army == White ? "BLACK" : "WHITE") << " IS CHECKMATED!" << endl;
+        qDebug() << (army == White ? "BLACK" : "WHITE") << "IS CHECKMATED!" << endl;
+        chessApp->showStatus(QString("%1: checkmate!").arg((army == White ? "white" : "black")));
         endGame(CheckMate, army == White ? WhiteWins : BlackWins);
     }
 

@@ -223,6 +223,8 @@ bool Rules::isCheckMated(Chess::Army army) const
         return false;
     }
 
+    return false; //FIXME ASSERTS after this!!
+
     //Another piece can move to block attacker??
     Square attacker;
     for (int i = 0; i < 64; i++) {

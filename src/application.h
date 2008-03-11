@@ -18,6 +18,8 @@ public:
     Resource *resource() const { return m_resource; }
     MainWindow *mainWindow() const { return m_mainWindow; }
 
+    void showStatus(const QString &status, int timeout = 2 /*secs*/);
+
 private:
     Resource *m_resource;
     MainWindow *m_mainWindow;

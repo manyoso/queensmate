@@ -54,7 +54,6 @@ MainWindow::MainWindow(QWidget *parent)
     tabChanged(0);
 
     ui_toolBar->setVisible(false);
-    ui_statusBar->setVisible(false);
 
     QSettings settings;
     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();

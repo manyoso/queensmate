@@ -1,6 +1,7 @@
 #include "application.h"
 
 #include <QDebug>
+#include <QStatusBar>
 
 #include "resource.h"
 #include "mainwindow.h"
@@ -22,4 +23,9 @@ Application::Application(int &argc, char **argv)
 Application::~Application()
 {
     delete m_mainWindow;
+}
+
+void Application::showStatus(const QString &status, int timeout)
+{
+    mainWindow()->statusBar()->showMessage(status, timeout * 1000);
 }
