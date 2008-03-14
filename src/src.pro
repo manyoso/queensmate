@@ -1,6 +1,6 @@
 include($$PWD/../castle.pri)
 
-QT += gui network svg xml
+QT += gui network svg xml webkit
 
 TEMPLATE = app
 OBJECTS_DIR = tmp

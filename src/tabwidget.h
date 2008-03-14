@@ -20,6 +20,7 @@ Q_SIGNALS:
     void closeTab(int index);
 
 private Q_SLOTS:
+    void contextChanged(int index);
     void closeCurrentTab();
 
 private:

@@ -5,6 +5,8 @@
 
 #include "ui_mainwindow.h"
 
+class QWebView;
+
 class MainWindow : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
 public:
@@ -37,6 +39,9 @@ protected:
 private Q_SLOTS:
     void gameStateChanged();
     void tabChanged(int index);
+
+private:
+    QWebView *m_webView;
 };
 
 #endif

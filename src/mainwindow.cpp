@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include <QDebug>
+#include <QWebView>
 #include <QSettings>
 #include <QBoxLayout>
 #include <QCloseEvent>
@@ -50,7 +51,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
-    newScratchBoard();
+    m_webView = new QWebView(ui_tabWidget);
+    m_webView->load(QUrl("http://www.chessvibes.com"));
+    int i = ui_tabWidget->addTab(m_webView, tr("Main Page"));
+    ui_tabWidget->setCurrentIndex(i);
+
     tabChanged(0);
 
     ui_toolBar->setVisible(false);
