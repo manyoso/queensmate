@@ -56,6 +56,8 @@ Q_SIGNALS:
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void keyReleaseEvent(QKeyEvent *event);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
@@ -81,6 +83,7 @@ private:
     Square m_currentSquare;
     Chess::Army m_armyInFront;
     bool m_isMovesShown, m_isAttacksShown, m_isDefendsShown, m_isAttackedByShown, m_isDefendedByShown;
+    QHash<Square, QColor> m_squareBorders;
     friend class Borders;
 };
 

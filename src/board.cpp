@@ -283,15 +283,30 @@ void Board::changeTheme()
     dialog.exec();
 }
 
-void Board::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void Board::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    QGraphicsScene::mousePressEvent(event);
     BoardPiece *piece = qgraphicsitem_cast<BoardPiece*>(mouseGrabberItem());
     if (!piece)
         return;
 
+    m_squareBorders.clear();
+    m_squareBorders.insert(piece->square(), Qt::red);
+    m_borders->update();
+}
+
+void Board::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "mouseMoveEvent" << endl;
+    QGraphicsScene::mouseMoveEvent(event);
+}
+
+void Board::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    BoardPiece *piece = qgraphicsitem_cast<BoardPiece*>(mouseGrabberItem());
     QGraphicsScene::mouseReleaseEvent(event);
 
-    if (event->button() != Qt::LeftButton) {
+    if (!piece || event->button() != Qt::LeftButton) {
         return;
     }
 
@@ -316,8 +331,12 @@ void Board::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     move.setStart(Square(startF, startR));
     move.setEnd(Square(endF, endR));
 
+    m_squareBorders.insert(Square(endF, endR), Qt::red);
+    m_borders->update();
+
     if (!game()->localHumanMadeMove(piece->piece().army(), move)) {
         piece->setSquare(Square(startF, startR));
+        m_squareBorders.clear();
         return;
     }
 }
@@ -465,6 +484,22 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
             painter->drawText(painter->boundingRect(rect(), Qt::AlignCenter, c), Qt::AlignCenter, c);
             painter->restore();
         }
+    }
+
+    QHash<Square, QColor>::const_iterator it = m_board->m_squareBorders.begin();
+    for (; it != m_board->m_squareBorders.end(); ++it) {
+        BoardSquare *sq = m_board->m_squares.value(it.key().index());
+        QRectF r = sq->mapToScene(sq->boundingRect()).boundingRect();
+
+        painter->save();
+
+        QPen p(it.value());
+        p.setCosmetic(false);
+        p.setWidthF(0.1);
+        painter->setPen(p);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->drawRect(r);
+        painter->restore();
     }
 }
 

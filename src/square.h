@@ -22,6 +22,7 @@ private:
     int m_rank;
 };
 
+inline uint qHash(const Square &key) { return key.index(); }
 inline bool operator==(const Square &a, const Square &b) { return a.file() == b.file() && a.rank() == b.rank(); }
 inline bool operator!=(const Square &a, const Square &b) { return a.file() != b.file() || a.rank() != b.rank(); }
 
