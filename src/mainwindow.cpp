@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 
 #include <QDebug>
-#include <QWebView>
 #include <QSettings>
 #include <QBoxLayout>
 #include <QCloseEvent>
@@ -13,6 +12,8 @@
 #include "clock.h"
 #include "board.h"
 #include "player.h"
+#include "webpage.h"
+#include "webview.h"
 #include "gameview.h"
 #include "resource.h"
 #include "boardview.h"
@@ -51,9 +52,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
-    m_webView = new QWebView(ui_tabWidget);
-    m_webView->load(QUrl("http://www.chessvibes.com"));
-    int i = ui_tabWidget->addTab(m_webView, tr("Main Page"));
+    m_webView = new WebView(ui_tabWidget);
+    m_webPage = new WebPage(m_webView);
+    m_webView->setPage(m_webPage);
+    m_webView->load(chessApp->url());
+    int i = ui_tabWidget->addTab(m_webView, tr("Home"));
     ui_tabWidget->setCurrentIndex(i);
 
     tabChanged(0);

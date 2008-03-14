@@ -25,6 +25,11 @@ Application::~Application()
     delete m_mainWindow;
 }
 
+QUrl Application::url() const
+{
+    return QUrl("http://blog.magnuschess.com");
+}
+
 void Application::showStatus(const QString &status, int timeout)
 {
     mainWindow()->statusBar()->showMessage(status, timeout * 1000);

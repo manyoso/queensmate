@@ -55,7 +55,9 @@ SOURCES += \
     tableview.cpp \
     tabwidget.cpp \
     theme.cpp \
-    uciengine.cpp
+    uciengine.cpp \
+    webpage.cpp \
+    webview.cpp
 
 HEADERS += \
     aboutdialog.h \
@@ -89,7 +91,9 @@ HEADERS += \
     tableview.h \
     tabwidget.h \
     theme.h \
-    uciengine.h
+    uciengine.h \
+    webpage.h \
+    webview.h
 
 FORMS += \
     ui/aboutdialog.ui \

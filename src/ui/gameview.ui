@@ -342,7 +342,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>237</width>
+               <width>127</width>
                <height>487</height>
               </rect>
              </property>
@@ -355,12 +355,12 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>700</width>
-               <height>420</height>
+               <width>127</width>
+               <height>487</height>
               </rect>
              </property>
              <attribute name="title" >
-              <string>Inline</string>
+              <string>Notation</string>
              </attribute>
             </widget>
            </widget>

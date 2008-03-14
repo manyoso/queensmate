@@ -74,15 +74,7 @@ GameView::GameView(QWidget *parent, Game *game)
     if (Player *player = m_game->player(Black))
         ui_blackPlayer->setText(player->playerName());
 
-    if (!m_game->clock()->isUnlimited(White))
-        ui_whiteClock->setText(m_game->clock()->currentClock(White).toString("mm:ss"));
-    else
-        ui_whiteClock->setText(tr("Unlimited"));
-
-    if (!m_game->clock()->isUnlimited(Black))
-        ui_blackClock->setText(m_game->clock()->currentClock(Black).toString("mm:ss"));
-    else
-        ui_blackClock->setText(tr("Unlimited"));
+    tick();
 
     connect(m_game->clock(), SIGNAL(tick()), this, SLOT(tick()));
 
@@ -164,16 +156,19 @@ void GameView::end()
 void GameView::tick()
 {
 //     qDebug() << "tick" << endl;
-    if (!m_game->clock()->isUnlimited(White))
-        ui_whiteClock->setText(m_game->clock()->currentClock(White).toString("mm:ss"));
-    else
+    if (!m_game->clock()->isUnlimited(White)) {
+        QTime time = m_game->clock()->currentClock(White);
+        ui_whiteClock->setText(time.toString(time < QTime(1, 0, 0) ? "mm:ss" : "h:mm:ss"));
+    } else {
         ui_whiteClock->setText(tr("Unlimited"));
+    }
 
-    if (!m_game->clock()->isUnlimited(Black))
-        ui_blackClock->setText(m_game->clock()->currentClock(Black).toString("mm:ss"));
-    else
+    if (!m_game->clock()->isUnlimited(Black)) {
+        QTime time = m_game->clock()->currentClock(Black);
+        ui_blackClock->setText(time.toString(time < QTime(1, 0, 0) ? "mm:ss" : "h:mm:ss"));
+    } else {
         ui_blackClock->setText(tr("Unlimited"));
-
+    }
 }
 
 void GameView::gameStarted()

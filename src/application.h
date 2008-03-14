@@ -2,9 +2,10 @@
 #define APPLICATION_H
 
 #include <QApplication>
+#include <QUrl>
 
-class MainWindow;
 class Resource;
+class MainWindow;
 
 #define chessApp \
   (static_cast<Application*>(QCoreApplication::instance()))
@@ -15,9 +16,12 @@ public:
     Application(int &argc, char **argv);
     ~Application();
 
+    QUrl url() const;
+
     Resource *resource() const { return m_resource; }
     MainWindow *mainWindow() const { return m_mainWindow; }
 
+public Q_SLOTS:
     void showStatus(const QString &status, int timeout = 2 /*secs*/);
 
 private:

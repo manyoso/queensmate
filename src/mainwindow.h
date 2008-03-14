@@ -5,7 +5,8 @@
 
 #include "ui_mainwindow.h"
 
-class QWebView;
+class WebPage;
+class WebView;
 
 class MainWindow : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
@@ -41,7 +42,8 @@ private Q_SLOTS:
     void tabChanged(int index);
 
 private:
-    QWebView *m_webView;
+    WebPage *m_webPage;
+    WebView *m_webView;
 };
 
 #endif
