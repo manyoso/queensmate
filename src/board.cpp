@@ -404,7 +404,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->setPen(m_board->theme()->penForGrid());
 
     QList<QChar> files;
-    files << 'a' << 'b' << 'c' << 'd' << 'e' << 'f' << 'g' << 'h';
+    files << 'A' << 'B' << 'C' << 'D' << 'E' << 'F' << 'G' << 'H';
 
     QList<QChar> ranks;
     ranks << '1' << '2' << '3' << '4' << '5' << '6' << '7' << '8';
