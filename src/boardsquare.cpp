@@ -56,6 +56,7 @@ void BoardSquare::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void BoardSquare::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+/*    painter->setOpacity(0.5);*/
     QGraphicsRectItem::paint(painter, option, widget);
 }
 

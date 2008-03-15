@@ -62,6 +62,17 @@ Theme::Theme(QObject *parent)
 //     m_labelPen = QPen(Qt::black);
 //     m_borderPen = QPen(Qt::black);
 //     saveSquaresTheme("monge.castle");
+
+//     m_squareBrushes.insert(Light, QBrush(QPixmap(":textures/lightwood.png")));
+//     m_squareBrushes.insert(Dark, QBrush(QPixmap(":textures/darkwood.png")));
+//     m_squareBrushes.insert(Attack, QBrush(Qt::darkRed));
+//     m_squareBrushes.insert(Defense, QBrush(Qt::darkBlue));
+//     m_squareBrushes.insert(Move, QBrush(Qt::darkGreen));
+//     m_backgroundBrush = QBrush(QPixmap(":textures/backgroundwood.png"));
+//     m_gridPen = QPen(Qt::transparent);
+//     m_labelPen = QPen(Qt::white);
+//     m_borderPen = QPen(Qt::transparent);
+//     saveSquaresTheme("wood.castle");
 }
 
 Theme::~Theme()
@@ -170,10 +181,16 @@ QSvgRenderer *Theme::rendererForPiece(Chess::Army army, Chess::PieceType piece)
 
 QBrush Theme::brushForSquare(Theme::SquareType squareType)
 {
-    if (m_squareBrushes.contains(squareType))
+    if (m_squareBrushes.contains(squareType)) {
         return m_squareBrushes.value(squareType);
+    }
 
     return QBrush(Qt::transparent);
+}
+
+QBrush Theme::brushForBackground() const
+{
+    return m_backgroundBrush;
 }
 
 void Theme::parseSquaresTheme(const QString &theme)

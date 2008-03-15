@@ -25,5 +25,8 @@
         <file>icons/pieces/bb.png</file>
         <file>icons/pieces/bn.png</file>
         <file>icons/pieces/bp.png</file>
+        <file>textures/lightwood.png</file>
+        <file>textures/darkwood.png</file>
+        <file>textures/backgroundwood.png</file>
     </qresource>
 </RCC>

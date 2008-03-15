@@ -28,7 +28,7 @@ public:
     QSvgRenderer *rendererForPiece(Chess::Army army, Chess::PieceType piece);
     QBrush brushForSquare(Theme::SquareType squareType);
 
-    QBrush brushForBackground() const { return m_backgroundBrush; }
+    QBrush brushForBackground() const;
     QPen penForGrid() const { return m_gridPen; }
     QPen penForLabels() const { return m_labelPen; }
     QPen penForBorder() const { return m_borderPen; }
@@ -50,7 +50,7 @@ private:
     QHash<Chess::PieceType, QSvgRenderer*> m_whitePieces;
     QHash<Chess::PieceType, QSvgRenderer*> m_blackPieces;
     QHash<SquareType, QBrush> m_squareBrushes;
-    QBrush m_backgroundBrush;
+    mutable QBrush m_backgroundBrush;
     QPen m_gridPen;
     QPen m_labelPen;
     QPen m_borderPen;

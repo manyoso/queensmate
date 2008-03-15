@@ -290,6 +290,8 @@ void Board::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (!piece)
         return;
 
+    piece->setZValue(2.5);
+
     m_squareBorders.clear();
     m_squareBorders.insert(piece->square(), Qt::red);
     m_borders->update();
@@ -304,11 +306,14 @@ void Board::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void Board::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     BoardPiece *piece = qgraphicsitem_cast<BoardPiece*>(mouseGrabberItem());
+
     QGraphicsScene::mouseReleaseEvent(event);
 
     if (!piece || event->button() != Qt::LeftButton) {
         return;
     }
+
+    piece->setZValue(2);
 
     int startF = int(ceil(8 - (event->buttonDownScenePos(Qt::LeftButton).x() / SQUARE_SIZE))) - 1;
     int startR = int(ceil(8 - (event->buttonDownScenePos(Qt::LeftButton).y() / SQUARE_SIZE))) - 1;
