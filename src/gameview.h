@@ -34,6 +34,7 @@ private Q_SLOTS:
     void forward();
     void end();
     void tick();
+    void setClockActive(Chess::Army army);
     void gameStarted();
     void gameEnded();
 

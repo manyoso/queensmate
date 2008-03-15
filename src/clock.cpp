@@ -156,6 +156,7 @@ void Clock::startClock(Chess::Army army)
         m_started = true;
     }
 
+    emit onTheClock(m_army);
     emit tick();
 }
 

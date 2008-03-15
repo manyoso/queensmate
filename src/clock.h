@@ -39,6 +39,7 @@ public:
 Q_SIGNALS:
     void tick();
     void flagFell(Chess::Army army);
+    void onTheClock(Chess::Army army);
 
 private Q_SLOTS:
     void updateSignals();

@@ -23,7 +23,7 @@
 using namespace Chess;
 
 int ICON_SIZE = 32;
-int PLAYER_SIZE = 32;
+int PLAYER_SIZE = 16;
 
 GameView::GameView(QWidget *parent, Game *game)
     : QWidget(parent), m_game(game)
@@ -77,6 +77,7 @@ GameView::GameView(QWidget *parent, Game *game)
     tick();
 
     connect(m_game->clock(), SIGNAL(tick()), this, SLOT(tick()));
+    connect(m_game->clock(), SIGNAL(onTheClock(Chess::Army)), this, SLOT(setClockActive(Chess::Army)));
 
     m_captured = new Captured(ui_piecesBox, m_game);
     QHBoxLayout *piecesLayout = new QHBoxLayout(ui_piecesBox);
@@ -169,6 +170,12 @@ void GameView::tick()
     } else {
         ui_blackClock->setText(tr("Unlimited"));
     }
+}
+
+void GameView::setClockActive(Chess::Army army)
+{
+    ui_whitePlayersFrame->setFrameShadow(army == White ? QFrame::Sunken : QFrame::Raised);
+    ui_blackPlayersFrame->setFrameShadow(army == Black ? QFrame::Sunken : QFrame::Raised);
 }
 
 void GameView::gameStarted()

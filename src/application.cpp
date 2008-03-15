@@ -27,7 +27,7 @@ Application::~Application()
 
 QUrl Application::url() const
 {
-    return QUrl("http://blog.magnuschess.com");
+    return QUrl("http://www.chessvibes.com");
 }
 
 void Application::showStatus(const QString &status, int timeout)
