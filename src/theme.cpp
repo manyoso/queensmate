@@ -15,8 +15,8 @@ Theme::Theme(QObject *parent)
 
     QSettings settings;
     settings.beginGroup("Themes");
-    setPiecesTheme(settings.value("piecesTheme", "default").toString());
-    setSquaresTheme(settings.value("squaresTheme", "default").toString());
+    setPiecesTheme(settings.value("piecesTheme", "simple").toString());
+    setSquaresTheme(settings.value("squaresTheme", "wood").toString());
     settings.endGroup();
 
 //     m_squareBrushes.insert(Light, QBrush(QColor(Qt::yellow).lighter()));
@@ -73,6 +73,19 @@ Theme::Theme(QObject *parent)
 //     m_labelPen = QPen(Qt::white);
 //     m_borderPen = QPen(Qt::transparent);
 //     saveSquaresTheme("wood.castle");
+
+//     m_squareBrushes.insert(Light, QBrush(QPixmap(":textures/lightmat.png")));
+//     m_squareBrushes.insert(Dark, QBrush(QPixmap(":textures/darkmat.png")));
+//     m_squareBrushes.insert(Attack, QBrush(Qt::darkRed));
+//     m_squareBrushes.insert(Defense, QBrush(Qt::darkBlue));
+//     m_squareBrushes.insert(Move, QBrush(Qt::darkGreen));
+//     m_backgroundBrush = QBrush(QPixmap(":textures/lightmat.png"));
+//     m_gridPen = QPen(Qt::transparent);
+//     m_labelPen = QPen(QColor(24, 94, 60));
+//     m_borderPen = QPen(QColor(24, 94, 60));
+//     m_borderPen.setCosmetic(false);
+//     m_borderPen.setWidthF(0.1);
+//     saveSquaresTheme("greenmat.castle");
 }
 
 Theme::~Theme()

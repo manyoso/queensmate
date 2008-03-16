@@ -52,14 +52,31 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
+    //begin web...
     m_webView = new WebView(ui_tabWidget);
-    m_webPage = new WebPage(m_webView);
-    m_webView->setPage(m_webPage);
-    m_webView->load(chessApp->url());
+
+    QFile about(":/html/about.html");
+    Q_ASSERT(about.open(QIODevice::ReadOnly | QIODevice::Text));
+    m_aboutPage = new WebPage(m_webView);
+    m_aboutPage->mainFrame()->setHtml(about.readAll());
+    m_webView->setPage(m_aboutPage);
+
+    m_mainPage = new WebPage(m_webView);
+    connect(m_mainPage->mainFrame(), SIGNAL(initialLayoutCompleted()), this, SLOT(mainPageLayoutCompleted()));
+    m_mainPage->mainFrame()->load(chessApp->url());
+
+    connect(m_mainPage->mainFrame(), SIGNAL(loadStarted()),
+            m_webView->progressBar(), SLOT(startLoad()));
+    connect(m_mainPage, SIGNAL(loadProgress(int)),
+            m_webView->progressBar(), SLOT(changeLoad(int)));
+    connect(m_mainPage->mainFrame(), SIGNAL(loadFinished()),
+            m_webView->progressBar(), SLOT(endLoad()));
+
     int i = ui_tabWidget->addTab(m_webView, tr("Home"));
     ui_tabWidget->setCurrentIndex(i);
 
     tabChanged(0);
+    //end web...
 
     ui_toolBar->setVisible(false);
 
@@ -343,4 +360,9 @@ void MainWindow::tabChanged(int index)
     ui_actionResign->setEnabled(scratchView != 0 ? false : ui_actionResign->isEnabled());
     ui_actionConvertToScratchBoard->setEnabled(scratchView != 0 ? false : ui_actionConvertToScratchBoard->isEnabled());
     ui_actionRestart->setEnabled(scratchView != 0 ? true : ui_actionRestart->isEnabled());
+}
+
+void MainWindow::mainPageLayoutCompleted()
+{
+    //m_webView->setPage(m_mainPage);
 }

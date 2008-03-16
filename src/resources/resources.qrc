@@ -28,5 +28,8 @@
         <file>textures/lightwood.png</file>
         <file>textures/darkwood.png</file>
         <file>textures/backgroundwood.png</file>
+        <file>textures/lightmat.png</file>
+        <file>textures/darkmat.png</file>
+        <file>html/about.html</file>
     </qresource>
 </RCC>

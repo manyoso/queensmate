@@ -40,9 +40,11 @@ protected:
 private Q_SLOTS:
     void gameStateChanged();
     void tabChanged(int index);
+    void mainPageLayoutCompleted();
 
 private:
-    WebPage *m_webPage;
+    WebPage *m_aboutPage;
+    WebPage *m_mainPage;
     WebView *m_webView;
 };
 

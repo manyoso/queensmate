@@ -11,6 +11,7 @@ Application::Application(int &argc, char **argv)
 {
     QCoreApplication::setOrganizationDomain("castle");
     QCoreApplication::setApplicationName("castle");
+    QCoreApplication::setApplicationVersion("0.1");
 
     setWindowIcon(QIcon(":icons/application.png"));
 
@@ -27,7 +28,7 @@ Application::~Application()
 
 QUrl Application::url() const
 {
-    return QUrl("http://www.chessvibes.com");
+    return QUrl("http://www.queensmate.com");
 }
 
 void Application::showStatus(const QString &status, int timeout)

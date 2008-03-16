@@ -491,6 +491,12 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
         }
     }
 
+    painter->save();
+    painter->setPen(m_board->theme()->penForBorder());
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->drawRect(m_board->sceneRect().adjusted(BORDER_SIZE, BORDER_SIZE, -BORDER_SIZE, -BORDER_SIZE));
+    painter->restore();
+
     QHash<Square, QColor>::const_iterator it = m_board->m_squareBorders.begin();
     for (; it != m_board->m_squareBorders.end(); ++it) {
         BoardSquare *sq = m_board->m_squares.value(it.key().index());
