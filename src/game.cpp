@@ -89,9 +89,9 @@ int Game::position() const
 void Game::setPosition(int index)
 {
     if (m_mapOfFen.contains(index)) {
-        setFen(m_mapOfFen.value(index));
         int oldIndex = m_index;
         m_index = index;
+        setFen(m_mapOfFen.value(index));
         emit positionChanged(oldIndex, m_index);
     }
 }
@@ -254,18 +254,6 @@ bool Game::localHumanMadeMove(Chess::Army army, Move move)
         return false;
 
     processMove(army, move);
-
-    if (m_rules->isChecked(army == White ? Black : White)) {
-        qDebug() << (army == White ? "BLACK" : "WHITE") << "IS CHECKED!" << endl;
-        chessApp->showStatus(QString("%1: check!").arg((army == White ? "white" : "black")));
-    }
-
-    if (m_rules->isCheckMated(army == White ? Black : White)) {
-        qDebug() << (army == White ? "BLACK" : "WHITE") << "IS CHECKMATED!" << endl;
-        endGame(CheckMate, army == White ? WhiteWins : BlackWins);
-        chessApp->showStatus(QString("%1: checkmate!").arg((army == White ? "white" : "black")));
-    }
-
     return true;
 }
 
@@ -286,18 +274,6 @@ bool Game::remoteOrEngineMadeMove(Chess::Army army, Move move)
     }
 
     processMove(army, move);
-
-    if (m_rules->isChecked(army == White ? Black : White)) {
-        qDebug() << (army == White ? "BLACK" : "WHITE") << "IS CHECKED!" << endl;
-        chessApp->showStatus(QString("%1: check!").arg((army == White ? "white" : "black")));
-    }
-
-    if (m_rules->isCheckMated(army == White ? Black : White)) {
-        qDebug() << (army == White ? "BLACK" : "WHITE") << "IS CHECKMATED!" << endl;
-        chessApp->showStatus(QString("%1: checkmate!").arg((army == White ? "white" : "black")));
-        endGame(CheckMate, army == White ? WhiteWins : BlackWins);
-    }
-
     return true;
 }
 
@@ -307,8 +283,6 @@ void Game::processMove(Chess::Army army, Move move)
 
     if (army == White) {
         qDebug() << "white moved" << Notation::moveToString(move, Chess::Computer) << endl;
-
-        m_moves->addMove(fullMoveNumber(), army, move);
 
         if (move.piece() == King) {
             m_rules->setCastleAvailable(White, KingSide, false);
@@ -358,10 +332,6 @@ void Game::processMove(Chess::Army army, Move move)
     } else if (army == Black) {
         qDebug() << "black moved" << Notation::moveToString(move, Chess::Computer) << endl;
 
-        m_moves->addMove(fullMoveNumber(), army, move);
-
-        setFullMoveNumber(fullMoveNumber() + 1);
-
         if (move.piece() == King) {
             m_rules->setCastleAvailable(Black, KingSide, false);
             m_rules->setCastleAvailable(Black, QueenSide, false);
@@ -409,7 +379,16 @@ void Game::processMove(Chess::Army army, Move move)
             m_blackPieces.insert(end, Piece(Black, move.piece(), move.end()));
     }
 
-    emit pieceMoved();
+    emit pieceMoved(); //rules and bitboards are processed here...
+
+    bool check = m_rules->isChecked(army == White ? Black : White);
+    bool checkMate = m_rules->isCheckMated(army == White ? Black : White);
+    move.setCheck(check);
+    move.setCheckMate(checkMate);
+
+    m_moves->addMove(fullMoveNumber(), army, move);
+    if (army == Black)
+        setFullMoveNumber(fullMoveNumber() + 1);
 
     m_activeArmy = m_activeArmy == White ? Black : White;
 
@@ -419,6 +398,9 @@ void Game::processMove(Chess::Army army, Move move)
     m_mapOfFen.insert(m_index, fen);
     setFen(fen);
     emit positionChanged(oldIndex, m_index);
+
+    if (checkMate)
+        endGame(CheckMate, army == White ? WhiteWins : BlackWins);
 
     m_clock->startClock(m_activeArmy);
 

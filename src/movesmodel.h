@@ -22,6 +22,7 @@ public:
     virtual QVariant data(int role = Qt::UserRole + 1) const;
     virtual void setData(const QVariant &value, int role = Qt::UserRole + 1);
 
+    Move move() const;
     void setMove(Move move);
 
 private:
@@ -35,6 +36,8 @@ public:
     ~MovesModel();
 
     Game *game() const { return qobject_cast<Game*>(parent()); }
+
+    MoveItem *lastMove() const;
 
     void addMove(int fullMoveNumber, Chess::Army army, Move move);
 

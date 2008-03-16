@@ -51,7 +51,7 @@ QVariant MoveItem::data(int role) const
 //                      << endl;
 
             if (pos != -1 && r == row() && c == column()) {
-//                 qDebug() << "returning red" << endl;
+//                 qDebug() << "returning highlight" << endl;
                 return QApplication::palette().link();
             }
         }
@@ -75,6 +75,11 @@ void MoveItem::setData(const QVariant &value, int role)
 
         model()->game()->localHumanMadeMove((column() == 0 ? White : Black), move);
     }
+}
+
+Move MoveItem::move() const
+{
+    return m_move;
 }
 
 void MoveItem::setMove(Move move)
@@ -102,6 +107,18 @@ MovesModel::MovesModel(Game *game)
 
 MovesModel::~MovesModel()
 {
+}
+
+MoveItem *MovesModel::lastMove() const
+{
+    int pos = game()->position() - 1;
+    int r = pos / 2;
+    int c = pos % 2 ? 1 : 0;
+
+    if (pos != -1) {
+        return static_cast<MoveItem*>(item(r, c));
+    }
+    return 0;
 }
 
 void MovesModel::addMove(int fullMoveNumber, Chess::Army army, Move move)
@@ -166,5 +183,4 @@ void MovesModel::positionChanged(int oldIndex, int newIndex)
             emit dataChanged(index, index);
         }
     }
-
 }

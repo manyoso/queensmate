@@ -16,9 +16,11 @@
 #include "chess.h"
 #include "notation.h"
 #include "bitboard.h"
+#include "movesmodel.h"
 #include "boardpiece.h"
 #include "boardsquare.h"
 #include "changetheme.h"
+#include "application.h"
 
 using namespace Chess;
 
@@ -129,6 +131,27 @@ void Board::resetBoard()
     PieceList::ConstIterator it2 = blackPieces.begin();
     for (; it2 != blackPieces.end(); ++it2) {
         addItem(new BoardPiece(this, (*it2), QSizeF(SQUARE_SIZE, SQUARE_SIZE)));
+    }
+
+    MoveItem *move = game()->moves()->lastMove();
+    if (!move) {
+        m_squareBorders.clear();
+        return;
+    }
+
+    m_squareBorders.clear();
+    m_squareBorders.insert(move->move().start(), Qt::red);
+    m_squareBorders.insert(move->move().end(), Qt::red);
+    m_borders->update();
+
+    if (move->move().isCheck()) {
+        qDebug() << (game()->activeArmy() == White ? "WHITE" : "BLACK") << "IS CHECKED!" << endl;
+        chessApp->showStatus(QString("%1: check!").arg((game()->activeArmy() == White ? "black" : "white")));
+    }
+
+    if (move->move().isCheckMate()) {
+        qDebug() << (game()->activeArmy() == White ? "WHITE" : "BLACK") << "IS CHECKMATED!" << endl;
+        chessApp->showStatus(QString("%1: checkmate!").arg((game()->activeArmy() == White ? "black" : "white")));
     }
 }
 
@@ -299,7 +322,6 @@ void Board::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void Board::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "mouseMoveEvent" << endl;
     QGraphicsScene::mouseMoveEvent(event);
 }
 
@@ -499,7 +521,15 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 
     QHash<Square, QColor>::const_iterator it = m_board->m_squareBorders.begin();
     for (; it != m_board->m_squareBorders.end(); ++it) {
-        BoardSquare *sq = m_board->m_squares.value(it.key().index());
+
+        int index = it.key().index();
+        if (m_board->armyInFront() == Black) {
+            Square s = it.key();
+            Square inverted(7 - s.file(), 7 - s.rank());
+            index = inverted.index();
+        }
+
+        BoardSquare *sq = m_board->m_squares.value(index);
         QRectF r = sq->mapToScene(sq->boundingRect()).boundingRect();
 
         painter->save();
