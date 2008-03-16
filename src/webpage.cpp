@@ -1,6 +1,7 @@
 #include "webpage.h"
 
 #include <QDebug>
+#include <QTimer>
 #include <QNetworkRequest>
 #include <QDesktopServices>
 
@@ -68,5 +69,5 @@ void WebPage::handleQuery(const QueryItemList &list)
 {
     Q_UNUSED(list);
 //    qDebug() << "handleQuery" << list << endl;
-    chessApp->mainWindow()->newGame();
+    QTimer::singleShot(0, chessApp->mainWindow(), SLOT(newGame()));
 }

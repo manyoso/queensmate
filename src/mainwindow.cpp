@@ -364,5 +364,5 @@ void MainWindow::tabChanged(int index)
 
 void MainWindow::mainPageLayoutCompleted()
 {
-    //m_webView->setPage(m_mainPage);
+    m_webView->setPage(m_mainPage);
 }
