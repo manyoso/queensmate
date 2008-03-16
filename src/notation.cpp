@@ -61,6 +61,8 @@ QString Notation::moveToString(Move move, Chess::NotationType notation)
         {
             QChar piece = pieceToChar(move.piece(), notation);
             QChar capture = move.isCapture() ? 'x' : QChar();
+            QChar check = move.isCheck() ? '+' : QChar();
+            QChar checkMate = move.isCheckMate() ? '#' : QChar();
             QString square = squareToString(move.end(), notation);
             if (!piece.isNull())
                 str += piece;
@@ -68,6 +70,11 @@ QString Notation::moveToString(Move move, Chess::NotationType notation)
                 str += capture;
 
             str += square;
+
+            if (!checkMate.isNull())
+                str += checkMate;
+            else if (!check.isNull())
+                str += check;
             break;
         }
     case Long:

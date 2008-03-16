@@ -300,6 +300,7 @@ void Game::processMove(Chess::Army army, Move move)
         int end = move.end().index();
 
         bool capture = m_blackPieces.contains(end);
+        move.setCapture(capture);
         if (capture) {
             Piece piece = m_blackPieces.take(end);
             m_blackCapturedPieces << piece;
@@ -348,6 +349,7 @@ void Game::processMove(Chess::Army army, Move move)
         int end = move.end().index();
 
         bool capture = m_whitePieces.contains(end);
+        move.setCapture(capture);
         if (capture) {
             Piece piece = m_whitePieces.take(end);
             m_whiteCapturedPieces << piece;

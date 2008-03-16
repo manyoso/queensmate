@@ -144,15 +144,10 @@ void Board::resetBoard()
     m_squareBorders.insert(move->move().end(), Qt::red);
     m_borders->update();
 
-    if (move->move().isCheck()) {
-        qDebug() << (game()->activeArmy() == White ? "WHITE" : "BLACK") << "IS CHECKED!" << endl;
-        chessApp->showStatus(QString("%1: check!").arg((game()->activeArmy() == White ? "black" : "white")));
-    }
-
-    if (move->move().isCheckMate()) {
-        qDebug() << (game()->activeArmy() == White ? "WHITE" : "BLACK") << "IS CHECKMATED!" << endl;
-        chessApp->showStatus(QString("%1: checkmate!").arg((game()->activeArmy() == White ? "black" : "white")));
-    }
+    QString status = QString("%1. %2%3").arg(QString::number(game()->fullMoveNumber()))
+                                        .arg(game()->activeArmy() == White ? "... " : "")
+                                        .arg(Notation::moveToString(move->move()));
+    chessApp->showStatus(status, 0);
 }
 
 void Board::resetSquares()
