@@ -64,17 +64,37 @@ QString Notation::moveToString(Move move, Chess::NotationType notation)
             QChar check = move.isCheck() ? '+' : QChar();
             QChar checkMate = move.isCheckMate() ? '#' : QChar();
             QString square = squareToString(move.end(), notation);
-            if (!piece.isNull())
+
+            if (!piece.isNull()) {
                 str += piece;
-            if (!capture.isNull())
+            }
+
+            if (!capture.isNull()) {
+                if (move.piece() == Pawn) {
+                    str += fileToChar(move.start().file());
+                }
                 str += capture;
+            }
 
             str += square;
 
-            if (!checkMate.isNull())
+            if (move.promotion() != Unknown) {
+                str += QString("=%1").arg(pieceToChar(move.promotion()));
+            }
+
+            if (!checkMate.isNull()) {
                 str += checkMate;
-            else if (!check.isNull())
+            } else if (!check.isNull()) {
                 str += check;
+            }
+
+            if (move.isCastle()) {
+                if (move.isKingSideCastle())
+                    str = "O-O";
+                else if (move.isQueenSideCastle())
+                    str = "O-O-O";
+            }
+
             break;
         }
     case Long:
@@ -115,19 +135,14 @@ Square Notation::stringToSquare(const QString &string, Chess::NotationType notat
     int file;
     int rank;
 
-    QList<QChar> files;
-    files << 'a' << 'b' << 'c' << 'd' << 'e' << 'f' << 'g' << 'h';
-    QList<QChar> ranks;
-    ranks << '1' << '2' << '3' << '4' << '5' << '6' << '7' << '8';
-
     switch (notation) {
     case Standard:
     case Long:
     case Computer:
         {
             Q_ASSERT(string.size() == 2);
-            file = files.indexOf(string.at(0));
-            rank = ranks.indexOf(string.at(1));
+            file = charToFile(string.at(0), notation, ok, err);
+            rank = charToRank(string.at(1), notation, ok, err);
             break;
         }
     default:
@@ -144,17 +159,12 @@ QString Notation::squareToString(Square square, Chess::NotationType notation)
 
     QString str;
 
-    QList<QChar> files;
-    files << 'a' << 'b' << 'c' << 'd' << 'e' << 'f' << 'g' << 'h';
-    QList<QChar> ranks;
-    ranks << '1' << '2' << '3' << '4' << '5' << '6' << '7' << '8';
-
     switch (notation) {
     case Standard:
     case Long:
     case Computer:
         {
-            str = QString("%1%2").arg(files.at(square.file())).arg(ranks.at(square.rank()));
+            str = QString("%1%2").arg(fileToChar(square.file())).arg(rankToChar(square.rank()));
             break;
         }
     default:
@@ -209,6 +219,110 @@ QChar Notation::pieceToChar(Chess::PieceType piece, Chess::NotationType notation
             ch = pieces.at(piece);
             if (ch == 'P')
                 ch = QChar();
+            break;
+        }
+    default:
+        break;
+    }
+
+    return ch;
+}
+
+int Notation::charToFile(const QChar &ch, Chess::NotationType notation, bool *ok, QString *err)
+{
+    //FIXME
+    Q_UNUSED(ok);
+    Q_UNUSED(err);
+
+    int file;
+
+    QList<QChar> files;
+    files << 'a' << 'b' << 'c' << 'd' << 'e' << 'f' << 'g' << 'h';
+
+    switch (notation) {
+    case Standard:
+    case Long:
+    case Computer:
+        {
+            if (files.contains(ch.toLower())) {
+                file = files.indexOf(ch.toLower());
+            } else {
+                file = -1;
+            }
+            break;
+        }
+    default:
+        break;
+    }
+
+    return file;
+}
+
+QChar Notation::fileToChar(int file, Chess::NotationType notation)
+{
+    QChar ch;
+
+    QList<QChar> files;
+    files << 'a' << 'b' << 'c' << 'd' << 'e' << 'f' << 'g' << 'h';
+
+    switch (notation) {
+    case Standard:
+    case Long:
+    case Computer:
+        {
+            ch = files.at(file);
+            break;
+        }
+    default:
+        break;
+    }
+
+    return ch;
+}
+
+int Notation::charToRank(const QChar &ch, Chess::NotationType notation, bool *ok, QString *err)
+{
+    //FIXME
+    Q_UNUSED(ok);
+    Q_UNUSED(err);
+
+    int rank;
+
+    QList<QChar> ranks;
+    ranks << '1' << '2' << '3' << '4' << '5' << '6' << '7' << '8';
+
+    switch (notation) {
+    case Standard:
+    case Long:
+    case Computer:
+        {
+            if (ranks.contains(ch.toLower())) {
+                rank = ranks.indexOf(ch.toLower());
+            } else {
+                rank = -1;
+            }
+            break;
+        }
+    default:
+        break;
+    }
+
+    return rank;
+}
+
+QChar Notation::rankToChar(int rank, Chess::NotationType notation)
+{
+    QChar ch;
+
+    QList<QChar> ranks;
+    ranks << '1' << '2' << '3' << '4' << '5' << '6' << '7' << '8';
+
+    switch (notation) {
+    case Standard:
+    case Long:
+    case Computer:
+        {
+            ch = ranks.at(rank);
             break;
         }
     default:

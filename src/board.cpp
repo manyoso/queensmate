@@ -425,12 +425,6 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 
     painter->setPen(m_board->theme()->penForGrid());
 
-    QList<QChar> files;
-    files << 'A' << 'B' << 'C' << 'D' << 'E' << 'F' << 'G' << 'H';
-
-    QList<QChar> ranks;
-    ranks << '1' << '2' << '3' << '4' << '5' << '6' << '7' << '8';
-
     for (int i = 0; i < 64; i++) {
         BoardSquare *sq = m_board->m_squares.value(i);
         int file = sq->square().file();
@@ -443,7 +437,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
             painter->save();
             painter->setPen(m_board->theme()->penForLabels());
 
-            QChar c = m_board->armyInFront() == White ? ranks.at(rank) : ranks.at(7 - rank);
+            QChar c = m_board->armyInFront() == White ? Notation::rankToChar(rank) : Notation::rankToChar(7 - rank);
 
             QRectF to = r;
             to.setTop(r.top() + ((SQUARE_SIZE - LETTER_HEIGHT) / 2.0));
@@ -460,7 +454,7 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
             painter->save();
             painter->setPen(m_board->theme()->penForLabels());
 
-            QChar c = m_board->armyInFront() == White ? ranks.at(rank) : ranks.at(7 - rank);
+            QChar c = m_board->armyInFront() == White ? Notation::rankToChar(rank) : Notation::rankToChar(7 - rank);
 
             QRectF to = r;
             to.setTop(r.top() + ((SQUARE_SIZE - LETTER_HEIGHT) / 2.0));
@@ -477,7 +471,8 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
             painter->save();
             painter->setPen(m_board->theme()->penForLabels());
 
-            QChar c = m_board->armyInFront() == White ? files.at(file) : files.at(7 - file);
+            QChar c = m_board->armyInFront() == White ? Notation::fileToChar(file) : Notation::fileToChar(7 - file);
+            c = c.toUpper();
 
             QRectF to = r;
             to.setTop(r.bottom() + ((BORDER_SIZE - LETTER_HEIGHT) / 2.0));
@@ -494,7 +489,8 @@ void Borders::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
             painter->save();
             painter->setPen(m_board->theme()->penForLabels());
 
-            QChar c = m_board->armyInFront() == White ? files.at(file) : files.at(7 - file);
+            QChar c = m_board->armyInFront() == White ? Notation::fileToChar(file) : Notation::fileToChar(7 - file);
+            c = c.toUpper();
 
             QRectF to = r;
             to.setTop(rect().top() + ((BORDER_SIZE - LETTER_HEIGHT) / 2.0));

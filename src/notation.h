@@ -30,6 +30,12 @@ public:
     static Chess::PieceType charToPiece(const QChar &ch, Chess::NotationType notation = Chess::Standard, bool *ok = 0, QString *err = 0);
     static QChar pieceToChar(Chess::PieceType piece, Chess::NotationType notation = Chess::Standard);
 
+    static int charToFile(const QChar &ch, Chess::NotationType notation = Chess::Standard, bool *ok = 0, QString *err = 0);
+    static QChar fileToChar(int file, Chess::NotationType notation = Chess::Standard);
+
+    static int charToRank(const QChar &ch, Chess::NotationType notation = Chess::Standard, bool *ok = 0, QString *err = 0);
+    static QChar rankToChar(int rank, Chess::NotationType notation = Chess::Standard);
+
 private:
     Notation();
     ~Notation();

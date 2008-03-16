@@ -633,18 +633,15 @@ QString Game::stateOfGameToFen() const
     QString ranks = rankList.join("/");
     QString activeArmy = (m_activeArmy == White ? QLatin1String("w") : QLatin1String("b"));
 
-    QList<QChar> files;
-    files << 'a' << 'b' << 'c' << 'd' << 'e' << 'f' << 'g' << 'h';
-
     QString castling;
     if (m_rules->isCastleAvailable(White, KingSide))
-        isChess960() ? castling.append(files.at(m_fileOfKingsRook).toUpper()) : castling.append("K");
+        isChess960() ? castling.append(Notation::fileToChar(m_fileOfKingsRook).toUpper()) : castling.append("K");
     if (m_rules->isCastleAvailable(White, QueenSide))
-        isChess960() ? castling.append(files.at(m_fileOfQueensRook).toUpper()) : castling.append("Q");
+        isChess960() ? castling.append(Notation::fileToChar(m_fileOfQueensRook).toUpper()) : castling.append("Q");
     if (m_rules->isCastleAvailable(Black, KingSide))
-        isChess960() ? castling.append(files.at(m_fileOfKingsRook)) : castling.append("k");
+        isChess960() ? castling.append(Notation::fileToChar(m_fileOfKingsRook)) : castling.append("k");
     if (m_rules->isCastleAvailable(Black, QueenSide))
-        isChess960() ? castling.append(files.at(m_fileOfQueensRook)) : castling.append("q");
+        isChess960() ? castling.append(Notation::fileToChar(m_fileOfQueensRook)) : castling.append("q");
     if (castling.isEmpty())
         castling.append("-");
 
