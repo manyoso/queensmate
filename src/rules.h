@@ -39,6 +39,7 @@ public:
 private Q_SLOTS:
     void refreshPositionBoards();
     void refreshMoveAndAttackBoards();
+    void refreshCastleBoards();
     void refreshBoards();
 
 private:

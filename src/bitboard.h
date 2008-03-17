@@ -10,6 +10,7 @@
 class BitBoard : public QBitArray {
 public:
     BitBoard();
+    BitBoard(const Square &square);
     BitBoard(const SquareList &squareList);
     BitBoard(const QBitArray &other);
     ~BitBoard();

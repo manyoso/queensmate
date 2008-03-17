@@ -81,6 +81,9 @@ public:
     bool localHumanMadeMove(Chess::Army army, Move move);
     bool remoteOrEngineMadeMove(Chess::Army army, Move move);
 
+    int fileOfKingsRook() const { return m_fileOfKingsRook; }
+    int fileOfQueensRook() const { return m_fileOfQueensRook; }
+
     Rules *rules() const { return m_rules; }
     Clock *clock() const { return m_clock; }
     MovesModel *moves() const { return m_moves; }

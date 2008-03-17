@@ -9,6 +9,12 @@ BitBoard::BitBoard()
 {
 }
 
+BitBoard::BitBoard(const Square &square)
+    : QBitArray(64)
+{
+    setSquare(square);
+}
+
 BitBoard::BitBoard(const SquareList &squareList)
     : QBitArray(64)
 {

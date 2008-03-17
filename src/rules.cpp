@@ -16,25 +16,6 @@ Rules::Rules(Game *parent)
       m_hasWhiteQueenCastle(false),
       m_hasBlackQueenCastle(false)
 {
-    QStringList kingCastle;
-    kingCastle << "e1" << "f1" << "g1" << "h1";
-    kingCastle << "e8" << "f8" << "g8" << "h8";
-    QStringList queenCastle;
-    queenCastle << "a1" << "b1" << "c1" << "d1" << "e1";
-    queenCastle << "a8" << "b8" << "c8" << "d8" << "e8";
-
-    SquareList kc;
-    foreach (QString square, kingCastle) {
-        kc << Notation::stringToSquare(square);
-    }
-    SquareList qc;
-    foreach (QString square, queenCastle) {
-        qc << Notation::stringToSquare(square);
-    }
-
-    m_castleBoards.insert(KingSide, BitBoard(kc));
-    m_castleBoards.insert(QueenSide, BitBoard(qc));
-
     connect(parent, SIGNAL(pieceMoved()), this, SLOT(refreshBoards()));
 }
 
@@ -147,27 +128,25 @@ bool Rules::isLegalMove(Chess::Army army, Move move) const
     }
 
     if (move.isCastle()) {
-        if (isCastleLegal(army, KingSide)) {
-            if (army == White && move.isKingSideCastle()) {
+        if (move.isKingSideCastle() && isCastleLegal(army, KingSide)) {
+            if (army == White) {
                 if (move.piece() == King && move.end() == Square(6, 0) /*g1*/)
                     return true;
                 else if (move.piece() == Rook && move.end() == Square(5, 0) /*f1*/)
                     return true;
-            } else if (army == Black && move.isKingSideCastle()) {
+            } else if (army == Black) {
                 if (move.piece() == King && move.end() == Square(6, 7) /*g8*/)
                     return true;
                 else if (move.piece() == Rook && move.end() == Square(5, 7) /*f8*/)
                     return true;
             }
-        }
-
-        if (isCastleLegal(army, QueenSide)) {
-            if (army == White && move.isQueenSideCastle()) {
+        } else if (move.isQueenSideCastle() && isCastleLegal(army, QueenSide)) {
+            if (army == White) {
                 if (move.piece() == King && move.end() == Square(2, 0) /*c1*/)
                     return true;
                 else if (move.piece() == Rook && move.end() == Square(3, 0) /*d1*/)
                     return true;
-            } else if (army == Black && move.isQueenSideCastle()) {
+            } else if (army == Black) {
                 if (move.piece() == King && move.end() == Square(2, 7) /*c8*/)
                     return true;
                 else if (move.piece() == Rook && move.end() == Square(3, 7) /*d8*/)
@@ -277,12 +256,29 @@ bool Rules::isUnderAttack(Piece piece) const
 bool Rules::isCastleLegal(Chess::Army army, Chess::Castle castle) const
 {
     //Check if castle is available... ie, if neither king nor rook(s) have moved...
-    if (!isCastleAvailable(army, castle))
+    if (!isCastleAvailable(army, castle)) {
+        qDebug() << "castle is unavailable!" << endl;
         return false;
+    }
 
-    //FIXME
-    //Check if under attack...
+    BitBoard castleBoard = bitBoard(army, castle);
+
+    //Check if all squares between king and rook(s) are under attack...
+    if (!BitBoard(castleBoard & bitBoard(army == White ? Black : White, Attacks)).isClear()) {
+        qDebug() << "square is under attack!" << endl;
+        return false;
+    }
+
     //Check if all squares between king and rook(s) are unoccupied by anything other than king or rook...
+    BitBoard kingBoard(bitBoard(King) & bitBoard(army));
+    BitBoard rookBoard(Square(castle == KingSide ? game()->fileOfKingsRook() : game()->fileOfQueensRook(), army == White ? 0 : 7));
+    BitBoard piecesBoard(kingBoard | rookBoard);
+    BitBoard castleBoardMinusPieces(castleBoard ^ piecesBoard);
+    if (!BitBoard(castleBoardMinusPieces & BitBoard(bitBoard(White) | bitBoard(Black))).isClear()) {
+        qDebug() << "castle is impeded by occupied square!" << endl;
+        return false;
+    }
+
     return true;
 }
 
@@ -565,10 +561,50 @@ void Rules::refreshMoveAndAttackBoards()
     m_pieceAttackBoards.insert(Pawn, BitBoard(whitePawnAttackSquares << blackPawnAttackSquares));
 }
 
+void Rules::refreshCastleBoards()
+{
+    //Assumes that the kings began the game on the current file occupied by the white king
+    Square king = BitBoard(bitBoard(King) & bitBoard(White)).occupiedSquares().first();
+
+    int kingsRook = game()->fileOfKingsRook();
+    int queensRook = game()->fileOfQueensRook();
+
+    SquareList kc;
+    SquareList qc;
+    for (int i= 0; i < 8; ++i) {
+        if (king.file() < kingsRook) {
+            if (i >= king.file() && i <= kingsRook) {
+                kc << Square(i, 0);
+                kc << Square(i, 7);
+            }
+        } else {
+            if (i >= kingsRook && i <= king.file()) {
+                kc << Square(i, 0);
+                kc << Square(i, 7);
+            }
+        }
+        if (king.file() < queensRook) {
+            if (i >= king.file() && i <= queensRook) {
+                qc << Square(i, 0);
+                qc << Square(i, 7);
+            }
+        } else {
+            if (i >= queensRook && i <= king.file()) {
+                qc << Square(i, 0);
+                qc << Square(i, 7);
+            }
+        }
+    }
+
+    m_castleBoards.insert(KingSide, BitBoard(kc));
+    m_castleBoards.insert(QueenSide, BitBoard(qc));
+}
+
 void Rules::refreshBoards()
 {
     refreshPositionBoards();
     refreshMoveAndAttackBoards();
+    refreshCastleBoards();
 }
 
 SquareList Rules::raysForKing(Piece piece)
