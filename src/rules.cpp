@@ -140,6 +140,12 @@ bool Rules::isLegalMove(Chess::Army army, Move move) const
         return true;
     }
 
+    if (move.isEnPassant()) {
+        BitBoard board;
+        board.setSquare(game()->enPassantTarget());
+        return BitBoard(bitBoard(move.start(), Attacks) & board).isSquareOccupied(move.end());
+    }
+
     if (move.isCastle()) {
         if (army == White && move.isKingSideCastle()) {
             if (isCastleAvailable(army, KingSide) && move.end() == Square(6, 0) /*g1*/)

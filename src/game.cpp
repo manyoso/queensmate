@@ -299,10 +299,13 @@ void Game::processMove(Chess::Army army, Move move)
         int start = move.start().index();
         int end = move.end().index();
 
-        bool capture = m_blackPieces.contains(end);
+        bool capture = m_blackPieces.contains(end) || move.isEnPassant();
         move.setCapture(capture);
         if (capture) {
-            Piece piece = m_blackPieces.take(end);
+            int capturedPieceIndex = end;
+            if (move.isEnPassant())
+                capturedPieceIndex = Square(move.end().file(), move.end().rank() - 1).index();
+            Piece piece = m_blackPieces.take(capturedPieceIndex);
             m_blackCapturedPieces << piece;
             emit capturedPiecesChanged(); //FIXME need to reset state with new fen??
         }
@@ -348,10 +351,13 @@ void Game::processMove(Chess::Army army, Move move)
         int start = move.start().index();
         int end = move.end().index();
 
-        bool capture = m_whitePieces.contains(end);
+        bool capture = m_whitePieces.contains(end) || move.isEnPassant();
         move.setCapture(capture);
         if (capture) {
-            Piece piece = m_whitePieces.take(end);
+            int capturedPieceIndex = end;
+            if (move.isEnPassant())
+                capturedPieceIndex = Square(move.end().file(), move.end().rank() + 1).index();
+            Piece piece = m_whitePieces.take(capturedPieceIndex);
             m_whiteCapturedPieces << piece;
             emit capturedPiecesChanged(); //FIXME need to reset state with new fen??
         }
@@ -437,7 +443,7 @@ bool Game::fillOutMove(Chess::Army army, Move *move)
             return false;
     }
 
-    if (move->promotion() == Unknown && move->piece() == Pawn &&
+    if (move->piece() == Pawn && move->promotion() == Unknown &&
         ((army == White && move->end().rank() == 7) ||
          (army == Black && move->end().rank() == 0))) {
 
@@ -458,6 +464,10 @@ bool Game::fillOutMove(Chess::Army army, Move *move)
             move->setPromotion(Knight);
         else
             move->setPromotion(Queen);
+    }
+
+    if (move->piece() == Pawn && move->end() == m_enPassantTarget) {
+        move->setEnPassant(true);
     }
 
     if (move->piece() == King) {
