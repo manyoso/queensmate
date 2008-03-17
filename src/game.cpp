@@ -288,9 +288,9 @@ void Game::processMove(Chess::Army army, Move move)
             m_rules->setCastleAvailable(White, KingSide, false);
             m_rules->setCastleAvailable(White, QueenSide, false);
         } else if (move.piece() == Rook) {
-            if (Notation::squareToString(move.start()) == "a1")
+            if (move.start() == Square(m_fileOfQueensRook, 0))
                 m_rules->setCastleAvailable(White, QueenSide, false);
-            else if (Notation::squareToString(move.start()) == "h1")
+            else if (move.start() == Square(m_fileOfKingsRook, 0))
                 m_rules->setCastleAvailable(White, KingSide, false);
         } else if (move.piece() == Pawn && qAbs(move.start().rank() - move.end().rank()) == 2) {
             setEnPassantTarget(Square(move.end().file(), move.end().rank() - 1));
@@ -340,9 +340,9 @@ void Game::processMove(Chess::Army army, Move move)
             m_rules->setCastleAvailable(Black, KingSide, false);
             m_rules->setCastleAvailable(Black, QueenSide, false);
         } else if (move.piece() == Rook) {
-            if (Notation::squareToString(move.start()) == "a8")
+            if (move.start() == Square(m_fileOfQueensRook, 7))
                 m_rules->setCastleAvailable(Black, QueenSide, false);
-            else if (Notation::squareToString(move.start()) == "h8")
+            else if (move.start() == Square(m_fileOfKingsRook, 7))
                 m_rules->setCastleAvailable(Black, KingSide, false);
         } else if (move.piece() == Pawn && qAbs(move.start().rank() - move.end().rank()) == 2) {
             setEnPassantTarget(Square(move.end().file(), move.end().rank() + 1));

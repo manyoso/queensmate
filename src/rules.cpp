@@ -147,18 +147,32 @@ bool Rules::isLegalMove(Chess::Army army, Move move) const
     }
 
     if (move.isCastle()) {
-        if (army == White && move.isKingSideCastle()) {
-            if (isCastleAvailable(army, KingSide) && move.end() == Square(6, 0) /*g1*/)
-                return true;
-        } else if (army == White && move.isQueenSideCastle()) {
-            if (isCastleAvailable(army, QueenSide) && move.end() == Square(2, 0) /*c1*/)
-                return true;
-        } else if (army == Black && move.isKingSideCastle()) {
-            if (isCastleAvailable(army, KingSide) && move.end() == Square(6, 7) /*g8*/)
-                return true;
-        } else if (army == Black && move.isQueenSideCastle()) {
-            if (isCastleAvailable(army, QueenSide) && move.end() == Square(2, 7) /*c8*/)
-                return true;
+        if (isCastleLegal(army, KingSide)) {
+            if (army == White && move.isKingSideCastle()) {
+                if (move.piece() == King && move.end() == Square(6, 0) /*g1*/)
+                    return true;
+                else if (move.piece() == Rook && move.end() == Square(5, 0) /*f1*/)
+                    return true;
+            } else if (army == Black && move.isKingSideCastle()) {
+                if (move.piece() == King && move.end() == Square(6, 7) /*g8*/)
+                    return true;
+                else if (move.piece() == Rook && move.end() == Square(5, 7) /*f8*/)
+                    return true;
+            }
+        }
+
+        if (isCastleLegal(army, QueenSide)) {
+            if (army == White && move.isQueenSideCastle()) {
+                if (move.piece() == King && move.end() == Square(2, 0) /*c1*/)
+                    return true;
+                else if (move.piece() == Rook && move.end() == Square(3, 0) /*d1*/)
+                    return true;
+            } else if (army == Black && move.isQueenSideCastle()) {
+                if (move.piece() == King && move.end() == Square(2, 7) /*c8*/)
+                    return true;
+                else if (move.piece() == Rook && move.end() == Square(3, 7) /*d8*/)
+                    return true;
+            }
         }
     }
 
@@ -258,6 +272,18 @@ bool Rules::isCheckMated(Chess::Army army) const
 bool Rules::isUnderAttack(Piece piece) const
 {
     return !bitBoard(piece.square(), AttackedBy).isClear();
+}
+
+bool Rules::isCastleLegal(Chess::Army army, Chess::Castle castle) const
+{
+    //Check if castle is available... ie, if neither king nor rook(s) have moved...
+    if (!isCastleAvailable(army, castle))
+        return false;
+
+    //FIXME
+    //Check if under attack...
+    //Check if all squares between king and rook(s) are unoccupied by anything other than king or rook...
+    return true;
 }
 
 bool Rules::isCastleAvailable(Chess::Army army, Chess::Castle castle) const

@@ -30,6 +30,7 @@ public:
     bool isCheckMated(Chess::Army army) const;
     bool isUnderAttack(Piece piece) const;
 
+    bool isCastleLegal(Chess::Army army, Chess::Castle castle) const;
     bool isCastleAvailable(Chess::Army army, Chess::Castle castle) const;
     void setCastleAvailable(Chess::Army army, Chess::Castle castle, bool available);
 
