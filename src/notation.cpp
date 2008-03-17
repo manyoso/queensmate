@@ -22,6 +22,22 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
     case Standard:
         {
             move.setCapture(string.contains('x'));
+
+            if (string.contains('=')) {
+                ;
+            }
+
+            move.setCheck(string.contains('+'));
+            move.setCheckMate(string.contains('#'));
+
+            if (string == "O-O") {
+                move.setCastle(true);
+                move.setCastleSide(KingSide);
+            } else if (string == "O-O-0") {
+                move.setCastle(true);
+                move.setCastleSide(QueenSide);
+            }
+
             move.setPiece(charToPiece(string.at(0), notation));
             move.setEnd(stringToSquare(string.right(2), notation));
             break;
