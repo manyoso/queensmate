@@ -23,7 +23,8 @@ BoardSquare::BoardSquare(Board *board, Square square, const QSizeF &size, bool o
     connect(this, SIGNAL(hoverLeave()), board, SLOT(hoverLeaveSquare()));
     connect(board->theme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 
-    setBrush(m_board->theme()->brushForSquare(m_squareType));
+    QBrush brush = m_board->theme()->brushForSquare(m_squareType);
+    setBrush(brush);
     setPen(Qt::NoPen);
     setZValue(1);
     setAcceptsHoverEvents(true);
@@ -39,7 +40,9 @@ void BoardSquare::setSquareType(Theme::SquareType squareType)
         return;
 
     m_squareType = squareType;
-    setBrush(m_board->theme()->brushForSquare(m_squareType));
+
+    QBrush brush = m_board->theme()->brushForSquare(m_squareType);
+    setBrush(brush);
 }
 
 void BoardSquare::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -56,12 +59,19 @@ void BoardSquare::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void BoardSquare::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 /*    painter->setOpacity(0.5);*/
-    QGraphicsRectItem::paint(painter, option, widget);
+    painter->setPen(pen());
+    QBrush b = brush();
+    b.setTransform(painter->transform().inverted());
+    painter->setBrush(b);
+    painter->drawRect(rect());
 }
 
 void BoardSquare::themeChanged()
 {
-    setBrush(m_board->theme()->brushForSquare(m_squareType));
+    QBrush brush = m_board->theme()->brushForSquare(m_squareType);
+    setBrush(brush);
     update();
 }

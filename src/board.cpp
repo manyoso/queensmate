@@ -140,8 +140,10 @@ void Board::resetBoard()
     }
 
     m_squareBorders.clear();
-    m_squareBorders.insert(move->move().start(), Qt::red);
-    m_squareBorders.insert(move->move().end(), Qt::red);
+    if (move->move().start().isValid())
+        m_squareBorders.insert(move->move().start(), Qt::red);
+    if (move->move().end().isValid())
+        m_squareBorders.insert(move->move().end(), Qt::red);
     m_borders->update();
 
     QString status = QString("%1. %2%3").arg(QString::number(game()->fullMoveNumber()))

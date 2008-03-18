@@ -16,7 +16,7 @@ Theme::Theme(QObject *parent)
     QSettings settings;
     settings.beginGroup("Themes");
     setPiecesTheme(settings.value("piecesTheme", "simple").toString());
-    setSquaresTheme(settings.value("squaresTheme", "wood").toString());
+    setSquaresTheme(settings.value("squaresTheme", "greenmat").toString());
     settings.endGroup();
 
 //     m_squareBrushes.insert(Light, QBrush(QColor(Qt::yellow).lighter()));
