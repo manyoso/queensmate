@@ -276,6 +276,11 @@ bool Rules::isCastleLegal(Chess::Army army, Chess::Castle castle) const
     BitBoard castleBoardMinusPieces(castleBoard ^ piecesBoard);
     if (!BitBoard(castleBoardMinusPieces & BitBoard(bitBoard(White) | bitBoard(Black))).isClear()) {
         qDebug() << "castle is impeded by occupied square!" << endl;
+//         qDebug() << "castleBoard" << castleBoard << endl;
+//         qDebug() << "kingBoard" << kingBoard << endl;
+//         qDebug() << "rookBoard" << rookBoard << endl;
+//         qDebug() << "piecesBoard" << piecesBoard << endl;
+//         qDebug() << "castleBoardMinusPieces" << castleBoardMinusPieces << endl;
         return false;
     }
 
@@ -563,8 +568,8 @@ void Rules::refreshMoveAndAttackBoards()
 
 void Rules::refreshCastleBoards()
 {
-    //Assumes that the kings began the game on the current file occupied by the white king
-    Square king = BitBoard(bitBoard(King) & bitBoard(White)).occupiedSquares().first();
+    Square whiteKing = BitBoard(bitBoard(King) & bitBoard(White)).occupiedSquares().first();
+    Square blackKing = BitBoard(bitBoard(King) & bitBoard(Black)).occupiedSquares().first();
 
     int kingsRook = game()->fileOfKingsRook();
     int queensRook = game()->fileOfQueensRook();
@@ -572,25 +577,39 @@ void Rules::refreshCastleBoards()
     SquareList kc;
     SquareList qc;
     for (int i= 0; i < 8; ++i) {
-        if (king.file() < kingsRook) {
-            if (i >= king.file() && i <= kingsRook) {
+        if (whiteKing.file() < kingsRook) {
+            if (i >= whiteKing.file() && i <= kingsRook) {
                 kc << Square(i, 0);
+            }
+        } else {
+            if (i >= kingsRook && i <= whiteKing.file()) {
+                kc << Square(i, 0);
+            }
+        }
+        if (blackKing.file() < kingsRook) {
+            if (i >= blackKing.file() && i <= kingsRook) {
                 kc << Square(i, 7);
             }
         } else {
-            if (i >= kingsRook && i <= king.file()) {
-                kc << Square(i, 0);
+            if (i >= kingsRook && i <= blackKing.file()) {
                 kc << Square(i, 7);
             }
         }
-        if (king.file() < queensRook) {
-            if (i >= king.file() && i <= queensRook) {
+        if (whiteKing.file() < queensRook) {
+            if (i >= whiteKing.file() && i <= queensRook) {
                 qc << Square(i, 0);
+            }
+        } else {
+            if (i >= queensRook && i <= whiteKing.file()) {
+                qc << Square(i, 0);
+            }
+        }
+        if (blackKing.file() < queensRook) {
+            if (i >= blackKing.file() && i <= queensRook) {
                 qc << Square(i, 7);
             }
         } else {
-            if (i >= queensRook && i <= king.file()) {
-                qc << Square(i, 0);
+            if (i >= queensRook && i <= blackKing.file()) {
                 qc << Square(i, 7);
             }
         }
