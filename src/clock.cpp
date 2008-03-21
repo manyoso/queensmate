@@ -198,13 +198,17 @@ void Clock::updateSignals()
 
     if (m_whiteTime <= 0 && !m_whiteIsUnlimited) {
         qDebug() << "flagFell for white" << endl;
+        m_whiteTime = 0;
         endClock();
         emit flagFell(White);
+        emit tick();
         return;
     } else if (m_blackTime <= 0 && !m_blackIsUnlimited) {
         qDebug() << "flagFell for black" << endl;
+        m_blackTime = 0;
         endClock();
         emit flagFell(Black);
+        emit tick();
         return;
     }
 

@@ -159,6 +159,11 @@ void GameView::tick()
 //     qDebug() << "tick" << endl;
     if (!m_game->clock()->isUnlimited(White)) {
         QTime time = m_game->clock()->currentClock(White);
+        if (time == QTime(0, 0, 0, 0)) {
+            QPalette p = ui_whiteClock->palette();
+            p.setColor(QPalette::WindowText, Qt::red);
+            ui_whiteClock->setPalette(p);
+        }
         ui_whiteClock->setText(time.toString(time < QTime(1, 0, 0) ? "mm:ss" : "h:mm:ss"));
     } else {
         ui_whiteClock->setText(tr("Unlimited"));
@@ -166,6 +171,11 @@ void GameView::tick()
 
     if (!m_game->clock()->isUnlimited(Black)) {
         QTime time = m_game->clock()->currentClock(Black);
+        if (time == QTime(0, 0, 0, 0)) {
+            QPalette p = ui_blackClock->palette();
+            p.setColor(QPalette::WindowText, Qt::red);
+            ui_blackClock->setPalette(p);
+        }
         ui_blackClock->setText(time.toString(time < QTime(1, 0, 0) ? "mm:ss" : "h:mm:ss"));
     } else {
         ui_blackClock->setText(tr("Unlimited"));
