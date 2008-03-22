@@ -25,18 +25,19 @@ WebPage::~WebPage()
 
 bool WebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type)
 {
-//    qDebug() << "acceptNavigationRequest" << request.url() << endl;
     Q_UNUSED(frame);
+
+    if (request.url().host() == chessApp->url().host()) {
+        if (request.url().path() == QString("/%1").arg(QCoreApplication::applicationName())) {
+            handleQuery(request.url().queryItems());
+            return false;
+        }
+    }
+
     switch (type) {
     case QWebPage::NavigationTypeLinkClicked:
         {
-            if (request.url().host() == chessApp->url().host()) {
-                if (request.url().path() == QString("/%1").arg(QCoreApplication::applicationName())) {
-                    handleQuery(request.url().queryItems());
-                    return false;
-                }
-                return true;
-            } else {
+            if (request.url().host() != chessApp->url().host()) {
                 QDesktopServices::openUrl(request.url());
                 return false;
             }

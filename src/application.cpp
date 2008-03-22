@@ -9,8 +9,8 @@
 Application::Application(int &argc, char **argv)
     : QApplication(argc, argv)
 {
-    QCoreApplication::setOrganizationDomain("castle");
-    QCoreApplication::setApplicationName("castle");
+    QCoreApplication::setOrganizationDomain("queensmate.com");
+    QCoreApplication::setApplicationName("queensmate");
     QCoreApplication::setApplicationVersion("0.1");
 
     setWindowIcon(QIcon(":icons/application.png"));
