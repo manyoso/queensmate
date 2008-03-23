@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QStatusBar>
+#include <QFileInfo>
 
 #include "resource.h"
 #include "mainwindow.h"
@@ -19,6 +20,16 @@ Application::Application(int &argc, char **argv)
 
     m_mainWindow = new MainWindow;
     m_mainWindow->show();
+
+    QStringList args = arguments();
+    if (args.count() > 1) {
+        args.removeFirst(); //app name
+        foreach (QString arg, args) {
+            QFileInfo f(arg);
+            if (f.exists() && f.suffix() == "pgn")
+                m_mainWindow->loadGameFromPGN(arg);
+        }
+    }
 }
 
 Application::~Application()

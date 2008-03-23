@@ -1,20 +1,24 @@
 #ifndef PGN_H
 #define PGN_H
 
+#include <QHash>
 #include <QString>
-
-class Game;
 
 class Pgn {
 public:
     Pgn();
     ~Pgn();
-    static QList<Pgn> pgnToGames(const QString &fileName, bool *ok = 0, QString *err = 0);
-    static QString gameToPgn(Game *game, bool *ok = 0, QString *err = 0);
 
 private:
-    void parseTagPair(const QByteArray &line);
-    void parseMoveText(const QByteArray &line);
+    QString m_event;
+    QString m_site;
+    QString m_date;
+    QString m_round;
+    QString m_white;
+    QString m_black;
+    QString m_result;
+    QHash<QString, QString> m_tags;
+    friend class PgnParser;
 };
 
 #endif

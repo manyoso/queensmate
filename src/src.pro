@@ -47,6 +47,8 @@ SOURCES += \
     notation.cpp \
     piece.cpp \
     pgn.cpp \
+    pgnlexer.cpp \
+    pgnparser.cpp \
     player.cpp \
     resource.cpp \
     rules.cpp \
@@ -83,6 +85,8 @@ HEADERS += \
     notation.h \
     piece.h \
     pgn.h \
+    pgnlexer.h \
+    pgnparser.h \
     player.h \
     resource.h \
     rules.h \

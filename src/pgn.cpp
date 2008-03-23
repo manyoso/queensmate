@@ -1,10 +1,7 @@
 #include "pgn.h"
 
-#include <QFile>
 #include <QDebug>
-#include <QObject>
 
-#include "game.h"
 #include "chess.h"
 
 using namespace Chess;
@@ -24,60 +21,6 @@ using namespace Chess;
 
 7) Result (the result of the game)
 */
-
-QList<Pgn> Pgn::pgnToGames(const QString &fileName, bool *ok, QString *err)
-{
-    QFile file(fileName);
-    if (!file.exists()) {
-        *ok = false;
-        *err = QObject::tr("File does not exist!");
-        return QList<Pgn>();
-    }
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        *ok = false;
-        *err = QObject::tr("Could not open file!");
-        return QList<Pgn>();
-    }
-
-    QList<Pgn> games;
-
-    while (!file.atEnd()) {
-        QByteArray line = file.readLine();
-        //qDebug() << "pgn line:" << line << endl;
-
-/*        switch (state) {
-        case TagPairSection:
-        case MoveTextSection:
-        default:
-            {
-                *ok = false;
-                *err = QObject::tr("Unknown state!");
-                return QList<Pgn>();
-            }
-        }*/
-    }
-
-    *ok = true;
-    *err = QString();
-    return games;
-}
-
-void Pgn::parseTagPair(const QByteArray &line)
-{
-}
-
-void Pgn::parseMoveText(const QByteArray &line)
-{
-}
-
-QString Pgn::gameToPgn(Game *game, bool *ok, QString *err)
-{
-    Q_UNUSED(game);
-    Q_UNUSED(ok);
-    Q_UNUSED(err);
-    return QString();
-}
 
 Pgn::Pgn()
 {

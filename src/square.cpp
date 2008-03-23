@@ -29,7 +29,8 @@ int Square::index() const
     return (8 * r) - (8 - f) - 1;
 }
 
-QDebug operator<<(QDebug debug, const Square &square) {
+QDebug operator<<(QDebug debug, const Square &square)
+{
     debug.nospace() << QString::number(square.file()) << ',' << QString::number(square.rank()) << "\n";
     return debug.space();
 }

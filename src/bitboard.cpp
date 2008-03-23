@@ -86,7 +86,8 @@ int BitBoard::squareToBit(Square square) const
     return bit;
 }
 
-QDebug operator<<(QDebug debug, const BitBoard &b) {
+QDebug operator<<(QDebug debug, const BitBoard &b)
+{
     debug.nospace() << "\n";
     for (int i = 7; i > -1; --i) {
         debug.nospace() << "\n";

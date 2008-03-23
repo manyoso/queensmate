@@ -16,6 +16,7 @@
 #include "webview.h"
 #include "gameview.h"
 #include "resource.h"
+#include "pgnparser.h"
 #include "boardview.h"
 #include "uciengine.h"
 #include "scratchview.h"
@@ -196,9 +197,14 @@ void MainWindow::loadGameFromPGN()
     if (file.isEmpty())
         return;
 
-    bool ok = false;
+    loadGameFromPGN(file);
+}
+
+void MainWindow::loadGameFromPGN(const QString &file)
+{
     QString err;
-    QList<Pgn> pgn = Pgn::pgnToGames(file, &ok, &err);
+    bool ok = false;
+    QList<Pgn> games = PgnParser::parsePgn(file, &ok, &err);
     if (!ok) {
         qDebug() << "ERROR! while loading PGN file" << file << err << endl;
         return;

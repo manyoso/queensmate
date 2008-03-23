@@ -19,6 +19,7 @@ public Q_SLOTS:
     void newGame(const QString &fen);
     void constructGame();
     void loadGameFromPGN();
+    void loadGameFromPGN(const QString &file);
     void loadGameFromFEN();
     void newScratchBoard();
 
