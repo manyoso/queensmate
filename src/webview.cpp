@@ -15,8 +15,7 @@ ProgressBar::ProgressBar(QWidget *parent)
 {
     setAutoFillBackground(true);
 
-    //FIXME gradient...
-    setBackgroundRole(QPalette::Button);
+    setBackgroundRole(QPalette::Window);
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
 
@@ -25,7 +24,7 @@ ProgressBar::ProgressBar(QWidget *parent)
     m_stop = new QPushButton(header);
     m_stop->setFlat(true);
     m_stop->setFixedSize(QSize(22,22));
-    m_stop->setIcon(style()->standardIcon(QStyle::SP_BrowserStop));
+    m_stop->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
     connect(m_stop, SIGNAL(pressed()), this, SLOT(hide()));
 
     QHBoxLayout *headerLayout = new QHBoxLayout(header);
