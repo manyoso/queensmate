@@ -7,6 +7,7 @@
 #include "pgn.h"
 #include "chess.h"
 #include "pgnlexer.h"
+#include "notation.h"
 
 using namespace Chess;
 
@@ -78,62 +79,67 @@ bool PgnParser::parseTagPair(PgnTokenStream *stream, Pgn *pgn, bool *ok, QString
 {
     Q_UNUSED(ok);
     Q_UNUSED(err);
+
     Q_ASSERT(stream->lookAhead() == PgnToken::LeftBrack);
+
     stream->next();
     QByteArray name = stream->text();
     stream->next();
     QByteArray value = stream->text();
-
-//     qDebug() << "pgn tag pair"
-//              << "\nname" << name
-//              << "\nvalue" << value
-//              << endl;
-
-    if (name == "Event")
-        pgn->m_event = value;
-    else if (name == "Site")
-        pgn->m_site = value;
-    else if (name == "Date")
-        pgn->m_date = value;
-    else if (name == "Round")
-        pgn->m_round = value;
-    else if (name == "White")
-        pgn->m_white = value;
-    else if (name == "Black")
-        pgn->m_black = value;
-    else if (name == "Result")
-        pgn->m_result = value;
-
-    pgn->m_tags.insert(name, value);
-
     stream->next();
+
+    pgn->addTag(name, value);
+
     return true;
 }
 
 bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn, bool *ok, QString *err)
 {
-//    qDebug() << "pgn move text" << endl;
     Q_UNUSED(pgn);
+
     while (!stream->atEnd()) {
+/*        qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;*/
         switch (stream->lookAhead()) {
-        case PgnToken::String:
-        case PgnToken::Period:
         case PgnToken::Asterisk:
+            break; //game termination
         case PgnToken::LeftParen:
         case PgnToken::RightParen:
+            break; //recursive variation
         case PgnToken::LeftAngle:
         case PgnToken::RightAngle:
+            break; //reserved for future
         case PgnToken::NAG:
+            {
+                break;
+            }
         case PgnToken::Integer:
+            {
+                bool isInt = false;
+                int num = stream->text().toInt(&isInt);
+                Q_ASSERT(isInt);
+                pgn->addMoveNumber(num);
+                for (int i = 1; i < 255; ++i) {
+                    if (stream->lookAhead(i) != PgnToken::Period) {
+                        stream->seek(stream->pos() + i - 1);
+                        break;
+                    }
+                }
+                break;
+            }
         case PgnToken::Symbol:
             {
+                Move move;
+                if (!parseMove(stream, &move, ok, err)) {
+                    return false;
+                } else {
+                    pgn->addMove(move);
+                }
                 break;
             }
         default:
             {
                 *ok = false;
                 *err = QString("Unknown token in move text at '%1!'").arg(QString::number(stream->pos()));
-                qDebug() << stream->token().toString() << endl;
                 return false;
             }
         }
@@ -143,6 +149,13 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn, bool *ok, QStrin
         stream->next();
     }
     return true;
+}
+
+bool PgnParser::parseMove(PgnTokenStream *stream, Move *move, bool *ok, QString *err)
+{
+//    qDebug() << "pgn move" << stream->text() << endl;
+    *move = Notation::stringToMove(stream->text(), Standard, ok, err);
+    return ok;
 }
 
 PgnParser::PgnParser()

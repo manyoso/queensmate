@@ -13,9 +13,6 @@ Square::Square()
 Square::Square(int file, int rank)
     : m_file(file), m_rank(rank)
 {
-    Q_ASSERT_X(isValid(),
-               "Square(int file, int rank)",
-               QString("%1%2").arg(QString::number(file)).arg(QString::number(rank)).toLatin1().constData());
 }
 
 Square::~Square()

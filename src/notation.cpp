@@ -21,25 +21,47 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
     switch (notation) {
     case Standard:
         {
-            move.setCapture(string.contains('x'));
-
-            if (string.contains('=')) {
-                ;
+            QString str = string;
+            if (str.contains('x')) {
+                move.setCapture(true);
+                str = str.remove('x');
             }
 
-            move.setCheck(string.contains('+'));
-            move.setCheckMate(string.contains('#'));
+            if (str.contains('=')) {
+                str = str.remove('=');
+            }
 
-            if (string == "O-O") {
+            if (str.contains('+')) {
+                move.setCheck(true);
+                str = str.remove('+');
+            }
+            if (str.contains('#')) {
+                move.setCheckMate(true);
+                str = str.remove('#');
+            }
+
+            if (str == "O-O") {
                 move.setCastle(true);
                 move.setCastleSide(KingSide);
-            } else if (string == "O-O-0") {
+                break;
+            } else if (str == "O-O-O") {
                 move.setCastle(true);
                 move.setCastleSide(QueenSide);
+                break;
+            } else if (str == "0-1") {
+                break;
+            } else if (str == "1-0") {
+                break;
+            } else if (str == "1/2-1/2") {
+                break;
             }
 
-            move.setPiece(charToPiece(string.at(0), notation));
-            move.setEnd(stringToSquare(string.right(2), notation));
+            move.setPiece(charToPiece(str.at(0), notation));
+            if (move.piece() == Pawn && str.length() == 3) {
+                int file = charToFile(str.at(0), notation);
+                move.setStart(Square(file, -1));
+            }
+            move.setEnd(stringToSquare(str.right(2), notation));
             break;
         }
     case Long:

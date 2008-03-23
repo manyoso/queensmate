@@ -209,6 +209,30 @@ void MainWindow::loadGameFromPGN(const QString &file)
         qDebug() << "ERROR! while loading PGN file" << file << err << endl;
         return;
     }
+
+    foreach (Pgn pgn, games) {
+
+        Game *game = new Game(this);
+        game->setScratchGame(true);
+
+        connect(game, SIGNAL(gameStarted()), this, SLOT(gameStateChanged()));
+        connect(game, SIGNAL(gameEnded()), this, SLOT(gameStateChanged()));
+
+        Chess::Army army = White;
+        QList<Move> moves = pgn.moves();
+        foreach (Move move, moves) {
+            qDebug() << "make move" << endl;
+            game->localHumanMadeMove(army, move);
+            army = army == White ? Black : White;
+        }
+
+        ScratchView *scratchView = new ScratchView(ui_tabWidget, game);
+        game->setParent(scratchView); //reparent!!
+
+        int i = ui_tabWidget->addTab(scratchView, tr("Scratch Board"));
+        ui_tabWidget->setCurrentIndex(i);
+
+    }
 }
 
 void MainWindow::loadGameFromFEN()

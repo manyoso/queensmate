@@ -296,7 +296,6 @@ void PgnLexer::scanIntegerOrSymbol(QTextStream *stream, bool integer)
 
     while (!stream->atEnd() || stream->pos() - token.start == 255) {
 
-        stream->skipWhiteSpace();
         if (stream->atEnd()) {
             break;
         }

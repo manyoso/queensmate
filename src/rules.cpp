@@ -568,8 +568,12 @@ void Rules::refreshMoveAndAttackBoards()
 
 void Rules::refreshCastleBoards()
 {
-    Square whiteKing = BitBoard(bitBoard(King) & bitBoard(White)).occupiedSquares().first();
-    Square blackKing = BitBoard(bitBoard(King) & bitBoard(Black)).occupiedSquares().first();
+    SquareList whiteKings = BitBoard(bitBoard(King) & bitBoard(White)).occupiedSquares();
+    SquareList blackKings = BitBoard(bitBoard(King) & bitBoard(Black)).occupiedSquares();
+    Square whiteKing = !whiteKings.isEmpty() ? whiteKings.first() : Square();
+    Square blackKing = !blackKings.isEmpty() ? blackKings.first() : Square();
+    if (!whiteKing.isValid() && !blackKing.isValid())
+        return; //could be scratch board...
 
     int kingsRook = game()->fileOfKingsRook();
     int queensRook = game()->fileOfQueensRook();

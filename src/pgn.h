@@ -4,20 +4,23 @@
 #include <QHash>
 #include <QString>
 
+#include "move.h"
+
 class Pgn {
 public:
     Pgn();
     ~Pgn();
 
+    QList<Move> moves() const { return m_moves.values(); }
+
+    void addTag(const QString &name, const QString &value);
+    void addMoveNumber(int number);
+    void addMove(const Move &move);
+
 private:
-    QString m_event;
-    QString m_site;
-    QString m_date;
-    QString m_round;
-    QString m_white;
-    QString m_black;
-    QString m_result;
     QHash<QString, QString> m_tags;
+    int m_currentMoveNumber;
+    QHash<int, Move> m_moves;
     friend class PgnParser;
 };
 

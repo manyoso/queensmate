@@ -6,6 +6,8 @@
 #include <QByteArray>
 #include <QTextStream>
 
+//FIXME Comments!
+
 class PgnToken
 {
 public:
