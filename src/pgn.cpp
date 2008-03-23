@@ -24,18 +24,18 @@ QString Pgn::tag(const QString &name) const
 
 void Pgn::addTag(const QString &name, const QString &value)
 {
-    qDebug() << "addTag" << name << value << endl;
+//     qDebug() << "addTag" << name << value << endl;
     m_tags.insert(name, value);
 }
 
 void Pgn::addMoveNumber(int number)
 {
-    //qDebug() << "addMoveNumber" << number << endl;
+//     qDebug() << "addMoveNumber" << number << endl;
     Q_UNUSED(number);
 }
 
 void Pgn::addMove(const Move &move)
 {
-//    qDebug() << "addMove" << Notation::moveToString(move) << endl;
+//     qDebug() << "addMove" << Notation::moveToString(move) << endl;
     m_moves.insert(m_moves.count() + 1, move);
 }
