@@ -5,6 +5,7 @@
 #include <QFrame>
 
 class QLabel;
+class QPushButton;
 class QProgressBar;
 
 class ProgressBar :public QFrame {
@@ -23,6 +24,7 @@ public Q_SLOTS:
 protected:
     int m_progress;
     QLabel *m_label;
+    QPushButton *m_stop;
     QProgressBar *m_progressBar;
 };
 

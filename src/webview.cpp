@@ -3,8 +3,11 @@
 #include <QDebug>
 #include <QTimer>
 #include <QLabel>
-#include <QProgressBar>
 #include <QBoxLayout>
+#include <QPushButton>
+#include <QProgressBar>
+
+#include <QStyle>
 
 ProgressBar::ProgressBar(QWidget *parent)
     : QFrame(parent),
@@ -16,12 +19,27 @@ ProgressBar::ProgressBar(QWidget *parent)
     setBackgroundRole(QPalette::Button);
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
-    m_label = new QLabel(tr("Loading..."), this);
+
+    QWidget *header = new QWidget(this);
+    m_label = new QLabel(tr("Loading..."), header);
+    m_stop = new QPushButton(header);
+    m_stop->setFlat(true);
+    m_stop->setFixedSize(QSize(22,22));
+    m_stop->setIcon(style()->standardIcon(QStyle::SP_BrowserStop));
+    connect(m_stop, SIGNAL(pressed()), this, SLOT(hide()));
+
+    QHBoxLayout *headerLayout = new QHBoxLayout(header);
+    headerLayout->setMargin(0);
+    headerLayout->addWidget(m_label);
+    headerLayout->addWidget(m_stop);
+    header->setLayout(headerLayout);
+
     m_progressBar = new QProgressBar(this);
     m_progressBar->setMinimum(0);
     m_progressBar->setMaximum(100);
+
     QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(m_label);
+    layout->addWidget(header);
     layout->addWidget(m_progressBar);
     setLayout(layout);
 }
