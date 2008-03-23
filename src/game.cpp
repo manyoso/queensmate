@@ -423,8 +423,17 @@ void Game::processMove(Chess::Army army, Move move)
 
 bool Game::fillOutMove(Chess::Army army, Move *move)
 {
-    if (!move->isValid())
+    if (move->isCastle() && !move->isValid()) {
+        if (move->isKingSideCastle())
+            move->setEnd(Square(6, army == White ? 0 : 7));
+        else if (move->isQueenSideCastle())
+            move->setEnd(Square(2, army == White ? 0 : 7));
+    }
+
+    if (!move->isValid()) {
+        qDebug() << "invalid move..." << endl;
         return false; //not enough info to do anything
+    }
 
     if (move->piece() == Unknown) {
         int start = move->start().index();
@@ -490,8 +499,10 @@ bool Game::fillOutMove(Chess::Army army, Move *move)
 
 bool Game::fillOutStart(Chess::Army army, Move *move)
 {
-    if (!move->isValid())
+    if (!move->isValid()) {
+        qDebug() << "invalid move..." << endl;
         return false; //not enough info to do anything
+    }
 
     Square square = m_rules->guessSquare(army, *move);
     if (square.isValid()) {
@@ -499,6 +510,7 @@ bool Game::fillOutStart(Chess::Army army, Move *move)
         return true;
     }
 
+    qDebug() << "could not find a valid start square..." << endl;
     return false;
 }
 

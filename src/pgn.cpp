@@ -15,6 +15,13 @@ Pgn::~Pgn()
 {
 }
 
+QString Pgn::tag(const QString &name) const
+{
+    if (m_tags.contains(name))
+        return m_tags.value(name);
+    return QString();
+}
+
 void Pgn::addTag(const QString &name, const QString &value)
 {
     qDebug() << "addTag" << name << value << endl;
@@ -23,15 +30,12 @@ void Pgn::addTag(const QString &name, const QString &value)
 
 void Pgn::addMoveNumber(int number)
 {
-    qDebug() << "addMoveNumber" << number << endl;
+    //qDebug() << "addMoveNumber" << number << endl;
     Q_UNUSED(number);
 }
 
 void Pgn::addMove(const Move &move)
 {
-//     if (move.piece() == Unknown /*result*/)
-//         return;
-    //qDebug() << "addMove" << Notation::moveToString(move) << endl;
-    Q_UNUSED(move);
+//    qDebug() << "addMove" << Notation::moveToString(move) << endl;
     m_moves.insert(m_moves.count() + 1, move);
 }

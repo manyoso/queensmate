@@ -100,10 +100,16 @@ PgnToken::Type PgnTokenStream::lookAhead(int pos)
 
 QByteArray PgnTokenStream::text()
 {
-    if (m_pos >= 0 && m_pos <= m_tokens.count() - 1)
-        return m_text.mid(m_tokens.at(m_pos).start, m_tokens.at(m_pos).length).trimmed();
-    else
+    if (m_pos >= 0 && m_pos <= m_tokens.count() - 1) {
+        QByteArray txt = m_text.mid(m_tokens.at(m_pos).start, m_tokens.at(m_pos).length).trimmed();
+        if (lookAhead() == PgnToken::String) {
+            txt.remove(0, 1);
+            txt.chop(1);
+        }
+        return txt;
+    } else {
         return QByteArray();
+    }
 }
 
 PgnLexer::PgnLexer()

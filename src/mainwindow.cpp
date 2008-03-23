@@ -15,6 +15,7 @@
 #include "webpage.h"
 #include "webview.h"
 #include "gameview.h"
+#include "notation.h"
 #include "resource.h"
 #include "pgnparser.h"
 #include "boardview.h"
@@ -213,7 +214,14 @@ void MainWindow::loadGameFromPGN(const QString &file)
     foreach (Pgn pgn, games) {
 
         Game *game = new Game(this);
-        game->setScratchGame(true);
+
+        Player *whitePlayer = new Player(game);
+        whitePlayer->setPlayerName(pgn.tag("White"));
+
+        Player *blackPlayer = new Player(game);
+        blackPlayer->setPlayerName(pgn.tag("Black"));
+
+        game->setPlayers(whitePlayer, blackPlayer);
 
         connect(game, SIGNAL(gameStarted()), this, SLOT(gameStateChanged()));
         connect(game, SIGNAL(gameEnded()), this, SLOT(gameStateChanged()));
@@ -221,15 +229,16 @@ void MainWindow::loadGameFromPGN(const QString &file)
         Chess::Army army = White;
         QList<Move> moves = pgn.moves();
         foreach (Move move, moves) {
-            qDebug() << "make move" << endl;
+            //qDebug() << "make move" << Notation::moveToString(move) << endl;
             game->localHumanMadeMove(army, move);
             army = army == White ? Black : White;
         }
 
-        ScratchView *scratchView = new ScratchView(ui_tabWidget, game);
-        game->setParent(scratchView); //reparent!!
+        GameView *gameView = new GameView(ui_tabWidget, game);
+        game->setParent(gameView); //reparent!!
 
-        int i = ui_tabWidget->addTab(scratchView, tr("Scratch Board"));
+        int i = ui_tabWidget->addTab(gameView,
+                                     QString("%1 vs %2").arg(whitePlayer->playerName()).arg(blackPlayer->playerName()));
         ui_tabWidget->setCurrentIndex(i);
 
     }

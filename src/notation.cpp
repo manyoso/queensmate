@@ -21,6 +21,16 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
     switch (notation) {
     case Standard:
         {
+// d8        //Pawn to d8
+// cxd8      //Pawn on c captures d8
+// cxd8=Q+   //Pawn on c captures d8 promotes to queen and check
+// Qcd8      //Queen on file c to d8
+// Qc8d8     //Queen on file c and rank 8 to d8
+// Qxd8      //Queen captures d8
+// Qcxd8     //Queen on file c captures d8
+// Qc8xd8    //Queen on file c and rank 8 captures d8
+// Qc8xd8+   //Queen on file c and rank 8 captures d8 check
+
             QString str = string;
             if (str.contains('x')) {
                 move.setCapture(true);
@@ -28,7 +38,11 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
             }
 
             if (str.contains('=')) {
+                int i = str.indexOf('=');
+                QChar c = str.at(i + 1);
+                move.setPromotion(charToPiece(c, notation));
                 str = str.remove('=');
+                str = str.remove(i + 1, 1);
             }
 
             if (str.contains('+')) {
@@ -41,10 +55,12 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
             }
 
             if (str == "O-O") {
+                move.setPiece(King);
                 move.setCastle(true);
                 move.setCastleSide(KingSide);
                 break;
             } else if (str == "O-O-O") {
+                move.setPiece(King);
                 move.setCastle(true);
                 move.setCastleSide(QueenSide);
                 break;
@@ -56,12 +72,33 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
                 break;
             }
 
-            move.setPiece(charToPiece(str.at(0), notation));
-            if (move.piece() == Pawn && str.length() == 3) {
-                int file = charToFile(str.at(0), notation);
-                move.setStart(Square(file, -1));
+            if (str.length() == 2) {
+                move.setPiece(Pawn);
+                move.setEnd(stringToSquare(str.right(2), notation));
+            } else if (str.length() == 3) {
+                QChar c = str.at(0);
+                if (c.isUpper()) {
+                    move.setPiece(charToPiece(c, notation));
+                } else if (c.isLower()) {
+                    move.setPiece(Pawn);
+                    move.setFileOfDeparture(charToFile(c, notation));
+                }
+                move.setEnd(stringToSquare(str.right(2), notation));
+            } else if (str.length() == 4) {
+                move.setPiece(charToPiece(str.at(0), notation));
+                QChar c = str.at(1);
+                if (c.isLetter() && c.isLower()) {
+                    move.setFileOfDeparture(charToFile(c, notation));
+                } else if (c.isNumber()) {
+                    move.setRankOfDeparture(charToRank(c, notation));
+                }
+                move.setEnd(stringToSquare(str.right(2), notation));
+            } else if (str.length() == 5) {
+                move.setPiece(charToPiece(str.at(0), notation));
+                move.setFileOfDeparture(charToFile(str.at(1), notation));
+                move.setRankOfDeparture(charToRank(str.at(2), notation));
+                move.setEnd(stringToSquare(str.right(2), notation));
             }
-            move.setEnd(stringToSquare(str.right(2), notation));
             break;
         }
     case Long:
@@ -109,7 +146,7 @@ QString Notation::moveToString(Move move, Chess::NotationType notation)
 
             if (!capture.isNull()) {
                 if (move.piece() == Pawn) {
-                    str += fileToChar(move.start().file());
+                    str += fileToChar(move.fileOfDeparture());
                 }
                 str += capture;
             }
@@ -299,6 +336,10 @@ int Notation::charToFile(const QChar &ch, Chess::NotationType notation, bool *ok
 QChar Notation::fileToChar(int file, Chess::NotationType notation)
 {
     QChar ch;
+
+    Q_ASSERT_X(file >=0 && file <= 7,
+               "Notation::fileToChar(int file, ...) range error",
+               QString("%1").arg(QString::number(file)).toLatin1().constData());
 
     QList<QChar> files;
     files << 'a' << 'b' << 'c' << 'd' << 'e' << 'f' << 'g' << 'h';

@@ -325,16 +325,34 @@ void Rules::setCastleAvailable(Chess::Army army, Chess::Castle castle, bool avai
 
 Square Rules::guessSquare(Chess::Army army, Move move) const
 {
-    BitBoard b(bitBoard(move.piece(), Positions) & bitBoard(army, Positions));
+    if (move.isCastle()) {
+        SquareList kings = BitBoard(bitBoard(King) & bitBoard(army)).occupiedSquares();
+        if (!kings.isEmpty())
+            return kings.first();
+        else
+            return Square();
+    }
+
+    BitBoard positions(bitBoard(move.piece(), Positions) & bitBoard(army, Positions));
+    BitBoard opposingPositions(bitBoard(army == White ? Black : White, Positions));
     for (int i = 0; i < 64; i++) {
-        if (!b.testBit(i))
+        if (!positions.testBit(i))
             continue;
 
-        if (!m_squareMoves.contains(i))
+        if (!m_squareMoves.contains(i) && !m_squareAttacks.contains(i))
+            continue;
+
+        Square square = positions.bitToSquare(i);
+
+        if (move.fileOfDeparture() != -1 && move.fileOfDeparture() != square.file())
+            continue;
+        if (move.rankOfDeparture() != -1 && move.rankOfDeparture() != square.file())
             continue;
 
         if (m_squareMoves.value(i).isSquareOccupied(move.end())) {
-            return b.bitToSquare(i);
+            return square;
+        } else if (m_squareAttacks.value(i).isSquareOccupied(move.end()) && opposingPositions.isSquareOccupied(move.end())) {
+            return square;
         }
     }
     return Square();

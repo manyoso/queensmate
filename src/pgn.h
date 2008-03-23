@@ -11,7 +11,8 @@ public:
     Pgn();
     ~Pgn();
 
-    QList<Move> moves() const { return m_moves.values(); }
+    QString tag(const QString &name) const;
+    QList<Move> moves() const { return m_moves.values(); };
 
     void addTag(const QString &name, const QString &value);
     void addMoveNumber(int number);

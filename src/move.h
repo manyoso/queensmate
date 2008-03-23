@@ -30,10 +30,10 @@ public:
     bool isQueenSideCastle() const { return m_castle == Chess::QueenSide; }
     void setCastleSide(Chess::Castle castle) { m_castle = castle; }
 
-    int fileOfDeparture() const { return start().file(); }
+    int fileOfDeparture() const { return start().isValid() ? start().file() : m_fileOfDeparture; }
     void setFileOfDeparture(int fileOfDeparture) { m_fileOfDeparture = fileOfDeparture; }
 
-    int rankOfDeparture() const { return m_rankOfDeparture; }
+    int rankOfDeparture() const { return start().isValid() ? start().rank() : m_rankOfDeparture; }
     void setRankOfDeparture(int rankOfDeparture) { m_rankOfDeparture = rankOfDeparture; }
 
     Chess::PieceType promotion() const { return m_promotion; }
