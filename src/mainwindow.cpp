@@ -93,6 +93,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui_toolBar->setVisible(false);
 
+    QStyle *s = QApplication::style();
+    QStyleOptionSlider o;
+    o.orientation = Qt::Vertical;
+    o.state &= ~QStyle::State_Horizontal;
+    int extent = s->pixelMetric(QStyle::PM_ScrollBarExtent, &o, 0);
+    centralWidget()->setMinimumWidth(1010 /*width of the webpage*/ + (extent * 2) /*width of the scrollbar*/);
+    centralWidget()->setMinimumHeight(554);
+
     QSettings settings;
     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
     QSize size = settings.value("size", QSize(400, 400)).toSize();

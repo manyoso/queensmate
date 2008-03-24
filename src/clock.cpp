@@ -8,11 +8,11 @@ Clock::Clock(QObject *parent)
     : QObject(parent),
       m_started(false),
       m_army(White),
-      m_whiteBaseTime(QTime(0, 15)),
+      m_whiteBaseTime(QTime(0, 0, 0)),
       m_whiteIncrement(QTime(0, 0, 0)),
       m_whiteMoves(-1),
       m_whiteIsUnlimited(false),
-      m_blackBaseTime(QTime(0, 15)),
+      m_blackBaseTime(QTime(0, 0, 0)),
       m_blackIncrement(QTime(0, 0, 0)),
       m_blackMoves(-1),
       m_blackIsUnlimited(false)
@@ -128,6 +128,12 @@ void Clock::startClock(Chess::Army army)
 {
     m_army = army;
 
+    if (m_army == White && m_whiteBaseTime == QTime(0, 0, 0))
+        return;
+
+    if (m_army == Black && m_blackBaseTime == QTime(0, 0, 0))
+        return;
+
 //     qDebug() << "startClock"
 //              << "army" << army
 //              << "m_whiteTime" << m_whiteTime
@@ -149,6 +155,22 @@ void Clock::startClock(Chess::Army army)
         }
 
         m_blackTime += incrementLeft(army);
+    }
+
+    if (m_whiteTime <= 0 && !m_whiteIsUnlimited) {
+        qDebug() << "flagFell for white" << endl;
+        m_whiteTime = 0;
+        endClock();
+        emit flagFell(White);
+        emit tick();
+        return;
+    } else if (m_blackTime <= 0 && !m_blackIsUnlimited) {
+        qDebug() << "flagFell for black" << endl;
+        m_blackTime = 0;
+        endClock();
+        emit flagFell(Black);
+        emit tick();
+        return;
     }
 
     if (!m_started) {
