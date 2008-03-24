@@ -9,7 +9,8 @@ using namespace Chess;
 
 Pgn::Pgn()
 {
-}
+
+qRegisterMetaType<PgnList>("PgnList");}
 
 Pgn::~Pgn()
 {

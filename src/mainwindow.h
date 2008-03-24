@@ -5,8 +5,12 @@
 
 #include "ui_mainwindow.h"
 
+class Pgn;
+typedef QList<Pgn> PgnList;
 class WebPage;
 class WebView;
+class PgnParser;
+class DataLoader;
 
 class MainWindow : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
@@ -16,11 +20,11 @@ public:
 
 public Q_SLOTS:
     void newGame();
-    void newGame(const QString &fen);
     void constructGame();
     void loadGameFromPGN();
-    void loadGameFromPGN(const QString &file);
+    void loadGameFromPGN(const QString &path);
     void loadGameFromFEN();
+    void loadGameFromFEN(const QString &fen);
     void newScratchBoard();
 
     void fullScreen(bool show);
@@ -42,11 +46,19 @@ private Q_SLOTS:
     void gameStateChanged();
     void tabChanged(int index);
     void mainPageLayoutCompleted();
+    void pgnDataProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void pgnDataLoaded(const QByteArray &data);
+    void pgnDataError(const QString &error);
+    void pgnParserProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void pgnParserFinished(const PgnList &games);
+    void pgnParserError(const QString &error);
 
 private:
+    DataLoader *m_pgnLoader;
+    PgnParser *m_pgnParser;
+    WebView *m_webView;
     WebPage *m_aboutPage;
     WebPage *m_mainPage;
-    WebView *m_webView;
 };
 
 #endif

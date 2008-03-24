@@ -6,6 +6,7 @@
 
 class Resource;
 class MainWindow;
+class QNetworkReply;
 
 #define chessApp \
   (static_cast<Application*>(QCoreApplication::instance()))

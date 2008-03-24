@@ -20,6 +20,7 @@
 #include "pgnparser.h"
 #include "boardview.h"
 #include "uciengine.h"
+#include "dataloader.h"
 #include "scratchview.h"
 #include "application.h"
 #include "aboutdialog.h"
@@ -54,16 +55,26 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
+    m_pgnLoader = new DataLoader(this);
+    connect(m_pgnLoader, SIGNAL(progress(qint64, qint64)), this, SLOT(pgnDataProgress(qint64, qint64)));
+    connect(m_pgnLoader, SIGNAL(finished(const QByteArray &)), this, SLOT(pgnDataLoaded(const QByteArray &)));
+    connect(m_pgnLoader, SIGNAL(error(const QString &)), this, SLOT(pgnDataError(const QString &)));
+
+    m_pgnParser = new PgnParser(this);
+    connect(m_pgnParser, SIGNAL(progress(qint64, qint64)), this, SLOT(pgnParserProgress(qint64, qint64)));
+    connect(m_pgnParser, SIGNAL(finished(const PgnList &)), this, SLOT(pgnParserFinished(const PgnList &)));
+    connect(m_pgnParser, SIGNAL(error(const QString &)), this, SLOT(pgnParserError(const QString &)));
+
     //begin web...
     m_webView = new WebView(ui_tabWidget);
 
     QFile about(":/html/about.html");
     Q_ASSERT(about.open(QIODevice::ReadOnly | QIODevice::Text));
-    m_aboutPage = new WebPage(m_webView);
+    m_aboutPage = new WebPage(this, m_webView);
     m_aboutPage->mainFrame()->setHtml(about.readAll());
     m_webView->setPage(m_aboutPage);
 
-    m_mainPage = new WebPage(m_webView);
+    m_mainPage = new WebPage(this, m_webView);
     connect(m_mainPage->mainFrame(), SIGNAL(initialLayoutCompleted()), this, SLOT(mainPageLayoutCompleted()));
     m_mainPage->mainFrame()->load(chessApp->url());
 
@@ -95,10 +106,43 @@ MainWindow::~MainWindow()
 
 void MainWindow::newGame()
 {
-    newGame(QString());
+    loadGameFromFEN(QString());
 }
 
-void MainWindow::newGame(const QString &fen)
+void MainWindow::constructGame()
+{
+    qDebug() << "FIXME!!" << endl;
+}
+
+void MainWindow::loadGameFromPGN()
+{
+    QString file = QFileDialog::getOpenFileName(this, tr("Load PGN File"), QString(), tr("PGN files (*.pgn)"));
+    if (file.isEmpty())
+        return;
+
+    loadGameFromPGN(file);
+}
+
+void MainWindow::loadGameFromPGN(const QString &path)
+{
+    m_pgnLoader->loadDataFromPath(path);
+}
+
+void MainWindow::loadGameFromFEN()
+{
+    bool ok;
+    QString fen = QInputDialog::getText(this, tr("Load FEN String"), tr("FEN String:"), QLineEdit::Normal, QString(), &ok);
+    if (!ok)
+        return;
+
+    if (fen.isEmpty())
+        qDebug() << "ERROR! FEN string is empty" << endl;
+
+    //FIXME error checking...
+    loadGameFromFEN(fen);
+}
+
+void MainWindow::loadGameFromFEN(const QString &fen)
 {
     NewGameDialog dialog(this);
     if (!fen.isEmpty()) {
@@ -185,77 +229,6 @@ void MainWindow::newGame(const QString &fen)
     int i = ui_tabWidget->addTab(gameView,
                                  QString("%1 vs %2").arg(whitePlayer->playerName()).arg(blackPlayer->playerName()));
     ui_tabWidget->setCurrentIndex(i);
-}
-
-void MainWindow::constructGame()
-{
-    qDebug() << "FIXME!!" << endl;
-}
-
-void MainWindow::loadGameFromPGN()
-{
-    QString file = QFileDialog::getOpenFileName(this, tr("Load PGN File"), QString(), tr("PGN files (*.pgn)"));
-    if (file.isEmpty())
-        return;
-
-    loadGameFromPGN(file);
-}
-
-void MainWindow::loadGameFromPGN(const QString &file)
-{
-    QString err;
-    bool ok = false;
-    QList<Pgn> games = PgnParser::parsePgn(file, &ok, &err);
-    if (!ok) {
-        qDebug() << "ERROR! while loading PGN file" << file << err << endl;
-        return;
-    }
-
-    foreach (Pgn pgn, games) {
-
-        Game *game = new Game(this);
-
-        Player *whitePlayer = new Player(game);
-        whitePlayer->setPlayerName(pgn.tag("White"));
-
-        Player *blackPlayer = new Player(game);
-        blackPlayer->setPlayerName(pgn.tag("Black"));
-
-        game->setPlayers(whitePlayer, blackPlayer);
-
-        connect(game, SIGNAL(gameStarted()), this, SLOT(gameStateChanged()));
-        connect(game, SIGNAL(gameEnded()), this, SLOT(gameStateChanged()));
-
-        Chess::Army army = White;
-        QList<Move> moves = pgn.moves();
-        foreach (Move move, moves) {
-            //qDebug() << "make move" << Notation::moveToString(move) << endl;
-            game->localHumanMadeMove(army, move);
-            army = army == White ? Black : White;
-        }
-
-        GameView *gameView = new GameView(ui_tabWidget, game);
-        game->setParent(gameView); //reparent!!
-
-        int i = ui_tabWidget->addTab(gameView,
-                                     QString("%1 vs %2").arg(whitePlayer->playerName()).arg(blackPlayer->playerName()));
-        ui_tabWidget->setCurrentIndex(i);
-
-    }
-}
-
-void MainWindow::loadGameFromFEN()
-{
-    bool ok;
-    QString fen = QInputDialog::getText(this, tr("Load FEN String"), tr("FEN String:"), QLineEdit::Normal, QString(), &ok);
-    if (!ok)
-        return;
-
-    if (fen.isEmpty())
-        qDebug() << "ERROR! FEN string is empty" << endl;
-
-    //FIXME error checking...
-    newGame(fen);
 }
 
 void MainWindow::newScratchBoard()
@@ -404,4 +377,65 @@ void MainWindow::tabChanged(int index)
 void MainWindow::mainPageLayoutCompleted()
 {
     m_webView->setPage(m_mainPage);
+}
+
+void MainWindow::pgnDataProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+    Q_UNUSED(bytesReceived);
+    Q_UNUSED(bytesTotal);
+}
+
+void MainWindow::pgnDataLoaded(const QByteArray &data)
+{
+    m_pgnParser->parsePgn(data);
+}
+
+void MainWindow::pgnDataError(const QString &error)
+{
+    qDebug() << "error loading pgn" << error << endl;
+}
+
+void MainWindow::pgnParserProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+    Q_UNUSED(bytesReceived);
+    Q_UNUSED(bytesTotal);
+}
+
+void MainWindow::pgnParserFinished(const PgnList &games)
+{
+    qDebug() << "pgnParserFinished" << endl;
+    foreach (Pgn pgn, games) {
+        Game *game = new Game(this);
+
+        Player *whitePlayer = new Player(game);
+        whitePlayer->setPlayerName(pgn.tag("White"));
+
+        Player *blackPlayer = new Player(game);
+        blackPlayer->setPlayerName(pgn.tag("Black"));
+
+        game->setPlayers(whitePlayer, blackPlayer);
+
+        connect(game, SIGNAL(gameStarted()), this, SLOT(gameStateChanged()));
+        connect(game, SIGNAL(gameEnded()), this, SLOT(gameStateChanged()));
+
+        Chess::Army army = White;
+        QList<Move> moves = pgn.moves();
+        foreach (Move move, moves) {
+            //qDebug() << "make move" << Notation::moveToString(move) << endl;
+            game->localHumanMadeMove(army, move);
+            army = army == White ? Black : White;
+        }
+
+        GameView *gameView = new GameView(ui_tabWidget, game);
+        game->setParent(gameView); //reparent!!
+
+        int i = ui_tabWidget->addTab(gameView,
+                                     QString("%1 vs %2").arg(whitePlayer->playerName()).arg(blackPlayer->playerName()));
+        ui_tabWidget->setCurrentIndex(i);
+    }
+}
+
+void MainWindow::pgnParserError(const QString &error)
+{
+    qDebug() << "error parsing pgn" << error << endl;
 }

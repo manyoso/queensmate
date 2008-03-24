@@ -1,22 +1,36 @@
 #ifndef PGNPARSER_H
 #define PGNPARSER_H
 
-#include <QString>
+#include <QThread>
 
 class Pgn;
 class Move;
 class PgnTokenStream;
+typedef QList<Pgn> PgnList;
 
-class PgnParser {
+class PgnParser : public QThread {
+    Q_OBJECT
 public:
-    static QList<Pgn> parsePgn(const QString &fileName, bool *ok = 0, QString *err = 0);
+    PgnParser(QObject *parent);
+    ~PgnParser();
+
+    void parsePgn(const QByteArray &data);
+
+Q_SIGNALS:
+    void progress(qint64 bytesReceived, qint64 bytesTotal);
+    void error(const QString &error);
+    void finished(const PgnList &games);
+
+protected:
+    virtual void run();
 
 private:
-    static bool parseTagPair(PgnTokenStream *stream, Pgn *pgn, bool *ok = 0, QString *err = 0);
-    static bool parseMoveText(PgnTokenStream *stream, Pgn *pgn, bool *ok = 0, QString *err = 0);
-    static bool parseMove(PgnTokenStream *stream, Move *move, bool *ok = 0, QString *err = 0);
-    PgnParser();
-    ~PgnParser();
+    bool parseTagPair(PgnTokenStream *stream, Pgn *pgn);
+    bool parseMoveText(PgnTokenStream *stream, Pgn *pgn);
+    bool parseMove(PgnTokenStream *stream, Move *move);
+
+private:
+    QByteArray m_data;
 };
 
 #endif

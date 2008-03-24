@@ -1,8 +1,8 @@
 #include "pgnparser.h"
 
+#include <QUrl>
 #include <QFile>
 #include <QDebug>
-#include <QObject>
 
 #include "pgn.h"
 #include "chess.h"
@@ -11,36 +11,36 @@
 
 using namespace Chess;
 
-QList<Pgn> PgnParser::parsePgn(const QString &fileName, bool *ok, QString *err)
+PgnParser::PgnParser(QObject *parent)
+    : QThread(parent)
 {
-//     qDebug() << "parsePgn" << fileName << endl;
-    QFile file(fileName);
-    if (!file.exists()) {
-        *ok = false;
-        *err = QObject::tr("File does not exist!");
-        return QList<Pgn>();
-    }
+}
 
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        *ok = false;
-        *err = QObject::tr("Could not open file!");
-        return QList<Pgn>();
-    }
+PgnParser::~PgnParser()
+{
+}
 
+void PgnParser::parsePgn(const QByteArray &data)
+{
+    m_data = data;
+    start(); //woohoo!
+}
+
+void PgnParser::run()
+{
+    qDebug() << "parsing pgn..." << endl;
     QList<Pgn> games;
 
     PgnLexer lexer;
-    QByteArray text = file.readAll();
-    PgnTokenStream stream = lexer.lex(text);
+    PgnTokenStream stream = lexer.lex(m_data);
 
     Pgn pgn;
     while (!stream.atEnd()) {
         switch (stream.lookAhead()) {
         case PgnToken::Unknown:
             {
-                *ok = false;
-                *err = QString("Unknown token at '%1!'").arg(QString::number(stream.pos()));
-                return QList<Pgn>();
+                emit error(QString("Unknown token at '%1!'").arg(QString::number(stream.pos())));
+                return;
             }
         case PgnToken::LeftBrack:
             {
@@ -48,19 +48,20 @@ QList<Pgn> PgnParser::parsePgn(const QString &fileName, bool *ok, QString *err)
                     stream.lookAhead(2) == PgnToken::String &&
                     stream.lookAhead(3) == PgnToken::RightBrack) {
 
-                    if (!parseTagPair(&stream, &pgn, ok, err))
-                        return QList<Pgn>();
+                    if (!parseTagPair(&stream, &pgn)) {
+                        return;
+                    }
                 } else {
-                    *ok = false;
-                    *err = QString("Could not parse tag pair at '%1!'").arg(QString::number(stream.pos()));
-                    return QList<Pgn>();
+                    emit error(QString("Could not parse tag pair at '%1!'").arg(QString::number(stream.pos())));
+                    return;
                 }
                 break;
             }
         default:
             {
-                if (!parseMoveText(&stream, &pgn, ok, err))
-                    return QList<Pgn>();
+                if (!parseMoveText(&stream, &pgn)) {
+                    return;
+                }
                 games << pgn;
                 pgn = Pgn();
                 break;
@@ -70,16 +71,13 @@ QList<Pgn> PgnParser::parsePgn(const QString &fileName, bool *ok, QString *err)
         stream.next();
     }
 
-    *ok = true;
-    *err = QString();
-    return games;
+    emit finished(games);
+    return;
 }
 
-bool PgnParser::parseTagPair(PgnTokenStream *stream, Pgn *pgn, bool *ok, QString *err)
+bool PgnParser::parseTagPair(PgnTokenStream *stream, Pgn *pgn)
 {
-    Q_UNUSED(ok);
-    Q_UNUSED(err);
-
+    qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
     Q_ASSERT(stream->lookAhead() == PgnToken::LeftBrack);
 
     stream->next();
@@ -93,12 +91,12 @@ bool PgnParser::parseTagPair(PgnTokenStream *stream, Pgn *pgn, bool *ok, QString
     return true;
 }
 
-bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn, bool *ok, QString *err)
+bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn)
 {
     Q_UNUSED(pgn);
 
     while (!stream->atEnd()) {
-/*        qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;*/
+        qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
         switch (stream->lookAhead()) {
         case PgnToken::Asterisk:
             break; //game termination
@@ -129,7 +127,7 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn, bool *ok, QStrin
         case PgnToken::Symbol:
             {
                 Move move;
-                if (!parseMove(stream, &move, ok, err)) {
+                if (!parseMove(stream, &move)) {
                     return false;
                 } else {
                     pgn->addMove(move);
@@ -138,8 +136,7 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn, bool *ok, QStrin
             }
         default:
             {
-                *ok = false;
-                *err = QString("Unknown token in move text at '%1!'").arg(QString::number(stream->pos()));
+                emit error(QString("Unknown token in move text at '%1!'").arg(QString::number(stream->pos())));
                 return false;
             }
         }
@@ -151,17 +148,14 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn, bool *ok, QStrin
     return true;
 }
 
-bool PgnParser::parseMove(PgnTokenStream *stream, Move *move, bool *ok, QString *err)
+bool PgnParser::parseMove(PgnTokenStream *stream, Move *move)
 {
 //    qDebug() << "pgn move" << stream->text() << endl;
-    *move = Notation::stringToMove(stream->text(), Standard, ok, err);
-    return ok;
-}
-
-PgnParser::PgnParser()
-{
-}
-
-PgnParser::~PgnParser()
-{
+    QString err;
+    bool ok = false;
+    *move = Notation::stringToMove(stream->text(), Standard, &ok, &err);
+//     if (!err.isEmpty())
+//         emit error(err);
+//     return ok;
+    return true;
 }

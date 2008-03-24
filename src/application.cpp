@@ -7,6 +7,11 @@
 #include "resource.h"
 #include "mainwindow.h"
 
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
+
+
 Application::Application(int &argc, char **argv)
     : QApplication(argc, argv)
 {
@@ -25,9 +30,7 @@ Application::Application(int &argc, char **argv)
     if (args.count() > 1) {
         args.removeFirst(); //app name
         foreach (QString arg, args) {
-            QFileInfo f(arg);
-            if (f.exists() && f.suffix() == "pgn")
-                m_mainWindow->loadGameFromPGN(arg);
+            m_mainWindow->loadGameFromPGN(arg);
         }
     }
 }

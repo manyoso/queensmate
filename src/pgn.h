@@ -3,6 +3,7 @@
 
 #include <QHash>
 #include <QString>
+#include <QMetaType>
 
 #include "move.h"
 
@@ -24,5 +25,8 @@ private:
     QHash<int, Move> m_moves;
     friend class PgnParser;
 };
+
+typedef QList<Pgn> PgnList;
+Q_DECLARE_METATYPE(PgnList)
 
 #endif

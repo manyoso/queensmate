@@ -35,6 +35,7 @@ SOURCES += \
     changetheme.cpp \
     clock.cpp \
     configuredialog.cpp \
+    dataloader.cpp \
     engine.cpp \
     game.cpp \
     gameview.cpp \
@@ -74,6 +75,7 @@ HEADERS += \
     chess.h \
     clock.h \
     configuredialog.h \
+    dataloader.h \
     engine.h \
     game.h \
     gameview.h \

@@ -8,7 +8,7 @@
 #include "mainwindow.h"
 #include "application.h"
 
-WebPage::WebPage(QObject *parent)
+WebPage::WebPage(MainWindow *mainWindow, QObject *parent)
     : QWebPage(parent)
 {
     connect(this, SIGNAL(linkHovered(const QString &, const QString &, const QString &)),
@@ -17,6 +17,16 @@ WebPage::WebPage(QObject *parent)
             chessApp, SLOT(showStatus(const QString &)));
     connect(this, SIGNAL(unsupportedContent(QNetworkReply *)),
             this, SLOT(handleUnsupportedContent(QNetworkReply *)));
+
+    connect(this, SIGNAL(newGame()),
+            mainWindow, SLOT(newGame()),
+            Qt::QueuedConnection);
+    connect(this, SIGNAL(loadGameFromPGN(const QString &)),
+            mainWindow, SLOT(loadGameFromPGN(const QString &)),
+            Qt::QueuedConnection);
+    connect(this, SIGNAL(loadGameFromFEN(const QString &)),
+            mainWindow, SLOT(loadGameFromFEN(const QString &)),
+            Qt::QueuedConnection);
 }
 
 WebPage::~WebPage()
@@ -68,7 +78,29 @@ void WebPage::handleUnsupportedContent(QNetworkReply *reply)
 
 void WebPage::handleQuery(const QueryItemList &list)
 {
-    Q_UNUSED(list);
-//    qDebug() << "handleQuery" << list << endl;
-    QTimer::singleShot(0, chessApp->mainWindow(), SLOT(newGame()));
+    QueryHash hash;
+    QueryItemList::ConstIterator it = list.begin();
+    for (; it != list.end(); ++it) {
+        QString name = (*it).first;
+        QString value = (*it).second;
+        hash.insert(name, value);
+    }
+
+    if (!hash.contains("action"))
+        return;
+
+    QString action = hash.value("action");
+    if (action == "newGame") {
+        emit newGame();
+    } else if (action == "loadGameFromPGN") {
+        if (!hash.contains("url"))
+            return;
+        QString url = hash.value("url");
+        emit loadGameFromPGN(url);
+    } else if (action == "loadGameFromFEN") {
+        if (!hash.contains("fen"))
+            return;
+        QString fen = hash.value("fen");
+        emit loadGameFromFEN(fen);
+    }
 }
