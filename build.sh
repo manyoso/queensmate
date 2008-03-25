@@ -7,5 +7,5 @@ export BUILDDIR=$PWD/build
 
 mkdir -p $BUILDDIR
 cd $BUILDDIR
-qmake -r $SCRIPTDIR/castle.pro
+qmake -r $SCRIPTDIR/queensmate.pro
 make

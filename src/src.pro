@@ -1,11 +1,11 @@
-include($$PWD/../castle.pri)
+include($$PWD/../queensmate.pri)
 
 QT += gui network svg xml webkit
 
 TEMPLATE = app
 OBJECTS_DIR = tmp
 MOC_DIR = tmp
-TARGET = castle
+TARGET = queensmate
 DESTDIR = $$OUTPUT_DIR/bin
 
 #FIXME the paths aren't properly quoted under windows...

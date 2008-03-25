@@ -5,5 +5,5 @@ cd `dirname $0`
 export SCRIPTDIR=$PWD
 export BUILDDIR=$PWD/build
 
-gdb --args $BUILDDIR/bin/castle "$@"
+gdb --args $BUILDDIR/bin/queensmate "$@"
 

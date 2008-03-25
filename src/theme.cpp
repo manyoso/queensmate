@@ -28,7 +28,7 @@ Theme::Theme(QObject *parent)
 //     m_gridPen = QPen(Qt::white);
 //     m_labelPen = QPen(Qt::lightGray);
 //     m_borderPen = QPen(Qt::white);
-//     saveSquaresTheme("default.castle");
+//     saveSquaresTheme("default.qm");
 
 //     m_squareBrushes.insert(Light, QBrush(Qt::lightGray));
 //     m_squareBrushes.insert(Dark, QBrush(Qt::darkGray));
@@ -39,7 +39,7 @@ Theme::Theme(QObject *parent)
 //     m_gridPen = QPen(Qt::white);
 //     m_labelPen = QPen(Qt::lightGray);
 //     m_borderPen = QPen(Qt::white);
-//     saveSquaresTheme("monocolor.castle");
+//     saveSquaresTheme("monocolor.qm");
 
 //     m_squareBrushes.insert(Light, QBrush(Qt::lightGray));
 //     m_squareBrushes.insert(Dark, QBrush(Qt::darkRed));
@@ -50,7 +50,7 @@ Theme::Theme(QObject *parent)
 //     m_gridPen = QPen(Qt::black);
 //     m_labelPen = QPen(Qt::black);
 //     m_borderPen = QPen(Qt::black);
-//     saveSquaresTheme("redandgray.castle");
+//     saveSquaresTheme("redandgray.qm");
 
 //     m_squareBrushes.insert(Light, QBrush(QColor(209, 205, 184)));
 //     m_squareBrushes.insert(Dark, QBrush(QColor(110, 128, 158)));
@@ -61,7 +61,7 @@ Theme::Theme(QObject *parent)
 //     m_gridPen = QPen(Qt::black);
 //     m_labelPen = QPen(Qt::black);
 //     m_borderPen = QPen(Qt::black);
-//     saveSquaresTheme("monge.castle");
+//     saveSquaresTheme("monge.qm");
 
 //     m_squareBrushes.insert(Light, QBrush(QPixmap(":textures/lightwood.png")));
 //     m_squareBrushes.insert(Dark, QBrush(QPixmap(":textures/darkwood.png")));
@@ -72,7 +72,7 @@ Theme::Theme(QObject *parent)
 //     m_gridPen = QPen(Qt::transparent);
 //     m_labelPen = QPen(Qt::white);
 //     m_borderPen = QPen(Qt::transparent);
-//     saveSquaresTheme("wood.castle");
+//     saveSquaresTheme("wood.qm");
 
 //     m_squareBrushes.insert(Light, QBrush(QPixmap(":textures/lightmat.png")));
 //     m_squareBrushes.insert(Dark, QBrush(QPixmap(":textures/darkmat.png")));
@@ -85,7 +85,7 @@ Theme::Theme(QObject *parent)
 //     m_borderPen = QPen(QColor(24, 94, 60));
 //     m_borderPen.setCosmetic(false);
 //     m_borderPen.setWidthF(0.1);
-//     saveSquaresTheme("greenmat.castle");
+//     saveSquaresTheme("greenmat.qm");
 }
 
 Theme::~Theme()
@@ -178,7 +178,7 @@ void Theme::setSquaresTheme(const QString &theme)
                                QDir::separator() +
                                "squares" +
                                QDir::separator() +
-                               theme + ".castle");
+                               theme + ".qm");
 
     parseSquaresTheme(fileName);
     emit themeChanged();

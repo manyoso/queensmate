@@ -1,4 +1,4 @@
-include($$PWD/../castle.pri)
+include($$PWD/../queensmate.pri)
 
 QT += gui network svg xml
 

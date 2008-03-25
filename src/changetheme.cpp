@@ -39,7 +39,7 @@ void ChangeTheme::fillSquareThemeList(const QString &theme)
     QStringList humanReadable;
     QStringList squareThemes = dir.entryList(QDir::Files);
     foreach (QString theme, squareThemes) {
-        humanReadable << theme.replace(".castle", "");
+        humanReadable << theme.replace(".qm", "");
     }
     ui_squareTheme->addItems(humanReadable);
     ui_squareTheme->setCurrentIndex(ui_squareTheme->findText(theme));

@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Castle</string>
+   <string>QueensMate</string>
   </property>
   <widget class="QWidget" name="ui_centralwidget" >
    <property name="geometry" >
@@ -128,12 +128,12 @@
   </action>
   <action name="ui_actionAbout" >
    <property name="text" >
-    <string>About Castle...</string>
+    <string>About QueensMate...</string>
    </property>
   </action>
   <action name="ui_actionConfigure" >
    <property name="text" >
-    <string>Configure Castle...</string>
+    <string>Configure QueensMate...</string>
    </property>
   </action>
   <action name="ui_actionLoadGameFromPGN" >
