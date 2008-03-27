@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#include <ctype.h>
+
 PgnToken::PgnToken()
     : start(0), length(0), type(Unknown)
 {
@@ -126,17 +128,26 @@ PgnTokenStream PgnLexer::lex(const QByteArray &text)
     m_size = text.size();
     m_tokens.clear();
 
-    QTextStream stream(text);
+    QByteArray copy = text;
+    QBuffer stream(&copy, this);
+
+    stream.open(QIODevice::ReadOnly | QIODevice::Text);
 
     while (!stream.atEnd()) {
         emit progress(stream.pos(), m_size);
 
-        stream.skipWhiteSpace();
+        char s;
+        stream.peek(&s, sizeof(s));
+        if (isspace(s)) {
+            stream.seek(stream.pos() + sizeof(s));
+            continue;
+        }
+
         if (stream.atEnd())
             break;
 
-        QChar c;
-        stream >> c;
+        char c;
+        stream.getChar(&c);
         if (c == '"')
             scanString(&stream);
         else if (c == '.')
@@ -157,9 +168,9 @@ PgnTokenStream PgnLexer::lex(const QByteArray &text)
             scanRightAngle(&stream);
         else if (c == '$')
             scanNAG(&stream);
-        else if (c.isDigit())
+        else if (isdigit(c))
             scanIntegerOrSymbol(&stream, true);
-        else if (c.isLetter())
+        else if (isalpha(c))
             scanIntegerOrSymbol(&stream, false);
         else
             qDebug() << "Unknown char:at" << stream.pos() << endl;
@@ -168,7 +179,7 @@ PgnTokenStream PgnLexer::lex(const QByteArray &text)
     return PgnTokenStream(text, m_tokens);
 }
 
-void PgnLexer::scanString(QTextStream *stream)
+void PgnLexer::scanString(QBuffer *stream)
 {
 //     qDebug() << "scanString start pos:" << stream->pos() << endl;
     PgnToken token;
@@ -177,13 +188,19 @@ void PgnLexer::scanString(QTextStream *stream)
     while (!stream->atEnd() || stream->pos() - token.start == 255) {
         emit progress(stream->pos(), m_size);
 
-        stream->skipWhiteSpace();
+        char s;
+        stream->peek(&s, sizeof(s));
+        if (isspace(s)) {
+            stream->seek(stream->pos() + sizeof(s));
+            continue;
+        }
+
         if (stream->atEnd()) {
             break;
         }
 
-        QChar c;
-        *stream >> c;
+        char c;
+        stream->getChar(&c);
         if (c == '\\') {
             stream->seek(stream->pos() + 1);
         } else if (c == '"') {
@@ -198,7 +215,7 @@ void PgnLexer::scanString(QTextStream *stream)
 //     qDebug() << "scanString end pos:" << stream->pos() << endl;
 }
 
-void PgnLexer::scanPeriod(QTextStream *stream)
+void PgnLexer::scanPeriod(QBuffer *stream)
 {
     PgnToken token;
     token.start = stream->pos() - 1;
@@ -207,7 +224,7 @@ void PgnLexer::scanPeriod(QTextStream *stream)
     m_tokens << token;
 }
 
-void PgnLexer::scanAsterisk(QTextStream *stream)
+void PgnLexer::scanAsterisk(QBuffer *stream)
 {
     PgnToken token;
     token.start = stream->pos() - 1;
@@ -216,7 +233,7 @@ void PgnLexer::scanAsterisk(QTextStream *stream)
     m_tokens << token;
 }
 
-void PgnLexer::scanLeftBrack(QTextStream *stream)
+void PgnLexer::scanLeftBrack(QBuffer *stream)
 {
 //     qDebug() << "scanLeftBrack start pos:" << stream->pos() << endl;
     PgnToken token;
@@ -227,7 +244,7 @@ void PgnLexer::scanLeftBrack(QTextStream *stream)
 //     qDebug() << "scanLeftBrack end pos:" << stream->pos() << endl;
 }
 
-void PgnLexer::scanRightBrack(QTextStream *stream)
+void PgnLexer::scanRightBrack(QBuffer *stream)
 {
     PgnToken token;
     token.start = stream->pos() - 1;
@@ -236,7 +253,7 @@ void PgnLexer::scanRightBrack(QTextStream *stream)
     m_tokens << token;
 }
 
-void PgnLexer::scanLeftParen(QTextStream *stream)
+void PgnLexer::scanLeftParen(QBuffer *stream)
 {
     PgnToken token;
     token.start = stream->pos() - 1;
@@ -245,7 +262,7 @@ void PgnLexer::scanLeftParen(QTextStream *stream)
     m_tokens << token;
 }
 
-void PgnLexer::scanRightParen(QTextStream *stream)
+void PgnLexer::scanRightParen(QBuffer *stream)
 {
     PgnToken token;
     token.start = stream->pos() - 1;
@@ -254,7 +271,7 @@ void PgnLexer::scanRightParen(QTextStream *stream)
     m_tokens << token;
 }
 
-void PgnLexer::scanLeftAngle(QTextStream *stream)
+void PgnLexer::scanLeftAngle(QBuffer *stream)
 {
     PgnToken token;
     token.start = stream->pos() - 1;
@@ -263,7 +280,7 @@ void PgnLexer::scanLeftAngle(QTextStream *stream)
     m_tokens << token;
 }
 
-void PgnLexer::scanRightAngle(QTextStream *stream)
+void PgnLexer::scanRightAngle(QBuffer *stream)
 {
     PgnToken token;
     token.start = stream->pos() - 1;
@@ -272,7 +289,7 @@ void PgnLexer::scanRightAngle(QTextStream *stream)
     m_tokens << token;
 }
 
-void PgnLexer::scanNAG(QTextStream *stream)
+void PgnLexer::scanNAG(QBuffer *stream)
 {
     PgnToken token;
     token.start = stream->pos() - 1;
@@ -280,14 +297,20 @@ void PgnLexer::scanNAG(QTextStream *stream)
     while (!stream->atEnd()) {
         emit progress(stream->pos(), m_size);
 
-        stream->skipWhiteSpace();
+        char s;
+        stream->peek(&s, sizeof(s));
+        if (isspace(s)) {
+            stream->seek(stream->pos() + sizeof(s));
+            continue;
+        }
+
         if (stream->atEnd()) {
             break;
         }
 
-        QChar c;
-        *stream >> c;
-        if (!c.isDigit()) {
+        char c;
+        stream->getChar(&c);
+        if (!isdigit(c)) {
             stream->seek(stream->pos() - 1);
             break;
         }
@@ -299,7 +322,7 @@ void PgnLexer::scanNAG(QTextStream *stream)
     m_tokens << token;
 }
 
-void PgnLexer::scanIntegerOrSymbol(QTextStream *stream, bool integer)
+void PgnLexer::scanIntegerOrSymbol(QBuffer *stream, bool integer)
 {
 //     qDebug() << "scanIntegerOrSymbol start pos:" << stream->pos() << endl;
     PgnToken token;
@@ -312,8 +335,8 @@ void PgnLexer::scanIntegerOrSymbol(QTextStream *stream, bool integer)
             break;
         }
 
-        QChar c;
-        *stream >> c;
+        char c;
+        stream->getChar(&c);
         if (c == '_') {
             integer = false;
         } else if (c == '+') {
@@ -328,9 +351,9 @@ void PgnLexer::scanIntegerOrSymbol(QTextStream *stream, bool integer)
             integer = false;
         } else if (c == '/') {
             integer = false;
-        } else if (c.isLetter()) {
+        } else if (isalpha(c)) {
             integer = false;
-        } else if (c.isDigit()) {
+        } else if (isdigit(c)) {
             ; //do nothing
         } else {
             stream->seek(stream->pos() - 1);

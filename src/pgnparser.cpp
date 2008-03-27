@@ -31,11 +31,12 @@ void PgnParser::run()
     qDebug() << "parsing pgn..." << endl;
     QList<Pgn> games;
 
-    PgnLexer lexer(this);
-    connect(&lexer, SIGNAL(progress(qint64, qint64)), this, SLOT(lexProgressOut(qint64, qint64)));
+    PgnLexer lexer;
+    //connect(&lexer, SIGNAL(progress(qint64, qint64)), this, SLOT(lexProgressOut(qint64, qint64)));
+    //connect(this, SIGNAL(progress(qint64, qint64)), this, SLOT(parseProgressOut(qint64, qint64)));
     PgnTokenStream stream = lexer.lex(m_data);
 
-    connect(this, SIGNAL(progress(qint64, qint64)), this, SLOT(parseProgressOut(qint64, qint64)));
+    qDebug() << "lexing finished..." << endl;
 
     Pgn pgn;
     while (!stream.atEnd()) {

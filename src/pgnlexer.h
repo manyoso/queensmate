@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QVector>
 #include <QByteArray>
-#include <QTextStream>
+#include <QBuffer>
 
 //FIXME Comments!
 
@@ -63,7 +63,7 @@ private:
 class PgnLexer : public QObject {
     Q_OBJECT
 public:
-    PgnLexer(QObject *parent);
+    PgnLexer(QObject *parent = 0);
     ~PgnLexer();
 
     PgnTokenStream lex(const QByteArray &text);
@@ -74,17 +74,17 @@ Q_SIGNALS:
 private:
     bool nextToken(PgnToken &tok);
 
-    void scanString(QTextStream *stream);
-    void scanPeriod(QTextStream *stream);
-    void scanAsterisk(QTextStream *stream);
-    void scanLeftBrack(QTextStream *stream);
-    void scanRightBrack(QTextStream *stream);
-    void scanLeftParen(QTextStream *stream);
-    void scanRightParen(QTextStream *stream);
-    void scanLeftAngle(QTextStream *stream);
-    void scanRightAngle(QTextStream *stream);
-    void scanNAG(QTextStream *stream);
-    void scanIntegerOrSymbol(QTextStream *stream, bool integer);
+    void scanString(QBuffer *stream);
+    void scanPeriod(QBuffer *stream);
+    void scanAsterisk(QBuffer *stream);
+    void scanLeftBrack(QBuffer *stream);
+    void scanRightBrack(QBuffer *stream);
+    void scanLeftParen(QBuffer *stream);
+    void scanRightParen(QBuffer *stream);
+    void scanLeftAngle(QBuffer *stream);
+    void scanRightAngle(QBuffer *stream);
+    void scanNAG(QBuffer *stream);
+    void scanIntegerOrSymbol(QBuffer *stream, bool integer);
 
 private:
     qint64 m_size;
