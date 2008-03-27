@@ -346,12 +346,16 @@ Square Rules::guessSquare(Chess::Army army, Move move) const
 
         if (move.fileOfDeparture() != -1 && move.fileOfDeparture() != square.file())
             continue;
-        if (move.rankOfDeparture() != -1 && move.rankOfDeparture() != square.file())
+        if (move.rankOfDeparture() != -1 && move.rankOfDeparture() != square.rank())
             continue;
 
         if (m_squareMoves.value(i).isSquareOccupied(move.end())) {
             return square;
-        } else if (m_squareAttacks.value(i).isSquareOccupied(move.end()) && opposingPositions.isSquareOccupied(move.end())) {
+        } else if (m_squareAttacks.value(i).isSquareOccupied(move.end()) &&
+                   opposingPositions.isSquareOccupied(move.end())) {
+            return square;
+        } else if (m_squareAttacks.value(i).isSquareOccupied(move.end()) &&
+                   move.piece() == Pawn && move.end() == game()->enPassantTarget()) {
             return square;
         }
     }

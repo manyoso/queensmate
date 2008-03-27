@@ -81,7 +81,7 @@ void PgnParser::run()
 
 bool PgnParser::parseTagPair(PgnTokenStream *stream, Pgn *pgn)
 {
-    qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
+//    qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
     Q_ASSERT(stream->lookAhead() == PgnToken::LeftBrack);
 
     stream->next();
@@ -100,7 +100,7 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn)
     Q_UNUSED(pgn);
 
     while (!stream->atEnd()) {
-        qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
+//        qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
         switch (stream->lookAhead()) {
         case PgnToken::Asterisk:
             break; //game termination
@@ -154,7 +154,7 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn)
 
 bool PgnParser::parseMove(PgnTokenStream *stream, Move *move)
 {
-//    qDebug() << "pgn move" << stream->text() << endl;
+//    qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
     QString err;
     bool ok = false;
     *move = Notation::stringToMove(stream->text(), Standard, &ok, &err);
