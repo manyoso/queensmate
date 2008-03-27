@@ -1,7 +1,7 @@
 #ifndef PGN_H
 #define PGN_H
 
-#include <QHash>
+#include <QMap>
 #include <QString>
 #include <QMetaType>
 
@@ -20,9 +20,9 @@ public:
     void addMove(const Move &move);
 
 private:
-    QHash<QString, QString> m_tags;
+    QMap<QString, QString> m_tags;
     int m_currentMoveNumber;
-    QHash<int, Move> m_moves;
+    QMap<int, Move> m_moves;
     friend class PgnParser;
 };
 

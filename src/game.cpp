@@ -514,10 +514,13 @@ bool Game::fillOutStart(Chess::Army army, Move *move)
     BitBoard opposingPositions(m_rules->bitBoard(army == White ? Black : White, Positions));
 
     qDebug() << "could not find a valid start square..."
+             << "\narmy:" << (army == White ? "White" : "Black")
              << "\nmove:" << Notation::moveToString(*move)
              << "\npositions:" << positions
              << "\nopposingPositions:" << opposingPositions
              << endl;
+
+    Q_ASSERT(false);
 
     return false;
 }

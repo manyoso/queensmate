@@ -413,6 +413,7 @@ void MainWindow::pgnParserFinished(const PgnList &games)
 {
     qDebug() << "pgnParserFinished" << endl;
     foreach (Pgn pgn, games) {
+        qDebug() << "generating game" << pgn.tag("White") << "VS" << pgn.tag("Black") << endl;
         Game *game = new Game(this);
 
         Player *whitePlayer = new Player(game);
