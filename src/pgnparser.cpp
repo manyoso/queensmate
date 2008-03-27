@@ -130,11 +130,16 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn)
             }
         case PgnToken::Symbol:
             {
-                Move move;
-                if (!parseMove(stream, &move)) {
-                    return false;
+                QString text = stream->text();
+                if (text.startsWith('0') || text.startsWith('1')) {
+                    parseResult(stream->text());
                 } else {
-                    pgn->addMove(move);
+                    Move move;
+                    if (!parseMove(stream, &move)) {
+                        return false;
+                    } else {
+                        pgn->addMove(move);
+                    }
                 }
                 break;
             }
@@ -154,13 +159,19 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn)
 
 bool PgnParser::parseMove(PgnTokenStream *stream, Move *move)
 {
-//    qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
+//     qDebug() << "token:" << stream->token() << "text:"  << stream->text() << endl;
     QString err;
     bool ok = false;
     *move = Notation::stringToMove(stream->text(), Standard, &ok, &err);
-//     if (!err.isEmpty())
-//         emit error(err);
-//     return ok;
+    if (!err.isEmpty())
+        emit error(err);
+    return ok;
+//    return true;
+}
+
+bool PgnParser::parseResult(const QString &result)
+{
+    Q_UNUSED(result);
     return true;
 }
 

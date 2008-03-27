@@ -430,7 +430,7 @@ void MainWindow::pgnParserFinished(const PgnList &games)
         Chess::Army army = White;
         QList<Move> moves = pgn.moves();
         foreach (Move move, moves) {
-            //qDebug() << "make move" << Notation::moveToString(move) << endl;
+//             qDebug() << "make move" << Notation::moveToString(move) << endl;
             game->localHumanMadeMove(army, move);
             army = army == White ? Black : White;
         }
