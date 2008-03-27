@@ -41,8 +41,8 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
                 int i = str.indexOf('=');
                 QChar c = str.at(i + 1);
                 move.setPromotion(charToPiece(c, notation));
-                str = str.remove('=');
                 str = str.remove(i + 1, 1);
+                str = str.remove('=');
             }
 
             if (str.contains('+')) {
