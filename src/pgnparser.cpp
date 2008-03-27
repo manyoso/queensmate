@@ -31,8 +31,11 @@ void PgnParser::run()
     qDebug() << "parsing pgn..." << endl;
     QList<Pgn> games;
 
-    PgnLexer lexer;
+    PgnLexer lexer(this);
+    connect(&lexer, SIGNAL(progress(qint64, qint64)), this, SLOT(lexProgressOut(qint64, qint64)));
     PgnTokenStream stream = lexer.lex(m_data);
+
+    connect(this, SIGNAL(progress(qint64, qint64)), this, SLOT(parseProgressOut(qint64, qint64)));
 
     Pgn pgn;
     while (!stream.atEnd()) {
@@ -158,4 +161,14 @@ bool PgnParser::parseMove(PgnTokenStream *stream, Move *move)
 //         emit error(err);
 //     return ok;
     return true;
+}
+
+void PgnParser::lexProgressOut(qint64 pos, qint64 size)
+{
+    qDebug() << "lexing..." << pos << "of" << size << endl;
+}
+
+void PgnParser::parseProgressOut(qint64 bytesReceived, qint64 bytesTotal)
+{
+    qDebug() << "parsing..." << bytesReceived << "of" << bytesTotal << endl;
 }

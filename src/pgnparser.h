@@ -24,6 +24,10 @@ Q_SIGNALS:
 protected:
     virtual void run();
 
+private Q_SLOTS:
+    void lexProgressOut(qint64 pos, qint64 size);
+    void parseProgressOut(qint64 bytesReceived, qint64 bytesTotal);
+
 private:
     bool parseTagPair(PgnTokenStream *stream, Pgn *pgn);
     bool parseMoveText(PgnTokenStream *stream, Pgn *pgn);

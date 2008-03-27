@@ -112,7 +112,8 @@ QByteArray PgnTokenStream::text()
     }
 }
 
-PgnLexer::PgnLexer()
+PgnLexer::PgnLexer(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -122,11 +123,13 @@ PgnLexer::~PgnLexer()
 
 PgnTokenStream PgnLexer::lex(const QByteArray &text)
 {
+    m_size = text.size();
     m_tokens.clear();
 
     QTextStream stream(text);
 
     while (!stream.atEnd()) {
+        emit progress(stream.pos(), m_size);
 
         stream.skipWhiteSpace();
         if (stream.atEnd())
@@ -172,6 +175,7 @@ void PgnLexer::scanString(QTextStream *stream)
     token.start = stream->pos() - 1;
 
     while (!stream->atEnd() || stream->pos() - token.start == 255) {
+        emit progress(stream->pos(), m_size);
 
         stream->skipWhiteSpace();
         if (stream->atEnd()) {
@@ -274,6 +278,7 @@ void PgnLexer::scanNAG(QTextStream *stream)
     token.start = stream->pos() - 1;
 
     while (!stream->atEnd()) {
+        emit progress(stream->pos(), m_size);
 
         stream->skipWhiteSpace();
         if (stream->atEnd()) {
@@ -301,6 +306,7 @@ void PgnLexer::scanIntegerOrSymbol(QTextStream *stream, bool integer)
     token.start = stream->pos() - 1;
 
     while (!stream->atEnd() || stream->pos() - token.start == 255) {
+        emit progress(stream->pos(), m_size);
 
         if (stream->atEnd()) {
             break;

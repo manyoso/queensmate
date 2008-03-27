@@ -60,12 +60,16 @@ private:
     QVector<PgnToken> m_tokens;
 };
 
-class PgnLexer {
+class PgnLexer : public QObject {
+    Q_OBJECT
 public:
-    PgnLexer();
+    PgnLexer(QObject *parent);
     ~PgnLexer();
 
     PgnTokenStream lex(const QByteArray &text);
+
+Q_SIGNALS:
+    void progress(qint64 pos, qint64 size);
 
 private:
     bool nextToken(PgnToken &tok);
@@ -83,6 +87,7 @@ private:
     void scanIntegerOrSymbol(QTextStream *stream, bool integer);
 
 private:
+    qint64 m_size;
     QVector<PgnToken> m_tokens;
 };
 
