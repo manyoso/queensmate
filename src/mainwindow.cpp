@@ -412,6 +412,8 @@ void MainWindow::pgnParserProgress(qint64 bytesReceived, qint64 bytesTotal)
 void MainWindow::pgnParserFinished(const PgnList &games)
 {
     qDebug() << "pgnParserFinished" << endl;
+
+    QList<Game*> createdGames;
     foreach (Pgn pgn, games) {
         qDebug() << "generating game" << pgn.tag("White") << "VS" << pgn.tag("Black") << endl;
         Game *game = new Game(this);
@@ -444,13 +446,19 @@ void MainWindow::pgnParserFinished(const PgnList &games)
             break;
         }
 
+        createdGames << game;
+    }
+
+    int index;
+    foreach (Game *game, createdGames) {
         GameView *gameView = new GameView(ui_tabWidget, game);
         game->setParent(gameView); //reparent!!
 
-        int i = ui_tabWidget->addTab(gameView,
-                                     QString("%1 vs %2").arg(whitePlayer->playerName()).arg(blackPlayer->playerName()));
-        ui_tabWidget->setCurrentIndex(i);
+        index = ui_tabWidget->addTab(gameView,
+                                     QString("%1 vs %2").arg(game->player(White)->playerName()).arg(game->player(Black)->playerName()));
     }
+
+    ui_tabWidget->setCurrentIndex(index);
 }
 
 void MainWindow::pgnParserError(const QString &error)
