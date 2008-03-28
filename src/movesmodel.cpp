@@ -34,7 +34,26 @@ QVariant MoveItem::data(int role) const
     case Qt::EditRole:
     case Qt::DisplayRole:
         {
-            return (m_move.isValid() ? Notation::moveToString(m_move) : "...");
+            QString result;
+            switch (model()->game()->result()) {
+            case Game::NoResult: result = QString(); break;
+            case Game::WhiteWins: result = "1-0"; break;
+            case Game::BlackWins: result = "0-1"; break;
+            case Game::Drawn: result = "1/2-1/2"; break;
+            default: break;
+            }
+
+            if (this != model()->lastMove()) {
+                result = QString();
+            }
+
+            if (m_move.isValid()) {
+                return QString("%1 %2").arg(Notation::moveToString(m_move)).arg(result);
+            } else if (model()->game()->result() == Game::NoResult) {
+                return QLatin1String("...");
+            } else {
+                return QString();
+            }
         }
     case Qt::ForegroundRole:
         {
@@ -116,7 +135,11 @@ MoveItem *MovesModel::lastMove() const
     int c = pos % 2 ? 1 : 0;
 
     if (pos != -1) {
-        return static_cast<MoveItem*>(item(r, c));
+        QStandardItem *i = item(r, c);
+        if (i->type() == QStandardItem::UserType + 1) //moveitem
+            return static_cast<MoveItem*>(i);
+        else
+            return 0;
     }
     return 0;
 }

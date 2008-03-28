@@ -435,6 +435,15 @@ void MainWindow::pgnParserFinished(const PgnList &games)
             army = army == White ? Black : White;
         }
 
+        switch (pgn.result()) {
+        case Game::NoResult: break;
+        case Game::WhiteWins: game->endGame(Game::CheckMate, pgn.result()); break;
+        case Game::BlackWins: game->endGame(Game::CheckMate, pgn.result()); break;
+        case Game::Drawn: game->endGame(Game::DrawAccepted, pgn.result()); break;
+        default:
+            break;
+        }
+
         GameView *gameView = new GameView(ui_tabWidget, game);
         game->setParent(gameView); //reparent!!
 

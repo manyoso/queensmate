@@ -9,6 +9,7 @@ using namespace Chess;
 
 Pgn::Pgn()
 {
+    m_result = Game::NoResult;
     qRegisterMetaType<PgnList>("PgnList");
 }
 

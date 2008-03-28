@@ -132,7 +132,7 @@ bool PgnParser::parseMoveText(PgnTokenStream *stream, Pgn *pgn)
             {
                 QString text = stream->text();
                 if (text.startsWith('0') || text.startsWith('1')) {
-                    parseResult(stream->text());
+                    pgn->addResult(parseResult(stream->text()));
                 } else {
                     Move move;
                     if (!parseMove(stream, &move)) {
@@ -169,10 +169,15 @@ bool PgnParser::parseMove(PgnTokenStream *stream, Move *move)
 //    return true;
 }
 
-bool PgnParser::parseResult(const QString &result)
+Game::Result PgnParser::parseResult(const QString &result)
 {
-    Q_UNUSED(result);
-    return true;
+    if (result == "1-0")
+        return Game::WhiteWins;
+    else if (result == "0-1")
+        return Game::BlackWins;
+    else if (result == "1/2-1/2")
+        return Game::Drawn;
+    return Game::NoResult;
 }
 
 void PgnParser::lexProgressOut(qint64 pos, qint64 size)

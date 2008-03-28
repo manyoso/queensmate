@@ -3,6 +3,8 @@
 
 #include <QThread>
 
+#include "game.h"
+
 class Pgn;
 class Move;
 class PgnTokenStream;
@@ -32,7 +34,7 @@ private:
     bool parseTagPair(PgnTokenStream *stream, Pgn *pgn);
     bool parseMoveText(PgnTokenStream *stream, Pgn *pgn);
     bool parseMove(PgnTokenStream *stream, Move *move);
-    bool parseResult(const QString &result);
+    Game::Result parseResult(const QString &result);
 
 private:
     QByteArray m_data;

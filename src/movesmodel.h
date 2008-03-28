@@ -25,6 +25,8 @@ public:
     Move move() const;
     void setMove(Move move);
 
+    virtual int type() const { return QStandardItem::UserType + 1; }
+
 private:
     Move m_move;
 };

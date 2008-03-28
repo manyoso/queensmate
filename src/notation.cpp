@@ -124,8 +124,10 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
         break;
     }
 
-    *ok = true;
-    *err = QString();
+    if (ok)
+        *ok = true;
+    if (err)
+        *err = QString();
     return move;
 }
 
