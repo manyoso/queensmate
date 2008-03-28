@@ -46,6 +46,7 @@ public:
     void clear(int index); //clears everything after index
 
 private Q_SLOTS:
+    void gameEnded();
     void positionChanged(int oldIndex, int newIndex);
 };
 

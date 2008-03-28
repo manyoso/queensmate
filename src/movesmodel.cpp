@@ -49,10 +49,8 @@ QVariant MoveItem::data(int role) const
 
             if (m_move.isValid()) {
                 return QString("%1 %2").arg(Notation::moveToString(m_move)).arg(result);
-            } else if (model()->game()->result() == Game::NoResult) {
-                return QLatin1String("...");
             } else {
-                return QString();
+                return QLatin1String("...");
             }
         }
     case Qt::ForegroundRole:
@@ -122,6 +120,9 @@ MovesModel::MovesModel(Game *game)
 
     connect(game, SIGNAL(positionChanged(int, int)),
             this, SLOT(positionChanged(int, int)));
+
+    connect(game, SIGNAL(gameEnded()),
+            this, SLOT(gameEnded()));
 }
 
 MovesModel::~MovesModel()
@@ -205,5 +206,16 @@ void MovesModel::positionChanged(int oldIndex, int newIndex)
             QModelIndex index = indexFromItem(i);
             emit dataChanged(index, index);
         }
+    }
+}
+
+void MovesModel::gameEnded()
+{
+    //Remove placeholder for next move...
+    if (game()->activeArmy() == White) {
+        removeRow(rowCount() - 1);
+    } else {
+        QStandardItem *item = takeItem(rowCount() - 1, 1);
+        delete item;
     }
 }
