@@ -10,26 +10,27 @@ using namespace Chess;
 
 Move Notation::stringToMove(const QString &string, Chess::NotationType notation, bool *ok, QString *err)
 {
-    //FIXME
-    Q_UNUSED(ok);
-    Q_UNUSED(err);
-
     //qDebug() << "Notation::stringToMove:" << string << endl;
+    if (ok)
+        *ok = true;
+    if (err)
+        *err = QString();
 
     Move move;
-
     switch (notation) {
     case Standard:
         {
-// d8        //Pawn to d8
-// cxd8      //Pawn on c captures d8
-// cxd8=Q+   //Pawn on c captures d8 promotes to queen and check
-// Qcd8      //Queen on file c to d8
-// Qc8d8     //Queen on file c and rank 8 to d8
-// Qxd8      //Queen captures d8
-// Qcxd8     //Queen on file c captures d8
-// Qc8xd8    //Queen on file c and rank 8 captures d8
-// Qc8xd8+   //Queen on file c and rank 8 captures d8 check
+            /* Some Examples of SAN moves
+             * d8        //Pawn to d8
+             * cxd8      //Pawn on c captures d8
+             * cxd8=Q+   //Pawn on c captures d8 promotes to queen and check
+             * Qcd8      //Queen on file c to d8
+             * Qc8d8     //Queen on file c and rank 8 to d8
+             * Qxd8      //Queen captures d8
+             * Qcxd8     //Queen on file c captures d8
+             * Qc8xd8    //Queen on file c and rank 8 captures d8
+             * Qc8xd8+   //Queen on file c and rank 8 captures d8 check
+            */
 
             QString str = string;
             if (str.contains('x')) {
@@ -40,7 +41,7 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
             if (str.contains('=')) {
                 int i = str.indexOf('=');
                 QChar c = str.at(i + 1);
-                move.setPromotion(charToPiece(c, notation));
+                move.setPromotion(charToPiece(c, notation, ok, err));
                 str = str.remove(i + 1, 1);
                 str = str.remove('=');
             }
@@ -74,49 +75,52 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
 
             if (str.length() == 2) {
                 move.setPiece(Pawn);
-                move.setEnd(stringToSquare(str.right(2), notation));
+                move.setEnd(stringToSquare(str.right(2), notation, ok, err));
             } else if (str.length() == 3) {
                 QChar c = str.at(0);
                 if (c.isUpper()) {
-                    move.setPiece(charToPiece(c, notation));
+                    move.setPiece(charToPiece(c, notation, ok, err));
                 } else if (c.isLower()) {
                     move.setPiece(Pawn);
-                    move.setFileOfDeparture(charToFile(c, notation));
+                    move.setFileOfDeparture(charToFile(c, notation, ok, err));
                 }
-                move.setEnd(stringToSquare(str.right(2), notation));
+                move.setEnd(stringToSquare(str.right(2), notation, ok, err));
             } else if (str.length() == 4) {
-                move.setPiece(charToPiece(str.at(0), notation));
+                move.setPiece(charToPiece(str.at(0), notation, ok, err));
                 QChar c = str.at(1);
                 if (c.isLetter() && c.isLower()) {
-                    move.setFileOfDeparture(charToFile(c, notation));
+                    move.setFileOfDeparture(charToFile(c, notation, ok, err));
                 } else if (c.isNumber()) {
-                    move.setRankOfDeparture(charToRank(c, notation));
+                    move.setRankOfDeparture(charToRank(c, notation, ok, err));
                 }
-                move.setEnd(stringToSquare(str.right(2), notation));
+                move.setEnd(stringToSquare(str.right(2), notation, ok, err));
             } else if (str.length() == 5) {
-                move.setPiece(charToPiece(str.at(0), notation));
-                move.setFileOfDeparture(charToFile(str.at(1), notation));
-                move.setRankOfDeparture(charToRank(str.at(2), notation));
-                move.setEnd(stringToSquare(str.right(2), notation));
+                move.setPiece(charToPiece(str.at(0), notation, ok, err));
+                move.setFileOfDeparture(charToFile(str.at(1), notation, ok, err));
+                move.setRankOfDeparture(charToRank(str.at(2), notation, ok, err));
+                move.setEnd(stringToSquare(str.right(2), notation, ok, err));
+            } else {
+                if (ok) *ok = false;
+                if (err) *err = QObject::tr("String for SAN move is incorrect size.");
             }
             break;
         }
     case Long:
             move.setCapture(string.contains('x'));
-            move.setPiece(charToPiece(string.at(0), notation));
-            move.setStart(move.piece() != Pawn ? stringToSquare(string.mid(1, 2), notation) :
-                                                 stringToSquare(string.left(2), notation));
-            move.setEnd(stringToSquare(string.right(2), notation));
+            move.setPiece(charToPiece(string.at(0), notation, ok, err));
+            move.setStart(move.piece() != Pawn ? stringToSquare(string.mid(1, 2), notation, ok, err) :
+                                                 stringToSquare(string.left(2), notation, ok, err));
+            move.setEnd(stringToSquare(string.right(2), notation, ok, err));
             break;
     case Computer:
         {
             if (string == QLatin1String("(none)")) //glaurang sends this...
                 break;
 
-            move.setStart(stringToSquare(string.left(2), notation));
-            move.setEnd(stringToSquare(string.mid(2, 2), notation));
+            move.setStart(stringToSquare(string.left(2), notation, ok, err));
+            move.setEnd(stringToSquare(string.mid(2, 2), notation, ok, err));
             if (string.size() == 5) { //promotion
-                move.setPromotion(charToPiece(string.at(4), notation));
+                move.setPromotion(charToPiece(string.at(4), notation, ok, err));
             }
             break;
         }
@@ -124,10 +128,6 @@ Move Notation::stringToMove(const QString &string, Chess::NotationType notation,
         break;
     }
 
-    if (ok)
-        *ok = true;
-    if (err)
-        *err = QString();
     return move;
 }
 
@@ -207,10 +207,6 @@ QString Notation::moveToString(Move move, Chess::NotationType notation)
 
 Square Notation::stringToSquare(const QString &string, Chess::NotationType notation, bool *ok, QString *err)
 {
-    //FIXME
-    Q_UNUSED(ok);
-    Q_UNUSED(err);
-
     int file;
     int rank;
 
@@ -219,7 +215,11 @@ Square Notation::stringToSquare(const QString &string, Chess::NotationType notat
     case Long:
     case Computer:
         {
-            Q_ASSERT(string.size() == 2);
+            if (string.size() != 2) {
+                if (ok) *ok = false;
+                if (err) *err = QObject::tr("String for square is incorrect size.");
+                return Square();
+            }
             file = charToFile(string.at(0), notation, ok, err);
             rank = charToRank(string.at(1), notation, ok, err);
             break;
@@ -255,10 +255,8 @@ QString Notation::squareToString(Square square, Chess::NotationType notation)
 
 Chess::PieceType Notation::charToPiece(const QChar &ch, Chess::NotationType notation, bool *ok, QString *err)
 {
-    //FIXME
     Q_UNUSED(ok);
     Q_UNUSED(err);
-
     PieceType piece;
 
     QList<QChar> pieces;
@@ -309,10 +307,6 @@ QChar Notation::pieceToChar(Chess::PieceType piece, Chess::NotationType notation
 
 int Notation::charToFile(const QChar &ch, Chess::NotationType notation, bool *ok, QString *err)
 {
-    //FIXME
-    Q_UNUSED(ok);
-    Q_UNUSED(err);
-
     int file;
 
     QList<QChar> files;
@@ -326,7 +320,9 @@ int Notation::charToFile(const QChar &ch, Chess::NotationType notation, bool *ok
             if (files.contains(ch.toLower())) {
                 file = files.indexOf(ch.toLower());
             } else {
-                file = -1;
+                if (ok) *ok = false;
+                if (err) *err = QObject::tr("Char for file is invalid.");
+                return -1;
             }
             break;
         }
@@ -365,10 +361,6 @@ QChar Notation::fileToChar(int file, Chess::NotationType notation)
 
 int Notation::charToRank(const QChar &ch, Chess::NotationType notation, bool *ok, QString *err)
 {
-    //FIXME
-    Q_UNUSED(ok);
-    Q_UNUSED(err);
-
     int rank;
 
     QList<QChar> ranks;
@@ -382,6 +374,8 @@ int Notation::charToRank(const QChar &ch, Chess::NotationType notation, bool *ok
             if (ranks.contains(ch.toLower())) {
                 rank = ranks.indexOf(ch.toLower());
             } else {
+                if (ok) *ok = false;
+                if (err) *err = QObject::tr("Char for rank is invalid.");
                 rank = -1;
             }
             break;
