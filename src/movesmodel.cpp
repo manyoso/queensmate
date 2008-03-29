@@ -43,6 +43,7 @@ QVariant MoveItem::data(int role) const
             default: break;
             }
 
+            //FIXME!!
             if (this != model()->lastMove()) {
                 result = QString();
             }

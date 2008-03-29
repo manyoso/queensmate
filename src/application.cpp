@@ -42,7 +42,7 @@ Application::~Application()
 
 QUrl Application::url() const
 {
-    return QUrl("http://www.queensmate.com");
+    return QUrl("http://localhost/wordpress");
 }
 
 void Application::showStatus(const QString &status, int timeout)
