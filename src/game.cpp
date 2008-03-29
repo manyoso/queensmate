@@ -231,6 +231,9 @@ void Game::playerMadeMove(Move move)
 
 bool Game::localHumanMadeMove(Chess::Army army, Move move)
 {
+    if (m_ending != InProgress && !m_isScratchGame)
+        return false;
+
     if (m_isScratchGame) {
         fillOutMove(army, &move);
         processMove(army, move);
@@ -259,6 +262,9 @@ bool Game::localHumanMadeMove(Chess::Army army, Move move)
 
 bool Game::remoteOrEngineMadeMove(Chess::Army army, Move move)
 {
+    if (m_ending != InProgress && !m_isScratchGame)
+        return false;
+
     if (m_activeArmy != army)
         return false;
 
