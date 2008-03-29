@@ -115,11 +115,11 @@ MovesModel::MovesModel(Game *game)
 
     setItemPrototype(new MoveItem); //no clones!!
 
-    //create a placeholder...
-    setItem(0, new MoveItem);
-
     connect(game, SIGNAL(positionChanged(int, int)),
             this, SLOT(positionChanged(int, int)));
+
+    connect(game, SIGNAL(gameStarted()),
+            this, SLOT(gameStarted()));
 
     connect(game, SIGNAL(gameEnded()),
             this, SLOT(gameEnded()));
@@ -206,6 +206,16 @@ void MovesModel::positionChanged(int oldIndex, int newIndex)
             QModelIndex index = indexFromItem(i);
             emit dataChanged(index, index);
         }
+    }
+}
+
+void MovesModel::gameStarted()
+{
+    //create a placeholder...
+    if (game()->activeArmy() == White) {
+        setItem(qMax(0, rowCount()), 0, new MoveItem);
+    } else {
+        setItem(qMax(0, rowCount()), 1, new MoveItem);
     }
 }
 

@@ -60,7 +60,7 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
     bold.setFontWeight(QFont::Bold);
     cursor.setCharFormat(bold);
 
-    for (int row = topLeft.row(); row < bottomRight.row() + 1; ++row) {
+    for (int row = qMax(0, topLeft.row()); row < bottomRight.row() + 1; ++row) {
 
         QModelIndex rowNumber = model()->index(row, 0, rootIndex());
         if (!m_indexToPos.contains(rowNumber)) {
@@ -68,7 +68,7 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
             cursor.insertText(text);
         }
 
-        for (int column = topLeft.column(); column < bottomRight.column() + 1; ++column) {
+        for (int column = qMax(0, topLeft.column()); column < bottomRight.column() + 1; ++column) {
             QModelIndex index = model()->index(row, column, rootIndex());
             int pos = m_indexToPos.contains(index) ? m_indexToPos.value(index) : -1;
             QString value = model()->data(index).toString();

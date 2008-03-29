@@ -6,6 +6,7 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QProgressBar>
 
 #include "pgn.h"
 #include "game.h"
@@ -92,6 +93,11 @@ MainWindow::MainWindow(QWidget *parent)
     //end web...
 
     ui_toolBar->setVisible(false);
+
+    m_progressBar = new QProgressBar(this);
+    m_progressBar->setMinimumWidth(250);
+    statusBar()->addPermanentWidget(new QWidget(this), 1);
+    statusBar()->addPermanentWidget(m_progressBar);
 
     QStyle *s = QApplication::style();
     QStyleOptionSlider o;

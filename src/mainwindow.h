@@ -7,10 +7,12 @@
 
 class Pgn;
 typedef QList<Pgn> PgnList;
+
 class WebPage;
 class WebView;
 class PgnParser;
 class DataLoader;
+class QProgressBar;
 
 class MainWindow : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
@@ -59,6 +61,7 @@ private:
     WebView *m_webView;
     WebPage *m_aboutPage;
     WebPage *m_mainPage;
+    QProgressBar *m_progressBar;
 };
 
 #endif
