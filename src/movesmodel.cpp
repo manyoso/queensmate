@@ -43,15 +43,16 @@ QVariant MoveItem::data(int role) const
             default: break;
             }
 
-            //FIXME!!
             if (this != model()->lastMove()) {
                 result = QString();
             }
 
             if (m_move.isValid()) {
                 return QString("%1 %2").arg(Notation::moveToString(m_move)).arg(result);
-            } else {
+            } else if (model()->game()->result() == Game::NoResult) {
                 return QLatin1String("...");
+            } else {
+                return QString();
             }
         }
     case Qt::ForegroundRole:
@@ -223,10 +224,10 @@ void MovesModel::gameStarted()
 void MovesModel::gameEnded()
 {
     //Remove placeholder for next move...
+    QModelIndex topLeft = index(0, 0);
+    QModelIndex bottomRight = index(rowCount() - 1, columnCount() - 1);
     if (game()->activeArmy() == White) {
         removeRow(rowCount() - 1);
-    } else {
-        QStandardItem *item = takeItem(rowCount() - 1, 1);
-        delete item;
     }
+    emit dataChanged(topLeft, bottomRight);
 }

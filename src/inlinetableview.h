@@ -43,7 +43,12 @@ private:
     QTextDocument *m_document;
     QHash<QModelIndex, int> m_indexToPos;
     QHash<int, QModelIndex> m_posToIndex;
+
+    QHash<QModelIndex, int> m_rowToPos;
+    QHash<int, QModelIndex> m_posToRow;
+
     QHash<QModelIndex, QString> m_indexToText;
+    QHash<QModelIndex, QString> m_rowToText;
 };
 
 #endif

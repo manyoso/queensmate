@@ -47,5 +47,5 @@ QUrl Application::url() const
 
 void Application::showStatus(const QString &status, int timeout)
 {
-    mainWindow()->statusBar()->showMessage(status, timeout * 1000);
+//    mainWindow()->statusBar()->showMessage(status, timeout * 1000);
 }

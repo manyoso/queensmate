@@ -38,10 +38,10 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
 {
     QAbstractItemView::dataChanged(topLeft, bottomRight);
 
-//     qDebug() << "InlineTableView::dataChanged"
-//              << "topLeft:" << topLeft.row() << "," << topLeft.column()
-//              << "bottomRight:" << bottomRight.row() << "," << bottomRight.column()
-//              << endl;
+    qDebug() << "InlineTableView::dataChanged"
+             << "topLeft:" << topLeft.row() << "," << topLeft.column()
+             << "bottomRight:" << bottomRight.row() << "," << bottomRight.column()
+             << endl;
 
     QTextCursor cursor(m_document);
 
@@ -62,11 +62,25 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
 
     for (int row = qMax(0, topLeft.row()); row < bottomRight.row() + 1; ++row) {
 
-        QModelIndex rowNumber = model()->index(row, 0, rootIndex());
-        if (!m_indexToPos.contains(rowNumber)) {
+        QModelIndex rowIndex = model()->index(row, 0, rootIndex());
+        int rowPos = m_rowToPos.contains(rowIndex) ? m_rowToPos.value(rowIndex) : -1;
+        if (rowPos == -1 && rowIndex.isValid()) {
+            m_posToRow.insert(cursor.position(), rowIndex);
+            m_rowToPos.insert(rowIndex, cursor.position());
             QString text = QString("%1. ").arg(QString::number(row + 1));
             cursor.insertText(text);
-        }
+            m_rowToText.insert(rowIndex, text);
+        }/* else {
+            cursor.setPosition(rowPos);
+            m_posToRow.remove(rowPos);
+            m_rowToPos.remove(rowIndex);
+            QString previousText = m_rowToText.take(rowIndex);
+            m_posToRow.insert(cursor.position(), rowIndex);
+            m_rowToPos.insert(rowIndex, cursor.position());
+            cursor.clearSelection();
+            cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, previousText.count());
+            cursor.insertText(QString());
+        }*/
 
         for (int column = qMax(0, topLeft.column()); column < bottomRight.column() + 1; ++column) {
             QModelIndex index = model()->index(row, column, rootIndex());
@@ -82,6 +96,7 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
                 m_indexToPos.insert(index, cursor.position());
             } else {
 //                 qDebug() << "previous index at" << pos << endl;
+                cursor.setPosition(pos);
                 m_posToIndex.remove(pos);
                 m_indexToPos.remove(index);
                 QString previousText = m_indexToText.take(index);
@@ -113,8 +128,54 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
 
 void InlineTableView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
 {
-//     qDebug() << "InlineTableView::rowsAboutToBeRemoved" << endl;
     QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
+
+    qDebug() << "InlineTableView::rowsAboutToBeRemoved" << start << end << endl;
+
+    QModelIndex topLeft = model()->index(start, 0, parent);
+    QModelIndex bottomRight = model()->index(end, 1, parent);
+
+    QTextCursor cursor(m_document);
+
+    for (int row = qMax(0, topLeft.row()); row < bottomRight.row() + 1; ++row) {
+        for (int column = qMax(0, topLeft.column()); column < bottomRight.column() + 1; ++column) {
+            QModelIndex index = model()->index(row, column, rootIndex());
+            int pos = m_indexToPos.contains(index) ? m_indexToPos.value(index) : -1;
+            QString value = model()->data(index).toString();
+
+            if (pos == -1 && value.isEmpty())
+                continue;
+
+            if (pos != -1) {
+                qDebug() << "previous index at" << pos << endl;
+                cursor.setPosition(pos);
+                m_posToIndex.remove(pos);
+                m_indexToPos.remove(index);
+                QString previousText = m_indexToText.take(index);
+                m_posToIndex.insert(cursor.position(), index);
+                m_indexToPos.insert(index, cursor.position());
+                cursor.clearSelection();
+                cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, previousText.count());
+                cursor.insertText(QString());
+            }
+        }
+
+//         QModelIndex rowIndex = model()->index(row, 0, rootIndex());
+//         int rowPos = m_rowToPos.contains(rowIndex) ? m_rowToPos.value(rowIndex) : -1;
+//         if (rowPos != -1 /*&& rowIndex.isValid()*/) {
+//             cursor.setPosition(rowPos);
+//             m_posToRow.remove(rowPos);
+//             m_rowToPos.remove(rowIndex);
+//             QString previousText = m_rowToText.take(rowIndex);
+//             m_posToRow.insert(cursor.position(), rowIndex);
+//             m_rowToPos.insert(rowIndex, cursor.position());
+//             cursor.clearSelection();
+//             cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, previousText.count());
+//             cursor.insertText(QString());
+//         }
+    }
+
+    viewport()->update();
 }
 
 void InlineTableView::rowsInserted(const QModelIndex &parent, int start, int end)
