@@ -13,8 +13,6 @@
 #include "clock.h"
 #include "board.h"
 #include "player.h"
-#include "webpage.h"
-#include "webview.h"
 #include "gameview.h"
 #include "notation.h"
 #include "resource.h"
@@ -66,31 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_pgnParser, SIGNAL(finished(const PgnList &)), this, SLOT(pgnParserFinished(const PgnList &)));
     connect(m_pgnParser, SIGNAL(error(const QString &)), this, SLOT(pgnParserError(const QString &)));
 
-    //begin web...
-    m_webView = new WebView(ui_tabWidget);
-
-    QFile about(":/html/about.html");
-    Q_ASSERT(about.open(QIODevice::ReadOnly | QIODevice::Text));
-    m_aboutPage = new WebPage(this, m_webView);
-    m_aboutPage->mainFrame()->setHtml(about.readAll());
-    m_webView->setPage(m_aboutPage);
-
-    m_mainPage = new WebPage(this, m_webView);
-    connect(m_mainPage->mainFrame(), SIGNAL(initialLayoutCompleted()), this, SLOT(mainPageLayoutCompleted()));
-    m_mainPage->mainFrame()->load(chessApp->url());
-
-    connect(m_mainPage->mainFrame(), SIGNAL(loadStarted()),
-            m_webView->progressBar(), SLOT(startLoad()));
-    connect(m_mainPage, SIGNAL(loadProgress(int)),
-            m_webView->progressBar(), SLOT(changeLoad(int)));
-    connect(m_mainPage->mainFrame(), SIGNAL(loadFinished()),
-            m_webView->progressBar(), SLOT(endLoad()));
-
-    int i = ui_tabWidget->addTab(m_webView, tr("Home"));
-    ui_tabWidget->setCurrentIndex(i);
-
-    tabChanged(0);
-    //end web...
+    newScratchBoard();
 
     ui_toolBar->setVisible(false);
 
@@ -98,14 +72,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_progressBar->setMinimumWidth(250);
     statusBar()->addPermanentWidget(new QWidget(this), 1);
     statusBar()->addPermanentWidget(m_progressBar);
-
-    QStyle *s = QApplication::style();
-    QStyleOptionSlider o;
-    o.orientation = Qt::Vertical;
-    o.state &= ~QStyle::State_Horizontal;
-    int extent = s->pixelMetric(QStyle::PM_ScrollBarExtent, &o, 0);
-    centralWidget()->setMinimumWidth(1010 /*width of the webpage*/ + (extent * 2) /*width of the scrollbar*/);
-    centralWidget()->setMinimumHeight(554);
 
     QSettings settings;
     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
@@ -386,11 +352,6 @@ void MainWindow::tabChanged(int index)
     ui_actionResign->setEnabled(scratchView != 0 ? false : ui_actionResign->isEnabled());
     ui_actionConvertToScratchBoard->setEnabled(scratchView != 0 ? false : ui_actionConvertToScratchBoard->isEnabled());
     ui_actionRestart->setEnabled(scratchView != 0 ? true : ui_actionRestart->isEnabled());
-}
-
-void MainWindow::mainPageLayoutCompleted()
-{
-    m_webView->setPage(m_mainPage);
 }
 
 void MainWindow::pgnDataProgress(qint64 bytesReceived, qint64 bytesTotal)

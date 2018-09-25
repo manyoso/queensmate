@@ -23,11 +23,12 @@ BoardPiece::BoardPiece(Board *board, Piece piece, const QSizeF &size)
     setPiece(piece);
 
     QRectF rect = boundingRect();
-    scale(size.width() / rect.width(), size.height() / rect.width());
+    setTransform(QTransform::fromScale(size.width() / rect.width(),
+        size.height() / rect.width()), true);
 
     setZValue(2);
     setFlag(ItemIsMovable, true);
-    setAcceptsHoverEvents(true);
+    setAcceptHoverEvents(true);
 }
 
 BoardPiece::~BoardPiece()
@@ -89,7 +90,8 @@ void BoardPiece::themeChanged()
     resetTransform();
     setSharedRenderer(m_board->theme()->rendererForPiece(m_piece.army(), m_piece.piece()));
     QRectF rect = boundingRect();
-    scale(m_size.width() / rect.width(), m_size.height() / rect.width());
+        setTransform(QTransform::fromScale(m_size.width() / rect.width(),
+        m_size.height() / rect.width()), true);
     setVisible(true);
     update();
 }

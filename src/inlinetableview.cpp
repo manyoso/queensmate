@@ -107,8 +107,8 @@ void InlineTableView::dataChanged(const QModelIndex &topLeft,
             }
 
             QTextCharFormat format;
-            QBrush foreground = qVariantValue<QBrush>(model()->data(index, Qt::ForegroundRole));
-            QBrush background = qVariantValue<QBrush>(model()->data(index, Qt::BackgroundRole));
+            QBrush foreground = QVariant(model()->data(index, Qt::ForegroundRole)).value<QBrush>();
+            QBrush background = QVariant(model()->data(index, Qt::BackgroundRole)).value<QBrush>();
 //             qDebug() << "foreground" << foreground << "background" << background << endl;
 
             format.setForeground(foreground);

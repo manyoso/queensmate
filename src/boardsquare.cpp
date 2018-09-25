@@ -27,7 +27,7 @@ BoardSquare::BoardSquare(Board *board, Square square, const QSizeF &size, bool o
     setBrush(brush);
     setPen(Qt::NoPen);
     setZValue(1);
-    setAcceptsHoverEvents(true);
+    setAcceptHoverEvents(true);
 }
 
 BoardSquare::~BoardSquare()

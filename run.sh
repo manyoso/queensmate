@@ -1,9 +1,0 @@
-#!/bin/sh
-
-cd `dirname $0`
-
-export SCRIPTDIR=$PWD
-export BUILDDIR=$PWD/build
-
-$BUILDDIR/bin/queensmate "$@"
-

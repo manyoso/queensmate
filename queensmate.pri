@@ -1,12 +1,4 @@
-!win32 {
-    isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/build
-} else {
-    isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/build-windows
-}
-
 QT += core
-
-CONFIG += silent
 
 TOPLEVELDIR = $$PWD
 

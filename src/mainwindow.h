@@ -8,8 +8,6 @@
 class Pgn;
 typedef QList<Pgn> PgnList;
 
-class WebPage;
-class WebView;
 class PgnParser;
 class DataLoader;
 class QProgressBar;
@@ -47,7 +45,6 @@ protected:
 private Q_SLOTS:
     void gameStateChanged();
     void tabChanged(int index);
-    void mainPageLayoutCompleted();
     void pgnDataProgress(qint64 bytesReceived, qint64 bytesTotal);
     void pgnDataLoaded(const QByteArray &data);
     void pgnDataError(const QString &error);
@@ -58,9 +55,6 @@ private Q_SLOTS:
 private:
     DataLoader *m_pgnLoader;
     PgnParser *m_pgnParser;
-    WebView *m_webView;
-    WebPage *m_aboutPage;
-    WebPage *m_mainPage;
     QProgressBar *m_progressBar;
 };
 
