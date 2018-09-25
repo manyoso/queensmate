@@ -1,7 +1,0 @@
-* Rules and validation
-* PGN Parser
-* Error handlers for parsers
-* Flesh out and finish notation parser
-* Regression test suite (parsers, database of games, fen, rules, etc, etc)
-* Chess clock
-* Come up with good name :)
